@@ -23,7 +23,7 @@ void cameraCallback(ConstImageStampedPtr &msg) {
   cv::cvtColor(im, im, CV_BGR2RGB);
 
   cv::imshow("camera", im);
-  cv::waitKey(1);
+  //  cv::waitKey(1);
 }
 
 void lidarCallback(ConstLaserScanStampedPtr &msg) {
@@ -48,26 +48,28 @@ void lidarCallback(ConstLaserScanStampedPtr &msg) {
   int height = 400;
   double px_per_m = 200 / range_max;
 
-  cv::Mat im(height, width, CV_8UC1);
+  cv::Mat im(height, width, CV_8UC3);
   im.setTo(0);
   for (int i = 0; i < nranges; i++) {
-    float angle = angle_min + i * angle_increment;
-    double range = msg->scan().ranges(i);
+    double angle = angle_min + i * angle_increment;
+    double range = std::min(msg->scan().ranges(i), range_max);
     double intensity = msg->scan().intensities(i);
     cv::Point2f startpt(200.5 + range_min * px_per_m * std::cos(angle),
                         200.5 - range_min * px_per_m * std::sin(angle));
     cv::Point2f endpt(200.5 + range * px_per_m * std::cos(angle),
                       200.5 - range * px_per_m * std::sin(angle));
-    cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 0, 0, 255), 1,
+    cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
              cv::LINE_AA, 4);
-  }
 
+    //    std::cout << angle << " " << range << " " << intensity << std::endl;
+  }
+  cv::circle(im, cv::Point(200, 200), 2, cv::Scalar(0, 0, 255));
   cv::putText(im, std::to_string(sec) + ":" + std::to_string(nsec),
               cv::Point(10, 20), cv::FONT_HERSHEY_PLAIN, 1.0,
               cv::Scalar(255, 0, 0));
 
   cv::imshow("lidar", im);
-  cv::waitKey(1);
+  //  cv::waitKey(1);
 }
 
 int main(int _argc, char **_argv) {
@@ -112,7 +114,7 @@ int main(int _argc, char **_argv) {
   while (true) {
     gazebo::common::Time::MSleep(10);
 
-    int key = cv::waitKey(1);
+    int key = cv::waitKey(10);
 
     if (key == key_esc)
       break;
