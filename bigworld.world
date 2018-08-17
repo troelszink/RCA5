@@ -2,6 +2,17 @@
 <sdf version="1.5">
   <world name="default">
 
+	<physics type="ode">
+		<real_time_factor>1</real_time_factor>
+		<real_time_update_rate>250</real_time_update_rate>
+		<max_step_size>0.004</max_step_size>
+		<ode>
+			<solver>
+				<iters>20</iters>
+			</solver>
+		</ode>
+	</physics>
+
     <include>
       <uri>model://ground_plane</uri>
     </include>

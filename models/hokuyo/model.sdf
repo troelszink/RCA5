@@ -35,7 +35,7 @@
         <ray>
           <scan>
             <horizontal>
-              <samples>640</samples>
+              <samples>50</samples>
               <resolution>1</resolution>
               <min_angle>-2.26889</min_angle>
               <max_angle>2.268899</max_angle>
@@ -48,8 +48,8 @@
           </range>
         </ray>
         <plugin name="laser" filename="libRayPlugin.so" />
-        <always_on>1</always_on>
-        <update_rate>30</update_rate>
+        <always_on>0</always_on>
+        <update_rate>10</update_rate>
         <visualize>true</visualize>
       </sensor>
     </link>
