@@ -6,10 +6,31 @@
 
 #include <iostream>
 
+boost::mutex mutex;
+
 void statCallback(ConstWorldStatisticsPtr &_msg) {
   // Dump the message contents to stdout.
   //  std::cout << _msg->DebugString();
   //  std::cout << std::flush;
+}
+
+void poseCallback(ConstPosesStampedPtr &_msg) {
+  // Dump the message contents to stdout.
+  //  std::cout << _msg->DebugString();
+
+  for (int i = 0; i < _msg->pose_size(); i++) {
+    if (_msg->pose(i).name() == "pioneer2dx") {
+
+      std::cout << std::setprecision(2) << std::fixed << std::setw(6)
+                << _msg->pose(i).position().x() << std::setw(6)
+                << _msg->pose(i).position().y() << std::setw(6)
+                << _msg->pose(i).position().z() << std::setw(6)
+                << _msg->pose(i).orientation().w() << std::setw(6)
+                << _msg->pose(i).orientation().x() << std::setw(6)
+                << _msg->pose(i).orientation().y() << std::setw(6)
+                << _msg->pose(i).orientation().z() << std::endl;
+    }
+  }
 }
 
 void cameraCallback(ConstImageStampedPtr &msg) {
@@ -22,8 +43,9 @@ void cameraCallback(ConstImageStampedPtr &msg) {
   im = im.clone();
   cv::cvtColor(im, im, CV_BGR2RGB);
 
+  mutex.lock();
   cv::imshow("camera", im);
-  //    cv::waitKey(1);
+  mutex.unlock();
 }
 
 void lidarCallback(ConstLaserScanStampedPtr &msg) {
@@ -68,8 +90,9 @@ void lidarCallback(ConstLaserScanStampedPtr &msg) {
               cv::Point(10, 20), cv::FONT_HERSHEY_PLAIN, 1.0,
               cv::Scalar(255, 0, 0));
 
+  mutex.lock();
   cv::imshow("lidar", im);
-  //  cv::waitKey(1);
+  mutex.unlock();
 }
 
 int main(int _argc, char **_argv) {
@@ -82,13 +105,16 @@ int main(int _argc, char **_argv) {
 
   // Listen to Gazebo topics
   gazebo::transport::SubscriberPtr statSubscriber =
-      node->Subscribe("~/world_stats", statCallback, true);
+      node->Subscribe("~/world_stats", statCallback);
 
-  gazebo::transport::SubscriberPtr cameraSubscriber = node->Subscribe(
-      "~/pioneer2dx/camera/link/camera/image", cameraCallback, true);
+  gazebo::transport::SubscriberPtr poseSubscriber =
+      node->Subscribe("~/pose/info", poseCallback);
 
-  gazebo::transport::SubscriberPtr lidarSubscriber = node->Subscribe(
-      "~/pioneer2dx/hokuyo/link/laser/scan", lidarCallback, true);
+  gazebo::transport::SubscriberPtr cameraSubscriber =
+      node->Subscribe("~/pioneer2dx/camera/link/camera/image", cameraCallback);
+
+  gazebo::transport::SubscriberPtr lidarSubscriber =
+      node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", lidarCallback);
 
   // Publish to the robot vel_cmd topic
   gazebo::transport::PublisherPtr movementPublisher =
@@ -115,7 +141,9 @@ int main(int _argc, char **_argv) {
   while (true) {
     gazebo::common::Time::MSleep(10);
 
-    int key = cv::waitKey(10);
+    mutex.lock();
+    int key = cv::waitKey(1);
+    mutex.unlock();
 
     if (key == key_esc)
       break;
