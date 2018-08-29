@@ -6,9 +6,10 @@
 
 #include <iostream>
 
-boost::mutex mutex;
+static boost::mutex mutex;
 
 void statCallback(ConstWorldStatisticsPtr &_msg) {
+  (void)_msg;
   // Dump the message contents to stdout.
   //  std::cout << _msg->DebugString();
   //  std::cout << std::flush;
@@ -38,7 +39,7 @@ void cameraCallback(ConstImageStampedPtr &msg) {
   std::size_t width = msg->image().width();
   std::size_t height = msg->image().height();
   const char *data = msg->image().data().c_str();
-  cv::Mat im(height, width, CV_8UC3, (void *)(data));
+  cv::Mat im(int(height), int(width), CV_8UC3, const_cast<char *>(data));
 
   im = im.clone();
   cv::cvtColor(im, im, CV_BGR2RGB);
@@ -51,12 +52,12 @@ void cameraCallback(ConstImageStampedPtr &msg) {
 void lidarCallback(ConstLaserScanStampedPtr &msg) {
 
   //  std::cout << ">> " << msg->DebugString() << std::endl;
-  double angle_min = msg->scan().angle_min();
-  double angle_max = msg->scan().angle_min();
-  double angle_increment = msg->scan().angle_step();
+  float angle_min = float(msg->scan().angle_min());
+  //  double angle_max = msg->scan().angle_max();
+  float angle_increment = float(msg->scan().angle_step());
 
-  double range_min = msg->scan().range_min();
-  double range_max = msg->scan().range_max();
+  float range_min = float(msg->scan().range_min());
+  float range_max = float(msg->scan().range_max());
 
   int sec = msg->time().sec();
   int nsec = msg->time().nsec();
@@ -68,18 +69,18 @@ void lidarCallback(ConstLaserScanStampedPtr &msg) {
 
   int width = 400;
   int height = 400;
-  double px_per_m = 200 / range_max;
+  float px_per_m = 200 / range_max;
 
   cv::Mat im(height, width, CV_8UC3);
   im.setTo(0);
   for (int i = 0; i < nranges; i++) {
-    double angle = angle_min + i * angle_increment;
-    double range = std::min(msg->scan().ranges(i), range_max);
-    double intensity = msg->scan().intensities(i);
-    cv::Point2f startpt(200.5 + range_min * px_per_m * std::cos(angle),
-                        200.5 - range_min * px_per_m * std::sin(angle));
-    cv::Point2f endpt(200.5 + range * px_per_m * std::cos(angle),
-                      200.5 - range * px_per_m * std::sin(angle));
+    float angle = angle_min + i * angle_increment;
+    float range = std::min(float(msg->scan().ranges(i)), range_max);
+    //    double intensity = msg->scan().intensities(i);
+    cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
+                        200.5f - range_min * px_per_m * std::sin(angle));
+    cv::Point2f endpt(200.5f + range * px_per_m * std::cos(angle),
+                      200.5f - range * px_per_m * std::sin(angle));
     cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
              cv::LINE_AA, 4);
 
@@ -163,7 +164,7 @@ int main(int _argc, char **_argv) {
     }
 
     // Generate a pose
-    ignition::math::Pose3d pose(speed, 0, 0, 0, 0, dir);
+    ignition::math::Pose3d pose(double(speed), 0, 0, 0, 0, double(dir));
 
     // Convert to a pose message
     gazebo::msgs::Pose msg;
