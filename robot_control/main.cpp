@@ -23,7 +23,7 @@ void cameraCallback(ConstImageStampedPtr &msg) {
   cv::cvtColor(im, im, CV_BGR2RGB);
 
   cv::imshow("camera", im);
-  //  cv::waitKey(1);
+  //    cv::waitKey(1);
 }
 
 void lidarCallback(ConstLaserScanStampedPtr &msg) {
@@ -82,24 +82,25 @@ int main(int _argc, char **_argv) {
 
   // Listen to Gazebo topics
   gazebo::transport::SubscriberPtr statSubscriber =
-      node->Subscribe("~/world_stats", statCallback);
+      node->Subscribe("~/world_stats", statCallback, true);
 
-  gazebo::transport::SubscriberPtr cameraSubscriber =
-      node->Subscribe("~/pioneer2dx/camera/link/camera/image", cameraCallback);
+  gazebo::transport::SubscriberPtr cameraSubscriber = node->Subscribe(
+      "~/pioneer2dx/camera/link/camera/image", cameraCallback, true);
 
-  gazebo::transport::SubscriberPtr lidarSubscriber =
-      node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", lidarCallback);
+  gazebo::transport::SubscriberPtr lidarSubscriber = node->Subscribe(
+      "~/pioneer2dx/hokuyo/link/laser/scan", lidarCallback, true);
 
   // Publish to the robot vel_cmd topic
   gazebo::transport::PublisherPtr movementPublisher =
       node->Advertise<gazebo::msgs::Pose>("~/pioneer2dx/vel_cmd");
 
-  //  gazebo::transport::PublisherPtr pub =
-  //      node->Advertise<gazebo::msgs::Request>("~/request");
-  //  gazebo::msgs::Request *msg =
-  //      gazebo::msgs::CreateRequest("entity_delete", "marble");
-  //  pub->WaitForConnection();
-  //  pub->Publish(*msg, true);
+  // Publish a reset of the world
+  gazebo::transport::PublisherPtr worldPublisher =
+      node->Advertise<gazebo::msgs::WorldControl>("~/world_control");
+  gazebo::msgs::WorldControl controlMessage;
+  controlMessage.mutable_reset()->set_all(true);
+  worldPublisher->WaitForConnection();
+  worldPublisher->Publish(controlMessage);
 
   const int key_left = 81;
   const int key_up = 82;
