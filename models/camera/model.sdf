@@ -47,7 +47,7 @@
           <noise>
             <type>gaussian</type>
             <mean>0.0</mean>
-            <stddev>0.04</stddev>
+            <stddev>0.02</stddev>
           </noise>
         </camera>
         <always_on>0</always_on>
