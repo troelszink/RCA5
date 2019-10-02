@@ -3,8 +3,11 @@
 #include <gazebo/transport/transport.hh>
 
 #include <opencv2/opencv.hpp>
+#include "fl/Headers.h"
 
 #include <iostream>
+
+using namespace fl;
 
 static boost::mutex mutex;
 
@@ -22,14 +25,14 @@ void poseCallback(ConstPosesStampedPtr &_msg) {
   for (int i = 0; i < _msg->pose_size(); i++) {
     if (_msg->pose(i).name() == "pioneer2dx") {
 
-      std::cout << std::setprecision(2) << std::fixed << std::setw(6)
+      /*std::cout << std::setprecision(2) << std::fixed << std::setw(6)
                 << _msg->pose(i).position().x() << std::setw(6)
                 << _msg->pose(i).position().y() << std::setw(6)
                 << _msg->pose(i).position().z() << std::setw(6)
                 << _msg->pose(i).orientation().w() << std::setw(6)
                 << _msg->pose(i).orientation().x() << std::setw(6)
                 << _msg->pose(i).orientation().y() << std::setw(6)
-                << _msg->pose(i).orientation().z() << std::endl;
+                << _msg->pose(i).orientation().z() << std::endl;*/
     }
   }
 }
@@ -137,6 +140,30 @@ int main(int _argc, char **_argv) {
 
   float speed = 0.0;
   float dir = 0.0;
+
+    // FUZZY LOGIC
+
+    Engine* engine = FllImporter().fromFile("LocalObstacleAvoidance_V1.fll");
+
+    std::string status;
+    if (not engine->isReady(&status))
+    {
+        throw Exception("[engine error] engine is not ready:n" + status, FL_AT);
+    }
+
+    InputVariable* DirectionToObstacle = engine->getInputVariable("DirectionToObstacle");
+    InputVariable* DistanceToObstacle = engine->getInputVariable("DistanceToObstacle");
+    OutputVariable* Steer = engine->getOutputVariable("Steer");
+
+    for (int i = 0; i <= 50; ++i)
+	  {
+        scalar location = DirectionToObstacle->getMinimum() + i * (DirectionToObstacle->range() / 50);
+        DirectionToObstacle->setValue(location);
+        engine->process();
+        FL_LOG("DirectionToObstacle.input = " << Op::str(location) << 
+            " => " << "Steer.output = " << Op::str(Steer->getValue()));
+    }
+
 
   // Loop
   while (true) {
