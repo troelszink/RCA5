@@ -100,7 +100,8 @@ void lidarCallback(ConstLaserScanStampedPtr &msg) {
 }
 
 int main(int _argc, char **_argv) {
-  // Load gazebo
+  std::cout << "Starting" << std::endl;
+  // Load gazebo 
   gazebo::client::setup(_argc, _argv);
 
   // Create our node for communication
@@ -143,7 +144,7 @@ int main(int _argc, char **_argv) {
 
     // FUZZY LOGIC
 
-    Engine* engine = FllImporter().fromFile("LocalObstacleAvoidance_V1.fll");
+    Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V1.fll");
 
     std::string status;
     if (not engine->isReady(&status))
@@ -165,6 +166,7 @@ int main(int _argc, char **_argv) {
     }
 
 
+std::cout << "Looping" << std::endl;
   // Loop
   while (true) {
     gazebo::common::Time::MSleep(10);
