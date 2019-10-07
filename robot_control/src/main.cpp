@@ -11,6 +11,13 @@ using namespace fl;
 
 static boost::mutex mutex;
 
+// Global variables
+
+float shortest_range = 10;
+float shortest_angle = 0;
+float angle_inc;
+
+
 void statCallback(ConstWorldStatisticsPtr &_msg) {
   (void)_msg;
   // Dump the message contents to stdout.
@@ -25,7 +32,7 @@ void poseCallback(ConstPosesStampedPtr &_msg) {
   for (int i = 0; i < _msg->pose_size(); i++) {
     if (_msg->pose(i).name() == "pioneer2dx") {
 
-      /*std::cout << std::setprecision(2) << std::fixed << std::setw(6)
+     /* std::cout << std::setprecision(2) << std::fixed << std::setw(6)
                 << _msg->pose(i).position().x() << std::setw(6)
                 << _msg->pose(i).position().y() << std::setw(6)
                 << _msg->pose(i).position().z() << std::setw(6)
@@ -59,13 +66,20 @@ void lidarCallback(ConstLaserScanStampedPtr &msg) {
   //  double angle_max = msg->scan().angle_max();
   float angle_increment = float(msg->scan().angle_step());
 
+
+  angle_inc = angle_increment;                      //Test
+
   float range_min = float(msg->scan().range_min());
   float range_max = float(msg->scan().range_max());
+
+
 
   int sec = msg->time().sec();
   int nsec = msg->time().nsec();
 
   int nranges = msg->scan().ranges_size();
+
+  
   int nintensities = msg->scan().intensities_size();
 
   assert(nranges == nintensities);
@@ -76,9 +90,14 @@ void lidarCallback(ConstLaserScanStampedPtr &msg) {
 
   cv::Mat im(height, width, CV_8UC3);
   im.setTo(0);
+
+  
+  float best_range = range_max;
+  float best_angle = angle_min;
+
   for (int i = 0; i < nranges; i++) {
     float angle = angle_min + i * angle_increment;
-    float range = std::min(float(msg->scan().ranges(i)), range_max);
+    float range = std::min(float(msg->scan().ranges(i)), range_max);             
     //    double intensity = msg->scan().intensities(i);
     cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
                         200.5f - range_min * px_per_m * std::sin(angle));
@@ -88,7 +107,22 @@ void lidarCallback(ConstLaserScanStampedPtr &msg) {
              cv::LINE_AA, 4);
 
     //    std::cout << angle << " " << range << " " << intensity << std::endl;
+     if (range < best_range)
+    {
+      best_range = range;
+      best_angle = angle;
+
+      //std::cout << "angle: " << shortest_angle << "    "  <<  "range: " << shortest_range << std::endl;
+    }
+           // std::cout << angle << " : " << range << std::endl;
+                                                                                          // Angle: radianer, range: antal blokke (nok cm)
   }
+
+  mutex.lock();
+  shortest_range = best_range;
+  shortest_angle = best_angle;
+  mutex.unlock();
+ 
   cv::circle(im, cv::Point(200, 200), 2, cv::Scalar(0, 0, 255));
   cv::putText(im, std::to_string(sec) + ":" + std::to_string(nsec),
               cv::Point(10, 20), cv::FONT_HERSHEY_PLAIN, 1.0,
@@ -99,7 +133,38 @@ void lidarCallback(ConstLaserScanStampedPtr &msg) {
   mutex.unlock();
 }
 
+
+float normalize(float val, std::string type){
+
+  if (type == "range")
+  {
+    float range_min = 0.08;
+	  float range_max = 10;
+    float norm_range;
+
+    norm_range = 2 * ((val - range_min) / (range_max - range_min)) - 1;
+    return norm_range;
+  }
+  else if (type == "angle")
+  {
+    float angle_min = -2.26889;
+	  float angle_max = 2.2689;
+    float norm_angle;
+
+    norm_angle = 2 * ((val - angle_min) / (angle_max - angle_min)) - 1;
+    return norm_angle;
+  }
+
+}
+
+
+
+
+
 int main(int _argc, char **_argv) {
+
+
+
   std::cout << "Starting" << std::endl;
   // Load gazebo 
   gazebo::client::setup(_argc, _argv);
@@ -120,6 +185,7 @@ int main(int _argc, char **_argv) {
 
   gazebo::transport::SubscriberPtr lidarSubscriber =
       node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", lidarCallback);
+
 
   // Publish to the robot vel_cmd topic
   gazebo::transport::PublisherPtr movementPublisher =
@@ -142,6 +208,13 @@ int main(int _argc, char **_argv) {
   float speed = 0.0;
   float dir = 0.0;
 
+
+  //getValues("~/pioneer2dx/camera/link/camera/image");
+  //getValues("~/pioneer2dx/camera/link/camera/image);
+
+ // gazebo::transport::SubscriberPtr valueSubscriber =
+   //   node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", getValues);
+
     // FUZZY LOGIC
 
     Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V1.fll");
@@ -156,24 +229,38 @@ int main(int _argc, char **_argv) {
     InputVariable* DistanceToObstacle = engine->getInputVariable("DistanceToObstacle");
     OutputVariable* Steer = engine->getOutputVariable("Steer");
 
-    for (int i = 0; i <= 50; ++i)
+    /*for (int i = 0; i <= 50; ++i)
 	  {
         scalar location = DirectionToObstacle->getMinimum() + i * (DirectionToObstacle->range() / 50);
         DirectionToObstacle->setValue(location);
         engine->process();
         FL_LOG("DirectionToObstacle.input = " << Op::str(location) << 
             " => " << "Steer.output = " << Op::str(Steer->getValue()));
-    }
+    }*/
+
+
+    //Initial speed
+    speed += 0.05;
 
 
 std::cout << "Looping" << std::endl;
   // Loop
   while (true) {
+    
     gazebo::common::Time::MSleep(10);
 
     mutex.lock();
     int key = cv::waitKey(1);
     mutex.unlock();
+
+    DistanceToObstacle->setValue(normalize(shortest_range, "range"));
+    DirectionToObstacle->setValue(normalize(shortest_angle, "angle"));
+
+    engine->process();
+    FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
+    dir += (Steer->getValue())/10;
+
+    //std::cout << "angle: " << shortest_angle << "      " << "range: " << shortest_range << std::endl;   
 
     if (key == key_esc)
       break;

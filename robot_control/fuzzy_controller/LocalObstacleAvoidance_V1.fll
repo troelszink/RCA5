@@ -23,14 +23,39 @@ OutputVariable: Steer
     enabled: true
     range: -1.000 1.000
     lock-range: false
-    aggregation: Minimum								# t-norm
+    aggregation: Maximum								# t-norm
     defuzzifier: Centroid 100
     default: nan
     lock-previous: false
-    term: left Triangle -1.000 -0.667 -0.333				# Has to be triangles in output, because the output has to be finite in both directions
+    term: Left Triangle -1.000 -0.667 -0.333				# Has to be triangles in output, because the output has to be finite in both directions
     term: DiagonalLeft Triangle -0.667 -0.333 0.000
-    term: forward Triangle -0.333 0.000 0.333
+    term: Forward Triangle -0.333 0.000 0.333
     term: DiagonalRight Triangle 0.000 0.333 0.667
-    term: right Triangle 0.333 0.667 1.000
+    term: Right Triangle 0.333 0.667 1.000
 
     # ADD RULES
+
+    RuleBlock: mamdani
+      enabled: true
+      conjunction: Minimum
+      disjunction: none
+      implication: AlgebraicProduct
+      activation: General
+
+    rule: if DistanceToObstacle is Medium and DirectionToObstacle is Left then Steer is Forward
+    rule: if DistanceToObstacle is Medium and DirectionToObstacle is Dialeft then Steer is Forward
+    rule: if DistanceToObstacle is Medium and DirectionToObstacle is Forward then Steer is Diaright
+    rule: if DistanceToObstacle is Medium and DirectionToObstacle is Diaright then Steer is Forward
+    rule: if DistanceToObstacle is Medium and DirectionToObstacle is Right then Steer is Forward
+
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Left then Steer is  Diaright
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Dialeft then Steer is Forward
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Forward then Steer is Right
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Diaright then Steer is Forward
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Right then Steer is Dialeft
+
+    rule: if DistanceToObstacle is Large and DirectionToObstacle is Left then Steer is Forward
+    rule: if DistanceToObstacle is Large and DirectionToObstacle is Dialeft then Steer is Forward
+    rule: if DistanceToObstacle is Large and DirectionToObstacle is Forward then Steer is Forward
+    rule: if DistanceToObstacle is Large and DirectionToObstacle is Diaright then Steer is Forward
+    rule: if DistanceToObstacle is Large and DirectionToObstacle is Right then Steer is Forward
