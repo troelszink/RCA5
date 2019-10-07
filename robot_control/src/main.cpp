@@ -240,7 +240,7 @@ int main(int _argc, char **_argv) {
 
 
     //Initial speed
-    speed += 0.05;
+    speed += 0.01;
 
 
 std::cout << "Looping" << std::endl;
@@ -257,8 +257,14 @@ std::cout << "Looping" << std::endl;
     DirectionToObstacle->setValue(normalize(shortest_angle, "angle"));
 
     engine->process();
-    FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
-    dir += (Steer->getValue())/10;
+   // FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
+
+    std::cout << "Range: " << normalize(shortest_range, "range") << "     ";
+    std::cout << "Angle: " << normalize(shortest_angle, "angle") << "     ";
+    std::cout << "Output: " << Steer->getValue() << std::endl;
+
+
+    dir += (Steer->getValue())/100;
 
     //std::cout << "angle: " << shortest_angle << "      " << "range: " << shortest_range << std::endl;   
 
