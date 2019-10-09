@@ -88,7 +88,7 @@ int main(int _argc, char **_argv)
 
       // FUZZY LOGIC
 
-      Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V1.fll");
+      Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V2.fll");
 
       std::string status;
       if (not engine->isReady(&status))
@@ -99,6 +99,7 @@ int main(int _argc, char **_argv)
       InputVariable* DirectionToObstacle = engine->getInputVariable("DirectionToObstacle");
       InputVariable* DistanceToObstacle = engine->getInputVariable("DistanceToObstacle");
       OutputVariable* Steer = engine->getOutputVariable("Steer");
+      OutputVariable* Speed = engine->getOutputVariable("Speed");
 
       /*for (int i = 0; i <= 50; ++i)
       {
@@ -111,7 +112,7 @@ int main(int _argc, char **_argv)
 
 
       //Initial speed
-      speed += 0.03;
+      //speed += 0.03;
 
 
   std::cout << "Looping" << std::endl;
@@ -130,12 +131,14 @@ int main(int _argc, char **_argv)
       engine->process();
     // FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
 
-      std::cout << "Range: " << fc.normalize(cb.getShortestRange(), "range") << "     ";
-      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), "angle") << "     ";
-      std::cout << "Output: " << Steer->getValue() << std::endl;
+      std::cout << "Range: " << fc.normalize(cb.getShortestRange(), "range") << "  ";
+      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), "angle") << "  ";
+      std::cout << "Output: " << Steer->getValue() << "  ";
+      std::cout << "Speed" << Speed->getValue() << std::endl;
 
 
-      dir += (Steer->getValue())/100;
+      dir = (Steer->getValue())/5;
+      speed = (Speed->getValue())/5;
 
       //std::cout << "angle: " << shortest_angle << "      " << "range: " << shortest_range << std::endl;   
 

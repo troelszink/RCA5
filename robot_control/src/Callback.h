@@ -24,7 +24,6 @@ public:
     void poseCallback(ConstPosesStampedPtr &_msg);
     void cameraCallback(ConstImageStampedPtr &msg);
     void lidarCallback(ConstLaserScanStampedPtr &msg);
-    void initialize(int _argc, char **_argv);
 
     float getShortestRange();
     float getShortestAngle();

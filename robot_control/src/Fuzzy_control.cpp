@@ -18,8 +18,8 @@ float Fuzzy_control::normalize(float val, std::string type)
     }
     else if (type == "angle")
     {
-        float angle_min = -2.26889;
-        float angle_max = 2.2689;
+        float angle_min = 2.26889;
+        float angle_max = -2.2689;
         float norm_angle;
 
         norm_angle = 2 * ((val - angle_min) / (angle_max - angle_min)) - 1;

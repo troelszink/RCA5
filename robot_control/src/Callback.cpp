@@ -99,8 +99,11 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
                           200.5f - range_min * px_per_m * std::sin(angle));
       cv::Point2f endpt(200.5f + range * px_per_m * std::cos(angle),
                         200.5f - range * px_per_m * std::sin(angle));
-      cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
+
+
+        cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
               cv::LINE_AA, 4);
+      
 
       //    std::cout << angle << " " << range << " " << intensity << std::endl;
       if (range < best_range)
@@ -129,43 +132,7 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     mutex.unlock();
 }
 
-void Callback::initialize(int _argc, char **_argv)
-{
 
-     std::cout << "Starting" << std::endl;
-    // Load gazebo 
-    gazebo::client::setup(_argc, _argv);
-
-    // Create our node for communication
-    gazebo::transport::NodePtr node(new gazebo::transport::Node());
-    node->Init();
-
-    // Listen to Gazebo topics
-    gazebo::transport::SubscriberPtr statSubscriber =
-        node->Subscribe("~/world_stats", &Callback::statCallback, this);
-
-    gazebo::transport::SubscriberPtr poseSubscriber =
-        node->Subscribe("~/pose/info", &Callback::poseCallback, this);
-
-    gazebo::transport::SubscriberPtr cameraSubscriber =
-        node->Subscribe("~/pioneer2dx/camera/link/camera/image", &Callback::cameraCallback, this);
-
-    gazebo::transport::SubscriberPtr lidarSubscriber =
-        node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", &Callback::lidarCallback, this);
-
-
-    // Publish to the robot vel_cmd topic
-    gazebo::transport::PublisherPtr movementPublisher =
-        node->Advertise<gazebo::msgs::Pose>("~/pioneer2dx/vel_cmd");
-
-    // Publish a reset of the world
-    gazebo::transport::PublisherPtr worldPublisher =
-        node->Advertise<gazebo::msgs::WorldControl>("~/world_control");
-    gazebo::msgs::WorldControl controlMessage;
-    controlMessage.mutable_reset()->set_all(true);
-    worldPublisher->WaitForConnection();
-    worldPublisher->Publish(controlMessage);
-}
 
 float Callback::getShortestRange()
 {
