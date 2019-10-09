@@ -49,9 +49,9 @@ OutputVariable: Steer
     rule: if DistanceToObstacle is Medium and DirectionToObstacle is Right then Steer is Forward
 
     rule: if DistanceToObstacle is Small and DirectionToObstacle is Left then Steer is  DiagonalRight
-    rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalLeft then Steer is Forward
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalLeft then Steer is DiagonalRight
     rule: if DistanceToObstacle is Small and DirectionToObstacle is Forward then Steer is Right
-    rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalRight then Steer is Forward
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalRight then Steer is DiagonalLeft
     rule: if DistanceToObstacle is Small and DirectionToObstacle is Right then Steer is DiagonalLeft
 
     rule: if DistanceToObstacle is Large and DirectionToObstacle is Left then Steer is Forward
