@@ -14,7 +14,7 @@
 
 using namespace fl;
 
-static boost::mutex mutex;
+
 
 // Global variables
 
@@ -24,7 +24,17 @@ float angle_inc;*/
 
 int main(int _argc, char **_argv) 
 {
-    std::cout << "Starting" << std::endl;
+    static boost::mutex mutex;
+
+    // Create objects
+    Callback cb;
+    Fuzzy_control fc;
+
+    
+
+    //cb.initialize(_argc, _argv);
+
+     std::cout << "Starting" << std::endl;
     // Load gazebo 
     gazebo::client::setup(_argc, _argv);
 
@@ -32,22 +42,18 @@ int main(int _argc, char **_argv)
     gazebo::transport::NodePtr node(new gazebo::transport::Node());
     node->Init();
 
-    // Create objects
-    Callback cb;
-    Fuzzy_control fc;
-
     // Listen to Gazebo topics
     gazebo::transport::SubscriberPtr statSubscriber =
-        node->Subscribe("~/world_stats", cb.statCallback);
+        node->Subscribe("~/world_stats", &Callback::statCallback, &cb);
 
     gazebo::transport::SubscriberPtr poseSubscriber =
-        node->Subscribe("~/pose/info", cb.poseCallback);
+        node->Subscribe("~/pose/info", &Callback::poseCallback, &cb);
 
     gazebo::transport::SubscriberPtr cameraSubscriber =
-        node->Subscribe("~/pioneer2dx/camera/link/camera/image", cb.cameraCallback);
+        node->Subscribe("~/pioneer2dx/camera/link/camera/image", &Callback::cameraCallback, &cb);
 
     gazebo::transport::SubscriberPtr lidarSubscriber =
-        node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", cb.lidarCallback);
+        node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", &Callback::lidarCallback, &cb);
 
 
     // Publish to the robot vel_cmd topic
@@ -61,6 +67,8 @@ int main(int _argc, char **_argv)
     controlMessage.mutable_reset()->set_all(true);
     worldPublisher->WaitForConnection();
     worldPublisher->Publish(controlMessage);
+
+    
 
     const int key_left = 81;
     const int key_up = 82;
@@ -116,14 +124,14 @@ int main(int _argc, char **_argv)
       int key = cv::waitKey(1);
       mutex.unlock();
 
-      DistanceToObstacle->setValue(fc.normalize(cb.getShortestRange, "range"));
-      DirectionToObstacle->setValue(fc.normalize(cb.getShortestAngle, "angle"));
+      DistanceToObstacle->setValue(fc.normalize(cb.getShortestRange(), "range"));
+      DirectionToObstacle->setValue(fc.normalize(cb.getShortestAngle(), "angle"));
 
       engine->process();
     // FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
 
-      std::cout << "Range: " << fc.normalize(cb.getShortestRange, "range") << "     ";
-      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle, "angle") << "     ";
+      std::cout << "Range: " << fc.normalize(cb.getShortestRange(), "range") << "     ";
+      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), "angle") << "     ";
       std::cout << "Output: " << Steer->getValue() << std::endl;
 
 

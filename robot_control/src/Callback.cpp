@@ -3,6 +3,7 @@
 
 Callback::Callback()
 {
+   
 }
 
 void Callback::statCallback(ConstWorldStatisticsPtr &_msg) 
@@ -35,8 +36,9 @@ void Callback::poseCallback(ConstPosesStampedPtr &_msg)
     }
 }
 
-void cameraCallback(ConstImageStampedPtr &msg) 
+void Callback::cameraCallback(ConstImageStampedPtr &msg) 
 {
+      static boost::mutex mutex;
 
     std::size_t width = msg->image().width();
     std::size_t height = msg->image().height();
@@ -53,6 +55,7 @@ void cameraCallback(ConstImageStampedPtr &msg)
 
 void Callback::lidarCallback(ConstLaserScanStampedPtr &msg) 
 {
+      static boost::mutex mutex;
 
     //  std::cout << ">> " << msg->DebugString() << std::endl;
     float angle_min = float(msg->scan().angle_min());
@@ -126,12 +129,50 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     mutex.unlock();
 }
 
-int Callback::getShortestRange()
+void Callback::initialize(int _argc, char **_argv)
+{
+
+     std::cout << "Starting" << std::endl;
+    // Load gazebo 
+    gazebo::client::setup(_argc, _argv);
+
+    // Create our node for communication
+    gazebo::transport::NodePtr node(new gazebo::transport::Node());
+    node->Init();
+
+    // Listen to Gazebo topics
+    gazebo::transport::SubscriberPtr statSubscriber =
+        node->Subscribe("~/world_stats", &Callback::statCallback, this);
+
+    gazebo::transport::SubscriberPtr poseSubscriber =
+        node->Subscribe("~/pose/info", &Callback::poseCallback, this);
+
+    gazebo::transport::SubscriberPtr cameraSubscriber =
+        node->Subscribe("~/pioneer2dx/camera/link/camera/image", &Callback::cameraCallback, this);
+
+    gazebo::transport::SubscriberPtr lidarSubscriber =
+        node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", &Callback::lidarCallback, this);
+
+
+    // Publish to the robot vel_cmd topic
+    gazebo::transport::PublisherPtr movementPublisher =
+        node->Advertise<gazebo::msgs::Pose>("~/pioneer2dx/vel_cmd");
+
+    // Publish a reset of the world
+    gazebo::transport::PublisherPtr worldPublisher =
+        node->Advertise<gazebo::msgs::WorldControl>("~/world_control");
+    gazebo::msgs::WorldControl controlMessage;
+    controlMessage.mutable_reset()->set_all(true);
+    worldPublisher->WaitForConnection();
+    worldPublisher->Publish(controlMessage);
+}
+
+float Callback::getShortestRange()
 {
     return shortest_range;
 }
 
-int Callback::getShortestAngle()
+float Callback::getShortestAngle()
 {
     return shortest_angle;
 }

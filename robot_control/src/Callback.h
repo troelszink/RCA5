@@ -24,6 +24,7 @@ public:
     void poseCallback(ConstPosesStampedPtr &_msg);
     void cameraCallback(ConstImageStampedPtr &msg);
     void lidarCallback(ConstLaserScanStampedPtr &msg);
+    void initialize(int _argc, char **_argv);
 
     float getShortestRange();
     float getShortestAngle();
@@ -32,6 +33,7 @@ public:
     
 private:
 
+   
     float shortest_range = 10;
     float shortest_angle = 0;
     float angle_inc;
