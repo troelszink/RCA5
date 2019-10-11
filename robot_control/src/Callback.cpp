@@ -91,6 +91,10 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     float best_range = range_max;
     float best_angle = angle_min;
 
+    float left_range;
+    float right_range;
+
+
     for (int i = 0; i < nranges; i++) {
       float angle = angle_min + i * angle_increment;
       float range = std::min(float(msg->scan().ranges(i)), range_max);             
@@ -99,23 +103,26 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
                           200.5f - range_min * px_per_m * std::sin(angle));
       cv::Point2f endpt(200.5f + range * px_per_m * std::cos(angle),
                         200.5f - range * px_per_m * std::sin(angle));
-
-
-        cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
+      cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
               cv::LINE_AA, 4);
-      
 
-      //    std::cout << angle << " " << range << " " << intensity << std::endl;
-      if (range < best_range)
+      if (range < best_range && 66 <= i <= nranges - 66)
       {
         best_range = range;
         best_angle = angle;
 
-        //std::cout << "angle: " << shortest_angle << "    "  <<  "range: " << shortest_range << std::endl;
       }
-            // std::cout << angle << " : " << range << std::endl;
-                                                                                            // Angle: radianer, range: antal blokke (nok cm)
+      if (i == 33)
+        right_range = range;
+      if (i == nranges - 33)
+        left_range = range;
+                                                                       // Angle: radianer, range: antal blokke (nok cm)
     }
+
+    if (right_range < left_range)
+        corner_type = 1;
+    else
+        corner_type = -1;
 
     mutex.lock();
     shortest_range = best_range;
@@ -132,8 +139,6 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     mutex.unlock();
 }
 
-
-
 float Callback::getShortestRange()
 {
     return shortest_range;
@@ -142,6 +147,11 @@ float Callback::getShortestRange()
 float Callback::getShortestAngle()
 {
     return shortest_angle;
+}
+
+float Callback::getCornerType()
+{
+    return corner_type;
 }
 
 Callback::~Callback()

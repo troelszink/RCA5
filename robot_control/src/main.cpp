@@ -14,13 +14,7 @@
 
 using namespace fl;
 
-
-
 // Global variables
-
-/*float shortest_range = 10;
-float shortest_angle = 0;
-float angle_inc;*/
 
 int main(int _argc, char **_argv) 
 {
@@ -30,11 +24,7 @@ int main(int _argc, char **_argv)
     Callback cb;
     Fuzzy_control fc;
 
-    
-
-    //cb.initialize(_argc, _argv);
-
-     std::cout << "Starting" << std::endl;
+    std::cout << "Starting" << std::endl;
     // Load gazebo 
     gazebo::client::setup(_argc, _argv);
 
@@ -88,7 +78,7 @@ int main(int _argc, char **_argv)
 
       // FUZZY LOGIC
 
-      Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V2.fll");
+      Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V3.fll");
 
       std::string status;
       if (not engine->isReady(&status))
@@ -98,6 +88,7 @@ int main(int _argc, char **_argv)
 
       InputVariable* DirectionToObstacle = engine->getInputVariable("DirectionToObstacle");
       InputVariable* DistanceToObstacle = engine->getInputVariable("DistanceToObstacle");
+      InputVariable* CornerType = engine->getInputVariable("CornerType");
       OutputVariable* Steer = engine->getOutputVariable("Steer");
       OutputVariable* Speed = engine->getOutputVariable("Speed");
 
@@ -112,7 +103,7 @@ int main(int _argc, char **_argv)
 
 
       //Initial speed
-      //speed += 0.03;
+      speed += 0.1;
 
 
   std::cout << "Looping" << std::endl;
@@ -127,18 +118,24 @@ int main(int _argc, char **_argv)
 
       DistanceToObstacle->setValue(fc.normalize(cb.getShortestRange(), "range"));
       DirectionToObstacle->setValue(fc.normalize(cb.getShortestAngle(), "angle"));
+      CornerType->setValue(cb.getCornerType());
 
       engine->process();
     // FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
 
-      std::cout << "Range: " << fc.normalize(cb.getShortestRange(), "range") << "  ";
-      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), "angle") << "  ";
-      std::cout << "Output: " << Steer->getValue() << "  ";
-      std::cout << "Speed" << Speed->getValue() << std::endl;
+      std::cout << "Range: " << fc.normalize(cb.getShortestRange(), "range") << "     ";
+      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), "angle") << "     ";
+      std::cout << "Steer: " << Steer->getValue() << "     ";
+      std::cout << "Speed: " << Speed->getValue() << std::endl;
 
+      dir = (Steer->getValue()) * 5;
+      speed = (Speed->getValue());
 
-      dir = (Steer->getValue())/5;
-      speed = (Speed->getValue())/5;
+      if (DistanceToObstacle->getValue() == -1)
+      {
+          speed = -(Speed->getValue()) * 100;
+          dir = (Steer->getValue()) * 100;
+      }
 
       //std::cout << "angle: " << shortest_angle << "      " << "range: " << shortest_range << std::endl;   
 

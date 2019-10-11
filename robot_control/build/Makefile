@@ -123,6 +123,60 @@ robot_control/fast:
 	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/build
 .PHONY : robot_control/fast
 
+src/Callback.o: src/Callback.cpp.o
+
+.PHONY : src/Callback.o
+
+# target to build an object file
+src/Callback.cpp.o:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Callback.cpp.o
+.PHONY : src/Callback.cpp.o
+
+src/Callback.i: src/Callback.cpp.i
+
+.PHONY : src/Callback.i
+
+# target to preprocess a source file
+src/Callback.cpp.i:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Callback.cpp.i
+.PHONY : src/Callback.cpp.i
+
+src/Callback.s: src/Callback.cpp.s
+
+.PHONY : src/Callback.s
+
+# target to generate assembly for a file
+src/Callback.cpp.s:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Callback.cpp.s
+.PHONY : src/Callback.cpp.s
+
+src/Fuzzy_control.o: src/Fuzzy_control.cpp.o
+
+.PHONY : src/Fuzzy_control.o
+
+# target to build an object file
+src/Fuzzy_control.cpp.o:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o
+.PHONY : src/Fuzzy_control.cpp.o
+
+src/Fuzzy_control.i: src/Fuzzy_control.cpp.i
+
+.PHONY : src/Fuzzy_control.i
+
+# target to preprocess a source file
+src/Fuzzy_control.cpp.i:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.i
+.PHONY : src/Fuzzy_control.cpp.i
+
+src/Fuzzy_control.s: src/Fuzzy_control.cpp.s
+
+.PHONY : src/Fuzzy_control.s
+
+# target to generate assembly for a file
+src/Fuzzy_control.cpp.s:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.s
+.PHONY : src/Fuzzy_control.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -159,6 +213,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... robot_control"
 	@echo "... edit_cache"
+	@echo "... src/Callback.o"
+	@echo "... src/Callback.i"
+	@echo "... src/Callback.s"
+	@echo "... src/Fuzzy_control.o"
+	@echo "... src/Fuzzy_control.i"
+	@echo "... src/Fuzzy_control.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

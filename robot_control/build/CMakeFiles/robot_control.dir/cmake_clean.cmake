@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/robot_control.dir/src/Callback.cpp.o"
+  "CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o"
   "CMakeFiles/robot_control.dir/src/main.cpp.o"
   "robot_control.pdb"
   "robot_control"

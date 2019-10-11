@@ -57,9 +57,57 @@ include CMakeFiles/robot_control.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/robot_control.dir/flags.make
 
+CMakeFiles/robot_control.dir/src/Callback.cpp.o: CMakeFiles/robot_control.dir/flags.make
+CMakeFiles/robot_control.dir/src/Callback.cpp.o: ../src/Callback.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/robot_control.dir/src/Callback.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/robot_control.dir/src/Callback.cpp.o -c /home/rb-rca5/rb-rca5/robot_control/src/Callback.cpp
+
+CMakeFiles/robot_control.dir/src/Callback.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/robot_control.dir/src/Callback.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rb-rca5/rb-rca5/robot_control/src/Callback.cpp > CMakeFiles/robot_control.dir/src/Callback.cpp.i
+
+CMakeFiles/robot_control.dir/src/Callback.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/robot_control.dir/src/Callback.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rb-rca5/rb-rca5/robot_control/src/Callback.cpp -o CMakeFiles/robot_control.dir/src/Callback.cpp.s
+
+CMakeFiles/robot_control.dir/src/Callback.cpp.o.requires:
+
+.PHONY : CMakeFiles/robot_control.dir/src/Callback.cpp.o.requires
+
+CMakeFiles/robot_control.dir/src/Callback.cpp.o.provides: CMakeFiles/robot_control.dir/src/Callback.cpp.o.requires
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Callback.cpp.o.provides.build
+.PHONY : CMakeFiles/robot_control.dir/src/Callback.cpp.o.provides
+
+CMakeFiles/robot_control.dir/src/Callback.cpp.o.provides.build: CMakeFiles/robot_control.dir/src/Callback.cpp.o
+
+
+CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o: CMakeFiles/robot_control.dir/flags.make
+CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o: ../src/Fuzzy_control.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o -c /home/rb-rca5/rb-rca5/robot_control/src/Fuzzy_control.cpp
+
+CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rb-rca5/rb-rca5/robot_control/src/Fuzzy_control.cpp > CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.i
+
+CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rb-rca5/rb-rca5/robot_control/src/Fuzzy_control.cpp -o CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.s
+
+CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.requires:
+
+.PHONY : CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.requires
+
+CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.provides: CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.requires
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.provides.build
+.PHONY : CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.provides
+
+CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.provides.build: CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o
+
+
 CMakeFiles/robot_control.dir/src/main.cpp.o: CMakeFiles/robot_control.dir/flags.make
 CMakeFiles/robot_control.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/robot_control.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/robot_control.dir/src/main.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/robot_control.dir/src/main.cpp.o -c /home/rb-rca5/rb-rca5/robot_control/src/main.cpp
 
 CMakeFiles/robot_control.dir/src/main.cpp.i: cmake_force
@@ -83,11 +131,15 @@ CMakeFiles/robot_control.dir/src/main.cpp.o.provides.build: CMakeFiles/robot_con
 
 # Object files for target robot_control
 robot_control_OBJECTS = \
+"CMakeFiles/robot_control.dir/src/Callback.cpp.o" \
+"CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o" \
 "CMakeFiles/robot_control.dir/src/main.cpp.o"
 
 # External object files for target robot_control
 robot_control_EXTERNAL_OBJECTS =
 
+robot_control: CMakeFiles/robot_control.dir/src/Callback.cpp.o
+robot_control: CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o
 robot_control: CMakeFiles/robot_control.dir/src/main.cpp.o
 robot_control: CMakeFiles/robot_control.dir/build.make
 robot_control: /usr/lib/x86_64-linux-gnu/libopencv_shape.so.3.2.0
@@ -243,7 +295,7 @@ robot_control: /usr/lib/x86_64-linux-gnu/libavcodec.so
 robot_control: /usr/lib/x86_64-linux-gnu/libavutil.so
 robot_control: /usr/lib/x86_64-linux-gnu/libavutil.so
 robot_control: CMakeFiles/robot_control.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable robot_control"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable robot_control"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/robot_control.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -251,6 +303,8 @@ CMakeFiles/robot_control.dir/build: robot_control
 
 .PHONY : CMakeFiles/robot_control.dir/build
 
+CMakeFiles/robot_control.dir/requires: CMakeFiles/robot_control.dir/src/Callback.cpp.o.requires
+CMakeFiles/robot_control.dir/requires: CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.requires
 CMakeFiles/robot_control.dir/requires: CMakeFiles/robot_control.dir/src/main.cpp.o.requires
 
 .PHONY : CMakeFiles/robot_control.dir/requires

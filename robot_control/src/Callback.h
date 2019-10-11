@@ -27,6 +27,7 @@ public:
 
     float getShortestRange();
     float getShortestAngle();
+    float getCornerType();
 
     ~Callback();
     
@@ -36,6 +37,7 @@ private:
     float shortest_range = 10;
     float shortest_angle = 0;
     float angle_inc;
+    float corner_type;
 
 };
 
