@@ -103,7 +103,7 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
               cv::LINE_AA, 4);
 
       //    std::cout << angle << " " << range << " " << intensity << std::endl;
-      if (range < best_range)
+      if (range < best_range && 66 <= i <= nranges - 66)
       {
         best_range = range;
         best_angle = angle;
