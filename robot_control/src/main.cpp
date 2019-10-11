@@ -126,7 +126,7 @@ int main(int _argc, char **_argv)
       std::cout << "Steer: " << Steer->getValue() << "     ";
       std::cout << "Speed: " << Speed->getValue() << std::endl;
 
-      dir = (Steer->getValue());
+      dir = (Steer->getValue()) * 5;
       speed = (Speed->getValue());
 
       if (DistanceToObstacle->getValue() == -1)

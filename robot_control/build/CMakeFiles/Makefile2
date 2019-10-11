@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/rb-rca5/rb-rca5/robot_control
+CMAKE_SOURCE_DIR = /home/troelszink/Desktop/RCA5/robot_control
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/rb-rca5/rb-rca5/robot_control/build
+CMAKE_BINARY_DIR = /home/troelszink/Desktop/RCA5/robot_control/build
 
 #=============================================================================
 # Target rules for target CMakeFiles/robot_control.dir
@@ -66,7 +66,7 @@ CMAKE_BINARY_DIR = /home/rb-rca5/rb-rca5/robot_control/build
 CMakeFiles/robot_control.dir/all:
 	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/depend
 	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles --progress-num=1,2,3,4 "Built target robot_control"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=1,2,3,4 "Built target robot_control"
 .PHONY : CMakeFiles/robot_control.dir/all
 
 # Include target in all.
@@ -76,9 +76,9 @@ all: CMakeFiles/robot_control.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/robot_control.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles 4
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/robot_control.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles 0
 .PHONY : CMakeFiles/robot_control.dir/rule
 
 # Convenience name for target.

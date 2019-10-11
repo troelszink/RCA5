@@ -1,4 +1,4 @@
-# Install script for directory: /home/rb-rca5/rb-rca5/robot_control
+# Install script for directory: /home/troelszink/Desktop/RCA5/robot_control
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/rb-rca5/rb-rca5/robot_control/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/troelszink/Desktop/RCA5/robot_control/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
