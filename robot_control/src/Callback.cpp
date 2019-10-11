@@ -92,6 +92,10 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     float best_range = range_max;
     float best_angle = angle_min;
 
+    float left_range;
+    float right_range;
+
+
     for (int i = 0; i < nranges; i++) {
         float angle = angle_min + i * angle_increment;
         float range = std::min(float(msg->scan().ranges(i)), range_max);             
@@ -129,6 +133,11 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
             corner_type = -1;
         }                                                                                        // Angle: radianer, range: antal blokke (nok cm)
     }
+
+    if (right_range < left_range)
+        corner_type = 1;
+    else
+        corner_type = -1;
 
     mutex.lock();
     shortest_range = best_range;
