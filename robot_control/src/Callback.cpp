@@ -68,7 +68,8 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     float range_min = float(msg->scan().range_min());
     float range_max = float(msg->scan().range_max());
 
-
+    float left_range;
+    float right_range;
 
     int sec = msg->time().sec();
     int nsec = msg->time().nsec();
@@ -92,26 +93,41 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     float best_angle = angle_min;
 
     for (int i = 0; i < nranges; i++) {
-      float angle = angle_min + i * angle_increment;
-      float range = std::min(float(msg->scan().ranges(i)), range_max);             
-      //    double intensity = msg->scan().intensities(i);
-      cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
-                          200.5f - range_min * px_per_m * std::sin(angle));
-      cv::Point2f endpt(200.5f + range * px_per_m * std::cos(angle),
-                        200.5f - range * px_per_m * std::sin(angle));
-      cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
-              cv::LINE_AA, 4);
+        float angle = angle_min + i * angle_increment;
+        float range = std::min(float(msg->scan().ranges(i)), range_max);             
+        //    double intensity = msg->scan().intensities(i);
+        cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
+                            200.5f - range_min * px_per_m * std::sin(angle));
+        cv::Point2f endpt(200.5f + range * px_per_m * std::cos(angle),
+                            200.5f - range * px_per_m * std::sin(angle));
+        cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
+                cv::LINE_AA, 4);
 
-      //    std::cout << angle << " " << range << " " << intensity << std::endl;
-      if (range < best_range && 66 <= i <= nranges - 66)
-      {
-        best_range = range;
-        best_angle = angle;
+        if (range < best_range && 66 <= i <= nranges - 66)
+        {
+            best_range = range;
+            best_angle = angle;
+        }
 
-        //std::cout << "angle: " << shortest_angle << "    "  <<  "range: " << shortest_range << std::endl;
-      }
-            // std::cout << angle << " : " << range << std::endl;
-                                                                                            // Angle: radianer, range: antal blokke (nok cm)
+        if (i == 33)
+        {
+            right_range = range;
+        }
+        else if (i == (nranges - 33))
+        {
+            left_range = range;
+        }
+
+        if (right_range < left_range)
+        {
+            std::cout << "Right" << std::endl;
+            corner_type = 1;
+        }
+        else
+        {
+            std::cout << "Left" << std::endl;
+            corner_type = -1;
+        }                                                                                        // Angle: radianer, range: antal blokke (nok cm)
     }
 
     mutex.lock();
@@ -137,6 +153,11 @@ float Callback::getShortestRange()
 float Callback::getShortestAngle()
 {
     return shortest_angle;
+}
+
+float Callback::getCornerType()
+{
+    return corner_type;
 }
 
 Callback::~Callback()
