@@ -10,6 +10,7 @@
 #include "fl/Headers.h"
 
 #include <iostream>
+#include <math.h>
 
 using namespace fl;
 
@@ -21,10 +22,14 @@ public:
     Fuzzy_control();
 
     float normalize(float val, std::string type);
+    float distanceToGoal(cv::Point);
+    float angleToGoal(cv::Point, float);
 
     ~Fuzzy_control();
 
 private:
+
+    cv::Point goal = cv::Point(-4, 2);
 
 };
 

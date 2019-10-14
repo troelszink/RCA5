@@ -17,6 +17,16 @@ class Callback
 {
 
 public:
+
+    struct Quaternion
+    {
+        double w, x, y, z;
+    };
+
+    struct EulerAngles
+    {
+        double roll, pitch, yaw;
+    };
     
     Callback();
 
@@ -25,9 +35,13 @@ public:
     void cameraCallback(ConstImageStampedPtr &msg);
     void lidarCallback(ConstLaserScanStampedPtr &msg);
 
+    EulerAngles ToEulerAngles(Quaternion);
+
     float getShortestRange();
     float getShortestAngle();
     float getCornerType();
+    cv::Point getCurPosition();
+    float getYaw();
 
     ~Callback();
     
@@ -38,6 +52,8 @@ private:
     float shortest_angle = 0;
     float angle_inc;
     float corner_type;
+    cv::Point curPosition;
+    float yaw;
 
 };
 

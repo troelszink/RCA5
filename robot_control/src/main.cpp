@@ -125,10 +125,10 @@ int main(int _argc, char **_argv)
     // FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
 
       // Printing values to the terminal
-      std::cout << "Range: " << fc.normalize(cb.getShortestRange(), "range") << "     ";
+      /*std::cout << "Range: " << fc.normalize(cb.getShortestRange(), "range") << "     ";
       std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), "angle") << "     ";
       std::cout << "Steer: " << Steer->getValue() << "     ";
-      std::cout << "Speed: " << Speed->getValue() << std::endl;
+      std::cout << "Speed: " << Speed->getValue() << std::endl;*/
 
       dir = (Steer->getValue()) * 5;
       speed = (Speed->getValue());
@@ -140,7 +140,11 @@ int main(int _argc, char **_argv)
           //dir = (Steer->getValue()) * 100;
       }
 
-      //std::cout << "angle: " << shortest_angle << "      " << "range: " << shortest_range << std::endl;   
+      // Distance to goal
+      //std::cout << fc.distanceToGoal(cb.getCurPosition()) << std::endl;
+
+      // Angle to goal
+      std::cout << fc.angleToGoal(cb.getCurPosition(), cb.getYaw()) << std:: endl;
 
       if (key == key_esc)
         break;

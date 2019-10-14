@@ -24,7 +24,26 @@ void Callback::poseCallback(ConstPosesStampedPtr &_msg)
         if (_msg->pose(i).name() == "pioneer2dx") 
         {
 
-        /* std::cout << std::setprecision(2) << std::fixed << std::setw(6)
+            Quaternion q;
+
+            q.w = _msg->pose(i).orientation().w();
+            q.x = _msg->pose(i).orientation().x();
+            q.y = _msg->pose(i).orientation().y();
+            q.z = _msg->pose(i).orientation().z();
+
+            ToEulerAngles(q);
+
+            yaw = ToEulerAngles(q).yaw;
+
+            // Yaw is rotation about the z-axis in radians, from pi to -pi
+            /*std::cout << "Roll: " << ToEulerAngles(q).roll << "     ";
+            std::cout << "Pitch: " << ToEulerAngles(q).pitch << "     ";
+            std::cout << "Yaw: " << ToEulerAngles(q).yaw << "     " << std::endl;*/
+
+            curPosition.x = _msg->pose(i).position().x();
+            curPosition.y = _msg->pose(i).position().y();
+
+         /*std::cout << std::setprecision(2) << std::fixed << std::setw(6)
                     << _msg->pose(i).position().x() << std::setw(6)
                     << _msg->pose(i).position().y() << std::setw(6)
                     << _msg->pose(i).position().z() << std::setw(6)
@@ -38,7 +57,7 @@ void Callback::poseCallback(ConstPosesStampedPtr &_msg)
 
 void Callback::cameraCallback(ConstImageStampedPtr &msg) 
 {
-      static boost::mutex mutex;
+    static boost::mutex mutex;
 
     std::size_t width = msg->image().width();
     std::size_t height = msg->image().height();
@@ -68,9 +87,6 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     float range_min = float(msg->scan().range_min());
     float range_max = float(msg->scan().range_max());
 
-    float left_range;
-    float right_range;
-
     int sec = msg->time().sec();
     int nsec = msg->time().nsec();
 
@@ -94,7 +110,7 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
 
     float left_range;
     float right_range;
-
+    int best_i;
 
     for (int i = 0; i < nranges; i++) {
         float angle = angle_min + i * angle_increment;
@@ -111,6 +127,8 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
         {
             best_range = range;
             best_angle = angle;
+
+            best_i = i;
         }
 
         if (i == 33)
@@ -124,15 +142,23 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
 
         if (right_range < left_range)
         {
-            std::cout << "Right" << std::endl;
             corner_type = 1;
         }
         else
         {
-            std::cout << "Left" << std::endl;
             corner_type = -1;
         }                                                                                        // Angle: radianer, range: antal blokke (nok cm)
     }
+
+    // Drawing the smallets sensor distance in a red color
+    float angle = angle_min + best_i * angle_increment;
+    float range = std::min(float(msg->scan().ranges(best_i)), range_max);             
+    cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
+                         200.5f - range_min * px_per_m * std::sin(angle));
+    cv::Point2f endpt(200.5f + range * px_per_m * std::cos(angle),
+                        200.5f - range * px_per_m * std::sin(angle));
+    cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
+                cv::LINE_AA, 4);
 
     if (right_range < left_range)
         corner_type = 1;
@@ -154,6 +180,30 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     mutex.unlock();
 }
 
+Callback::EulerAngles Callback::ToEulerAngles(Quaternion q)
+{
+    EulerAngles angles;
+
+    // roll (x-axis rotation)
+    double sinr_cosp = +2.0 * (q.w * q.x + q.y * q.z);
+    double cosr_cosp = +1.0 - 2.0 * (q.x * q.x + q.y * q.y);
+    angles.roll = atan2(sinr_cosp, cosr_cosp);
+
+    // pitch (y-axis rotation)
+    double sinp = +2.0 * (q.w * q.y - q.z * q.x);
+    if (fabs(sinp) >= 1)
+        angles.pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+    else
+        angles.pitch = asin(sinp);
+
+    // yaw (z-axis rotation)
+    double siny_cosp = +2.0 * (q.w * q.z + q.x * q.y);
+    double cosy_cosp = +1.0 - 2.0 * (q.y * q.y + q.z * q.z);  
+    angles.yaw = atan2(siny_cosp, cosy_cosp);
+
+    return angles;
+}
+
 float Callback::getShortestRange()
 {
     return shortest_range;
@@ -167,6 +217,16 @@ float Callback::getShortestAngle()
 float Callback::getCornerType()
 {
     return corner_type;
+}
+
+cv::Point Callback:: getCurPosition()
+{
+    return curPosition;
+}
+
+float Callback::getYaw()
+{
+    return yaw;
 }
 
 Callback::~Callback()

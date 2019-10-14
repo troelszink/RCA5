@@ -1,24 +1,24 @@
 Determining if the pthread_create exist failed with the following output:
-Change Dir: /home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles/CMakeTmp
+Change Dir: /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_26e51/fast"
-/usr/bin/make -f CMakeFiles/cmTC_26e51.dir/build.make CMakeFiles/cmTC_26e51.dir/build
-make[1]: Entering directory '/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_26e51.dir/CheckSymbolExists.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_26e51.dir/CheckSymbolExists.c.o   -c /home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_26e51
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_26e51.dir/link.txt --verbose=1
-/usr/bin/cc      -rdynamic CMakeFiles/cmTC_26e51.dir/CheckSymbolExists.c.o  -o cmTC_26e51 
-CMakeFiles/cmTC_26e51.dir/CheckSymbolExists.c.o: In function `main':
+Run Build Command:"/usr/bin/make" "cmTC_ba7b1/fast"
+/usr/bin/make -f CMakeFiles/cmTC_ba7b1.dir/build.make CMakeFiles/cmTC_ba7b1.dir/build
+make[1]: Entering directory '/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_ba7b1.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_ba7b1.dir/CheckSymbolExists.c.o   -c /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_ba7b1
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ba7b1.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_ba7b1.dir/CheckSymbolExists.c.o  -o cmTC_ba7b1 
+CMakeFiles/cmTC_ba7b1.dir/CheckSymbolExists.c.o: In function `main':
 CheckSymbolExists.c:(.text+0x1b): undefined reference to `pthread_create'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_26e51.dir/build.make:97: recipe for target 'cmTC_26e51' failed
-make[1]: *** [cmTC_26e51] Error 1
-make[1]: Leaving directory '/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_26e51/fast' failed
-make: *** [cmTC_26e51/fast] Error 2
+CMakeFiles/cmTC_ba7b1.dir/build.make:97: recipe for target 'cmTC_ba7b1' failed
+make[1]: *** [cmTC_ba7b1] Error 1
+make[1]: Leaving directory '/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_ba7b1/fast' failed
+make: *** [cmTC_ba7b1/fast] Error 2
 
-File /home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+File /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */
 #include <pthread.h>
 
@@ -34,22 +34,22 @@ int main(int argc, char** argv)
 }
 
 Determining if the function pthread_create exists in the pthreads failed with the following output:
-Change Dir: /home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles/CMakeTmp
+Change Dir: /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_b2d61/fast"
-/usr/bin/make -f CMakeFiles/cmTC_b2d61.dir/build.make CMakeFiles/cmTC_b2d61.dir/build
-make[1]: Entering directory '/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_b2d61.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_b2d61.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
-Linking C executable cmTC_b2d61
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b2d61.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_b2d61.dir/CheckFunctionExists.c.o  -o cmTC_b2d61 -lpthreads 
+Run Build Command:"/usr/bin/make" "cmTC_150b9/fast"
+/usr/bin/make -f CMakeFiles/cmTC_150b9.dir/build.make CMakeFiles/cmTC_150b9.dir/build
+make[1]: Entering directory '/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_150b9.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_150b9.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_150b9
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_150b9.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_150b9.dir/CheckFunctionExists.c.o  -o cmTC_150b9 -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_b2d61.dir/build.make:97: recipe for target 'cmTC_b2d61' failed
-make[1]: *** [cmTC_b2d61] Error 1
-make[1]: Leaving directory '/home/rb-rca5/rb-rca5/robot_control/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_b2d61/fast' failed
-make: *** [cmTC_b2d61/fast] Error 2
+CMakeFiles/cmTC_150b9.dir/build.make:97: recipe for target 'cmTC_150b9' failed
+make[1]: *** [cmTC_150b9] Error 1
+make[1]: Leaving directory '/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_150b9/fast' failed
+make: *** [cmTC_150b9/fast] Error 2
 
 
