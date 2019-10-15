@@ -30,11 +30,11 @@ InputVariable: DirectionToGoal
   enabled: true
   range: -1.000 1.000
   lock-range: false
-  term: Left Ramp -0.500 -1.000
-  term: DiagonalLeft Triangle -0.600 -0.350 -0.100
-  term: Forward Triangle -0.200 0.000 0.200
-  term: DiagonalRight Triangle 0.100 0.350 0.600
-  term: Right Ramp 0.500 1.000
+  term: Left Ramp -0.400 -1.000
+  term: DiagonalLeft Triangle -0.500 -0.250 -0.000
+  term: Forward Triangle -0.100 0.000 0.100
+  term: DiagonalRight Triangle 0.000 0.250 0.500
+  term: Right Ramp 0.400 1.000
 
 InputVariable: FreeLeftPassage
     enabled: true
