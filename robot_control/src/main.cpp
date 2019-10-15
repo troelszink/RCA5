@@ -112,7 +112,7 @@ int main(int _argc, char **_argv)
 
 
       //Initial speed
-      speed += 0.1;
+      //speed += 0.1;
 
 
   std::cout << "Looping" << std::endl;
@@ -140,7 +140,7 @@ int main(int _argc, char **_argv)
       std::cout << "Steer: " << Steer->getValue() << "     ";
       std::cout << "Speed: " << Speed->getValue() << std::endl;
 
-      dir = (Steer->getValue()) * 5;
+      dir = (Steer->getValue()) * 2;
       speed = (Speed->getValue());
 
       // If a corner is hit
@@ -150,12 +150,13 @@ int main(int _argc, char **_argv)
           //dir = (Steer->getValue()) * 100;
       }
 
-      /*if (fc.distanceToGoal(cb.getCurPosition()) == 0)
+      if (fc.distanceToGoal(cb.getCurPosition()) < 0.5)
       {
         speed = 0;
         dir = 0;
+        std::cout << "Goal reached" << std::endl;
         break;
-      }*/
+      }
 
       // Distance to goal
       //std::cout << fc.distanceToGoal(cb.getCurPosition()) << std::endl;
