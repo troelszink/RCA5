@@ -98,21 +98,14 @@ int main(int _argc, char **_argv)
       InputVariable* DistanceToObstacle = engine->getInputVariable("DistanceToObstacle");
       InputVariable* CornerType = engine->getInputVariable("CornerType");
       InputVariable* DirectionToGoal = engine->getInputVariable("DirectionToGoal");
+      InputVariable* FreeLeftPassage = engine->getInputVariable("FreeLeftPassage");
+      InputVariable* FreeRightPassage = engine->getInputVariable("FreerightPassage");
       OutputVariable* Steer = engine->getOutputVariable("Steer");
       OutputVariable* Speed = engine->getOutputVariable("Speed");
 
-      /*for (int i = 0; i <= 50; ++i)
-      {
-          scalar location = DirectionToObstacle->getMinimum() + i * (DirectionToObstacle->range() / 50);
-          DirectionToObstacle->setValue(location);
-          engine->process();
-          FL_LOG("DirectionToObstacle.input = " << Op::str(location) << 
-              " => " << "Steer.output = " << Op::str(Steer->getValue()));
-      }*/
-
 
       //Initial speed
-      speed += 0.1;
+      //speed += 0.1;
 
 
   std::cout << "Looping" << std::endl;
@@ -130,17 +123,22 @@ int main(int _argc, char **_argv)
       DirectionToObstacle->setValue(fc.normalize(cb.getShortestAngle(), lidarangle_min, lidarangle_max));
       CornerType->setValue(cb.getCornerType());
       DirectionToGoal->setValue(fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max));
+      FreeLeftPassage->setValue(cb.getFreeLeftPassage());
+      FreeRightPassage->setValue(cb.getFreeRightPassage());
 
       engine->process();
     // FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
 
       // Printing values to the terminal
-      std::cout << "Range: " << fc.normalize(cb.getShortestRange(), range_min, range_max) << "     ";
+      /*std::cout << "Range: " << fc.normalize(cb.getShortestRange(), range_min, range_max) << "     ";
       std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), lidarangle_min, lidarangle_max) << "     ";
+      std::cout << "DirectionToGoal: " << fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max) << "     ";
       std::cout << "Steer: " << Steer->getValue() << "     ";
-      std::cout << "Speed: " << Speed->getValue() << std::endl;
+      std::cout << "Speed: " << Speed->getValue() << std::endl;*/
 
-      dir = (Steer->getValue()) * 5;
+      std::cout << "Left passage: " << cb.getFreeLeftPassage() << "     " << "Right passage: " << cb.getFreeRightPassage() << std::endl;
+
+      dir = (Steer->getValue()) * 2;
       speed = (Speed->getValue());
 
       // If a corner is hit
@@ -150,12 +148,13 @@ int main(int _argc, char **_argv)
           //dir = (Steer->getValue()) * 100;
       }
 
-      /*if (fc.distanceToGoal(cb.getCurPosition()) == 0)
+      if (fc.distanceToGoal(cb.getCurPosition()) < 0.5)
       {
         speed = 0;
         dir = 0;
+        std::cout << "You reached the goal!" << std::endl;
         break;
-      }*/
+      }
 
       // Distance to goal
       //std::cout << fc.distanceToGoal(cb.getCurPosition()) << std::endl;

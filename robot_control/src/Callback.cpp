@@ -112,7 +112,11 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     float right_range;
     int best_i;
 
-    for (int i = 0; i < nranges; i++) {
+    float leftPassageVal = 0;
+    float rightPassageVal = 0;
+
+    for (int i = 0; i < nranges; i++) 
+    {
         float angle = angle_min + i * angle_increment;
         float range = std::min(float(msg->scan().ranges(i)), range_max);             
         //    double intensity = msg->scan().intensities(i);
@@ -123,7 +127,7 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
         cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
                 cv::LINE_AA, 4);
 
-        if (range < best_range && 66 <= i <= nranges - 66)
+        if (range < best_range && i >= 66 && i <= nranges - 66)
         {
             best_range = range;
             best_angle = angle;
@@ -147,10 +151,42 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
         else
         {
             corner_type = -1;
-        }                                                                                        // Angle: radianer, range: antal blokke (nok cm)
+        }          
+        
+        // Checking for a passage through an obstacle
+        std::cout << i << std::endl;
+        if ( i >= 33 - 7 && i <= 33 + 7 ) // right
+        {
+            rightPassageVal += range;
+            std::cout << "+1" << std::endl;
+        }
+        else if ( i >= nranges - 33 - 7 && i <= nranges - 33 + 7 ) // left
+        {
+            leftPassageVal += range;
+        }                                                                           
+        
+        // Angle: radianer, range: antal blokke (nok cm)
     }
 
-    // Drawing the smallets sensor distance in a red color
+    if ( rightPassageVal > (15 * 2) ) // sensors times distance
+    {
+        freeRightPassage = true;
+    }
+    else
+    {
+        freeRightPassage = false;
+    }
+    
+    if ( leftPassageVal > (15 * 2) )
+    {
+        freeLeftPassage = true;
+    }
+    else
+    {
+        freeLeftPassage = false;
+    }
+    
+    /*// Drawing the smallets sensor distance in a red color
     float angle = angle_min + best_i * angle_increment;
     float range = std::min(float(msg->scan().ranges(best_i)), range_max);             
     cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
@@ -158,12 +194,7 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     cv::Point2f endpt(200.5f + range * px_per_m * std::cos(angle),
                         200.5f - range * px_per_m * std::sin(angle));
     cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
-                cv::LINE_AA, 4);
-
-    if (right_range < left_range)
-        corner_type = 1;
-    else
-        corner_type = -1;
+                cv::LINE_AA, 4);*/
 
     mutex.lock();
     shortest_range = best_range;
@@ -201,9 +232,6 @@ Callback::EulerAngles Callback::ToEulerAngles(Quaternion q)
     double cosy_cosp = +1.0 - 2.0 * (q.y * q.y + q.z * q.z);  
     angles.yaw = atan2(siny_cosp, cosy_cosp);
 
-    /*if (angles.yaw < 0)
-        angles.yaw = angles.yaw+ 2*M_PI;*/
-
     return angles;
 }
 
@@ -230,6 +258,16 @@ cv::Point Callback:: getCurPosition()
 float Callback::getYaw()
 {
     return yaw;
+}
+
+bool Callback::getFreeLeftPassage()
+{
+    return freeLeftPassage;
+}
+
+bool Callback::getFreeRightPassage()
+{
+    return freeRightPassage;
 }
 
 Callback::~Callback()

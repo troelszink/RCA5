@@ -42,6 +42,8 @@ public:
     float getCornerType();
     cv::Point getCurPosition();
     float getYaw();
+    bool getFreeLeftPassage();
+    bool getFreeRightPassage();
 
     ~Callback();
     
@@ -54,6 +56,8 @@ private:
     float corner_type;
     cv::Point curPosition;
     float yaw;
+    bool freeLeftPassage;
+    bool freeRightPassage;
 
 };
 

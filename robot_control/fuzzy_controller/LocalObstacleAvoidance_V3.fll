@@ -36,6 +36,20 @@ InputVariable: DirectionToGoal
   term: DiagonalRight Triangle 0.100 0.350 0.600
   term: Right Ramp 0.500 1.000
 
+InputVariable: FreeLeftPassage
+    enabled: true
+    range: 0.000 1.000
+    lock-range: false
+    term: False Ramp 0.250 -1.000
+    term: True Ramp -0.250 1.000
+
+InputVariable: FreeRightPassage
+    enabled: true
+    range: 0.000 1.000
+    lock-range: false
+    term: False Ramp 0.250 -1.000
+    term: True Ramp -0.250 1.000
+
 OutputVariable: Steer
     enabled: true
     range: -1.000 1.000
@@ -65,39 +79,44 @@ OutputVariable: Speed
 
     # ADD RULES
 
-    RuleBlock: mamdani
-      enabled: true
-      conjunction: Minimum
-      disjunction: none
-      implication: AlgebraicProduct
-      activation: General
+RuleBlock: mamdani
+    enabled: true
+    conjunction: Minimum
+    disjunction: none
+    implication: AlgebraicProduct
+    activation: General
 
+    rule: if DistanceToObstacle is Medium and DirectionToGoal is Left then Steer is Left and Speed is Medium
+    rule: if DistanceToObstacle is Medium and DirectionToGoal is DiagonalLeft then Steer is DiagonalLeft and Speed is Medium
+    rule: if DistanceToObstacle is Medium and DirectionToGoal is Forward then Steer is Forward and Speed is Medium
+    rule: if DistanceToObstacle is Medium and DirectionToGoal is DiagonalRight then Steer is DiagonalRight and Speed is Medium
+    rule: if DistanceToObstacle is Medium and DirectionToGoal is Right then Steer is Right and Speed is Medium
 
+    # RULES FOR DIRECTION TO GOAL
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Left and DirectionToGoal is Left then Steer is Forward and Speed is Fast
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Left and DirectionToGoal is DiagonalLeft then Steer is Forward and Speed is Fast
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Left and DirectionToGoal is Forward then Steer is Forward and Speed is Fast
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Left and DirectionToGoal is DiagonalRight then Steer is Forward and Speed is Fast
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Left and DirectionToGoal is Right then Steer is Right and Speed is Fast
 
-      rule: if DistanceToObstacle is Medium and DirectionToGoal is Left then Steer is Left and Speed is Medium
-      rule: if DistanceToObstacle is Medium and DirectionToGoal is DiagonalLeft then Steer is DiagonalLeft and Speed is Medium
-      rule: if DistanceToObstacle is Medium and DirectionToGoal is Forward then Steer is Forward and Speed is Medium
-      rule: if DistanceToObstacle is Medium and DirectionToGoal is DiagonalRight then Steer is DiagonalRight and Speed is Medium
-      rule: if DistanceToObstacle is Medium and DirectionToGoal is Right then Steer is Right and Speed is Medium
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Right and DirectionToGoal is Left then Steer is Left and Speed is Fast
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Right and DirectionToGoal is DiagonalLeft then Steer is Forward and Speed is Fast
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Right and DirectionToGoal is Forward then Steer is Forward and Speed is Fast
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Right and DirectionToGoal is DiagonalRight then Steer is Forward and Speed is Fast
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Right and DirectionToGoal is Right then Steer is Forward and Speed is Fast
 
-      rule: if DistanceToObstacle is Small and DirectionToObstacle is Left then Steer is Forward and Speed is Fast
-      #rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalLeft then Steer is DiagonalRight and Speed is Slow
-      #rule: if DistanceToObstacle is Small and DirectionToObstacle is Forward then Steer is Right and Speed is Slow
-      #rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalRight then Steer is DiagonalLeft and Speed is Slow
-      rule: if DistanceToObstacle is Small and DirectionToObstacle is Right then Steer is Forward and Speed is Fast
+    # RULES FOR CORNER_TYPE
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Forward and CornerType is Left then Steer is Right and Speed is Slow
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is Forward and CornerType is Right then Steer is Left and Speed is Slow
+    #rule: if DistanceToObstacle is Medium and DirectionToObstacle is Forward and CornerType is Left then Steer is DiagonalRight and Speed is Medium
+    #rule: if DistanceToObstacle is Medium and DirectionToObstacle is Forward and CornerType is Right then Steer is DiagonalLeft and Speed is Medium
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalLeft and CornerType is Left then Steer is DiagonalRight and Speed is Slow
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalLeft and CornerType is Right then Steer is DiagonalLeft and Speed is Slow
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalRight and CornerType is Left then Steer is DiagonalRight and Speed is Slow
+    rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalRight and CornerType is Right then Steer is DiagonalLeft and Speed is Slow
 
-      # RULES FOR CORNER_TYPE
-      rule: if DistanceToObstacle is Small and DirectionToObstacle is Forward and CornerType is Left then Steer is Right and Speed is Slow
-      rule: if DistanceToObstacle is Small and DirectionToObstacle is Forward and CornerType is Right then Steer is Left and Speed is Slow
-      #rule: if DistanceToObstacle is Medium and DirectionToObstacle is Forward and CornerType is Left then Steer is DiagonalRight and Speed is Medium
-      #rule: if DistanceToObstacle is Medium and DirectionToObstacle is Forward and CornerType is Right then Steer is DiagonalLeft and Speed is Medium
-      rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalLeft and CornerType is Left then Steer is DiagonalRight and Speed is Slow
-      rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalLeft and CornerType is Right then Steer is DiagonalLeft and Speed is Slow
-      rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalRight and CornerType is Left then Steer is DiagonalRight and Speed is Slow
-      rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalRight and CornerType is Right then Steer is DiagonalLeft and Speed is Slow
-
-      rule: if DistanceToObstacle is Large and DirectionToGoal is Left then Steer is Left and Speed is Fast
-      rule: if DistanceToObstacle is Large and DirectionToGoal is DiagonalLeft then Steer is DiagonalLeft and Speed is Fast
-      rule: if DistanceToObstacle is Large and DirectionToGoal is Forward then Steer is Forward and Speed is Fast
-      rule: if DistanceToObstacle is Large and DirectionToGoal is DiagonalRight then Steer is DiagnoalRight and Speed is Fast
-      rule: if DistanceToObstacle is Large and DirectionToGoal is Right then Steer is Right and Speed is Fast
+    rule: if DistanceToObstacle is Large and DirectionToGoal is Left then Steer is Left and Speed is Fast
+    rule: if DistanceToObstacle is Large and DirectionToGoal is DiagonalLeft then Steer is DiagonalLeft and Speed is Fast
+    rule: if DistanceToObstacle is Large and DirectionToGoal is Forward then Steer is Forward and Speed is Fast
+    rule: if DistanceToObstacle is Large and DirectionToGoal is DiagonalRight then Steer is DiagonalRight and Speed is Fast
+    rule: if DistanceToObstacle is Large and DirectionToGoal is Right then Steer is Right and Speed is Fast

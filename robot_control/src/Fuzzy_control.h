@@ -29,7 +29,7 @@ public:
 
 private:
 
-    cv::Point goal = cv::Point(-4, 2);
+    cv::Point goal = cv::Point(5, -3);
 
 };
 
