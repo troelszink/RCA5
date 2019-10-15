@@ -4,6 +4,7 @@
 
 #include <opencv2/opencv.hpp>
 #include "fl/Headers.h"
+#include <math.h>
 
 #include <iostream>
 
@@ -69,6 +70,13 @@ int main(int _argc, char **_argv)
     float speed = 0.0;
     float dir = 0.0;
 
+    float range_min = 0.08;
+    float range_max = 10;
+    float lidarangle_min = 2.26889;
+    float lidarangle_max = -2.2689;
+    float angle_min = 0;
+    float angle_max = 2*M_PI;
+
 
     //getValues("~/pioneer2dx/camera/link/camera/image");
     //getValues("~/pioneer2dx/camera/link/camera/image);
@@ -89,6 +97,7 @@ int main(int _argc, char **_argv)
       InputVariable* DirectionToObstacle = engine->getInputVariable("DirectionToObstacle");
       InputVariable* DistanceToObstacle = engine->getInputVariable("DistanceToObstacle");
       InputVariable* CornerType = engine->getInputVariable("CornerType");
+      InputVariable* DirectionToGoal = engine->getInputVariable("DirectionToGoal");
       OutputVariable* Steer = engine->getOutputVariable("Steer");
       OutputVariable* Speed = engine->getOutputVariable("Speed");
 
@@ -117,18 +126,19 @@ int main(int _argc, char **_argv)
       mutex.unlock();
 
       // Setting values
-      DistanceToObstacle->setValue(fc.normalize(cb.getShortestRange(), "range"));
-      DirectionToObstacle->setValue(fc.normalize(cb.getShortestAngle(), "angle"));
+      DistanceToObstacle->setValue(fc.normalize(cb.getShortestRange(), range_min, range_max));
+      DirectionToObstacle->setValue(fc.normalize(cb.getShortestAngle(), lidarangle_min, lidarangle_max));
       CornerType->setValue(cb.getCornerType());
+      DirectionToGoal->setValue(fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max));
 
       engine->process();
     // FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
 
       // Printing values to the terminal
-      /*std::cout << "Range: " << fc.normalize(cb.getShortestRange(), "range") << "     ";
-      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), "angle") << "     ";
+      std::cout << "Range: " << fc.normalize(cb.getShortestRange(), range_min, range_max) << "     ";
+      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), lidarangle_min, lidarangle_max) << "     ";
       std::cout << "Steer: " << Steer->getValue() << "     ";
-      std::cout << "Speed: " << Speed->getValue() << std::endl;*/
+      std::cout << "Speed: " << Speed->getValue() << std::endl;
 
       dir = (Steer->getValue()) * 5;
       speed = (Speed->getValue());
@@ -140,11 +150,19 @@ int main(int _argc, char **_argv)
           //dir = (Steer->getValue()) * 100;
       }
 
+      /*if (fc.distanceToGoal(cb.getCurPosition()) == 0)
+      {
+        speed = 0;
+        dir = 0;
+        break;
+      }*/
+
       // Distance to goal
       //std::cout << fc.distanceToGoal(cb.getCurPosition()) << std::endl;
 
       // Angle to goal
-      std::cout << fc.angleToGoal(cb.getCurPosition(), cb.getYaw()) << std:: endl;
+      //std::cout << fc.angleToGoal(cb.getCurPosition(), cb.getYaw()) << "      "  <<  cb.getYaw()*180/M_PI << std:: endl;
+      //std::cout << fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max) << std::endl;
 
       if (key == key_esc)
         break;

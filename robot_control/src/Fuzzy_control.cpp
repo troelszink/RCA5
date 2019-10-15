@@ -5,26 +5,12 @@ Fuzzy_control::Fuzzy_control()
 {
 }
 
-float Fuzzy_control::normalize(float val, std::string type)
+float Fuzzy_control::normalize(float val, float min, float max)
 {
-    if (type == "range")
-    {
-        float range_min = 0.08;
-        float range_max = 10;
-        float norm_range;
+    float norm;
 
-        norm_range = 2 * ((val - range_min) / (range_max - range_min)) - 1;
-        return norm_range;
-    }
-    else if (type == "angle")
-    {
-        float angle_min = 2.26889;
-        float angle_max = -2.2689;
-        float norm_angle;
-
-        norm_angle = 2 * ((val - angle_min) / (angle_max - angle_min)) - 1;
-        return norm_angle;
-    }
+        norm = 2 * ((val - min) / (max - min)) - 1;
+        return norm;
 }
 
 float Fuzzy_control::distanceToGoal(cv::Point curPosition)
@@ -42,11 +28,14 @@ float Fuzzy_control::angleToGoal(cv::Point curPosition, float curYaw)
 
     float angle = acos((dotProduct) / (curPosLen * goalLen));*/
 
-    float angleHorizontal = atan2(goal.y - curPosition.y, goal.x - curPosition.x);
+    float angleHorizontal = atan2(goal.y - curPosition.y, goal.x - curPosition.x); 
 
-    float angle = (angleHorizontal - curYaw) * 180 / 3.14;
+    float angle = (angleHorizontal - curYaw);
 
-    return angle;
+    if (angle < 0)
+        angle = angle + 2*M_PI;
+
+    return angle;// * 180/ 3.14;
 }
 
 Fuzzy_control::~Fuzzy_control()

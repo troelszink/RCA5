@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/troelszink/Desktop/RCA5/robot_control/src/Callback.cpp
+/home/rb-rca5/rb-rca5/robot_control/src/Callback.cpp
 Callback.h
-/home/troelszink/Desktop/RCA5/robot_control/src/Callback.h
+/home/rb-rca5/rb-rca5/robot_control/src/Callback.h
 
-/home/troelszink/Desktop/RCA5/robot_control/src/Callback.h
+/home/rb-rca5/rb-rca5/robot_control/src/Callback.h
 gazebo/gazebo_client.hh
 -
 gazebo/msgs/msgs.hh
@@ -20,15 +20,15 @@ gazebo/transport/transport.hh
 opencv2/opencv.hpp
 -
 fl/Headers.h
-/home/troelszink/Desktop/RCA5/robot_control/src/fl/Headers.h
+/home/rb-rca5/rb-rca5/robot_control/src/fl/Headers.h
 iostream
 -
 
-/home/troelszink/Desktop/RCA5/robot_control/src/Fuzzy_control.cpp
+/home/rb-rca5/rb-rca5/robot_control/src/Fuzzy_control.cpp
 Fuzzy_control.h
-/home/troelszink/Desktop/RCA5/robot_control/src/Fuzzy_control.h
+/home/rb-rca5/rb-rca5/robot_control/src/Fuzzy_control.h
 
-/home/troelszink/Desktop/RCA5/robot_control/src/Fuzzy_control.h
+/home/rb-rca5/rb-rca5/robot_control/src/Fuzzy_control.h
 gazebo/gazebo_client.hh
 -
 gazebo/msgs/msgs.hh
@@ -38,13 +38,13 @@ gazebo/transport/transport.hh
 opencv2/opencv.hpp
 -
 fl/Headers.h
-/home/troelszink/Desktop/RCA5/robot_control/src/fl/Headers.h
+/home/rb-rca5/rb-rca5/robot_control/src/fl/Headers.h
 iostream
 -
 math.h
 -
 
-/home/troelszink/Desktop/RCA5/robot_control/src/main.cpp
+/home/rb-rca5/rb-rca5/robot_control/src/main.cpp
 gazebo/gazebo_client.hh
 -
 gazebo/msgs/msgs.hh
@@ -54,13 +54,15 @@ gazebo/transport/transport.hh
 opencv2/opencv.hpp
 -
 fl/Headers.h
-/home/troelszink/Desktop/RCA5/robot_control/src/fl/Headers.h
+/home/rb-rca5/rb-rca5/robot_control/src/fl/Headers.h
+math.h
+-
 iostream
 -
 Fuzzy_control.h
-/home/troelszink/Desktop/RCA5/robot_control/src/Fuzzy_control.h
+/home/rb-rca5/rb-rca5/robot_control/src/Fuzzy_control.h
 Callback.h
-/home/troelszink/Desktop/RCA5/robot_control/src/Callback.h
+/home/rb-rca5/rb-rca5/robot_control/src/Callback.h
 
 /usr/include/gazebo-10/gazebo/common/Animation.hh
 string

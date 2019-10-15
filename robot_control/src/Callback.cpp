@@ -201,6 +201,9 @@ Callback::EulerAngles Callback::ToEulerAngles(Quaternion q)
     double cosy_cosp = +1.0 - 2.0 * (q.y * q.y + q.z * q.z);  
     angles.yaw = atan2(siny_cosp, cosy_cosp);
 
+    /*if (angles.yaw < 0)
+        angles.yaw = angles.yaw+ 2*M_PI;*/
+
     return angles;
 }
 

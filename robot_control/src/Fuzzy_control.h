@@ -21,7 +21,7 @@ public:
 
     Fuzzy_control();
 
-    float normalize(float val, std::string type);
+    float normalize(float val, float min, float max);
     float distanceToGoal(cv::Point);
     float angleToGoal(cv::Point, float);
 
