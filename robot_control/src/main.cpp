@@ -25,7 +25,6 @@ int main(int _argc, char **_argv)
     Callback cb;
     Fuzzy_control fc;
 
-    std::cout << "Starting" << std::endl;
     // Load gazebo 
     gazebo::client::setup(_argc, _argv);
 
@@ -59,12 +58,6 @@ int main(int _argc, char **_argv)
     worldPublisher->WaitForConnection();
     worldPublisher->Publish(controlMessage);
 
-    
-
-    const int key_left = 81;
-    const int key_up = 82;
-    const int key_down = 84;
-    const int key_right = 83;
     const int key_esc = 27;
 
     float speed = 0.0;
@@ -89,6 +82,7 @@ int main(int _argc, char **_argv)
       Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V3.fll");
 
       std::string status;
+      
       if (not engine->isReady(&status))
       {
           throw Exception("[engine error] engine is not ready:n" + status, FL_AT);
@@ -99,26 +93,21 @@ int main(int _argc, char **_argv)
       InputVariable* CornerType = engine->getInputVariable("CornerType");
       InputVariable* DirectionToGoal = engine->getInputVariable("DirectionToGoal");
       InputVariable* FreeLeftPassage = engine->getInputVariable("FreeLeftPassage");
-      InputVariable* FreeRightPassage = engine->getInputVariable("FreerightPassage");
+      InputVariable* FreeRightPassage = engine->getInputVariable("FreeRightPassage");
       OutputVariable* Steer = engine->getOutputVariable("Steer");
       OutputVariable* Speed = engine->getOutputVariable("Speed");
 
 
-      //Initial speed
-      //speed += 0.1;
-
-
-  std::cout << "Looping" << std::endl;
     // Loop
-    while (true) {
-      
+    while (true) 
+    {      
       gazebo::common::Time::MSleep(10);
 
       mutex.lock();
       int key = cv::waitKey(1);
       mutex.unlock();
 
-      // Setting values
+      // Setting input values
       DistanceToObstacle->setValue(fc.normalize(cb.getShortestRange(), range_min, range_max));
       DirectionToObstacle->setValue(fc.normalize(cb.getShortestAngle(), lidarangle_min, lidarangle_max));
       CornerType->setValue(cb.getCornerType());
@@ -127,7 +116,6 @@ int main(int _argc, char **_argv)
       FreeRightPassage->setValue(cb.getFreeRightPassage());
 
       engine->process();
-    // FL_LOG("Steer.output = " << Op::str(Steer->getValue()));
 
       // Printing values to the terminal
       /*std::cout << "Range: " << fc.normalize(cb.getShortestRange(), range_min, range_max) << "     ";
@@ -136,8 +124,9 @@ int main(int _argc, char **_argv)
       std::cout << "Steer: " << Steer->getValue() << "     ";
       std::cout << "Speed: " << Speed->getValue() << std::endl;*/
 
-      std::cout << "Left passage: " << cb.getFreeLeftPassage() << "     " << "Right passage: " << cb.getFreeRightPassage() << std::endl;
+      //std::cout << "Left passage: " << cb.getFreeLeftPassage() << "     " << "Right passage: " << cb.getFreeRightPassage() << std::endl;
 
+      // Setting output values
       dir = (Steer->getValue()) * 2;
       speed = (Speed->getValue());
 
@@ -166,20 +155,6 @@ int main(int _argc, char **_argv)
       if (key == key_esc)
         break;
 
-      if ((key == key_up) && (speed <= 1.2f))
-        speed += 0.05;
-      else if ((key == key_down) && (speed >= -1.2f))
-        speed -= 0.05;
-      else if ((key == key_right) && (dir <= 0.4f))
-        dir += 0.05;
-      else if ((key == key_left) && (dir >= -0.4f))
-        dir -= 0.05;
-      else {
-        // slow down
-        //      speed *= 0.1;
-        //      dir *= 0.1;
-      }
-
       // Generate a pose
       ignition::math::Pose3d pose(double(speed), 0, 0, 0, 0, double(dir));
 
@@ -191,4 +166,7 @@ int main(int _argc, char **_argv)
 
     // Make sure to shut everything down.
     gazebo::client::shutdown();
+
+    // Draw path for the robot
+    fc.drawPath(cb.getVector());
 }

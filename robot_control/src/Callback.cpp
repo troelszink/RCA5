@@ -43,14 +43,20 @@ void Callback::poseCallback(ConstPosesStampedPtr &_msg)
             curPosition.x = _msg->pose(i).position().x();
             curPosition.y = _msg->pose(i).position().y();
 
-         /*std::cout << std::setprecision(2) << std::fixed << std::setw(6)
+         std::cout << std::setprecision(2) << std::fixed << std::setw(6)
                     << _msg->pose(i).position().x() << std::setw(6)
                     << _msg->pose(i).position().y() << std::setw(6)
                     << _msg->pose(i).position().z() << std::setw(6)
                     << _msg->pose(i).orientation().w() << std::setw(6)
                     << _msg->pose(i).orientation().x() << std::setw(6)
                     << _msg->pose(i).orientation().y() << std::setw(6)
-                    << _msg->pose(i).orientation().z() << std::endl;*/
+                    << _msg->pose(i).orientation().z() << std::endl;
+
+            // Storing the current position in a vector
+            std::vector<float> points;
+            points.push_back(_msg->pose(i).position().x());
+            points.push_back(_msg->pose(i).position().y());
+            position.push_back(points);
         }
     }
 }
@@ -154,11 +160,11 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
         }          
         
         // Checking for a passage through an obstacle
-        std::cout << i << std::endl;
+        //std::cout << i << std::endl;
         if ( i >= 33 - 7 && i <= 33 + 7 ) // right
         {
             rightPassageVal += range;
-            std::cout << "+1" << std::endl;
+            //std::cout << "+1" << std::endl;
         }
         else if ( i >= nranges - 33 - 7 && i <= nranges - 33 + 7 ) // left
         {
@@ -268,6 +274,11 @@ bool Callback::getFreeLeftPassage()
 bool Callback::getFreeRightPassage()
 {
     return freeRightPassage;
+}
+
+std::vector<std::vector<float>> Callback::getVector()
+{
+    return position;
 }
 
 Callback::~Callback()

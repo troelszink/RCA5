@@ -10,6 +10,7 @@
 #include "fl/Headers.h"
 
 #include <iostream>
+#include <vector>
 
 using namespace fl;
 
@@ -44,6 +45,7 @@ public:
     float getYaw();
     bool getFreeLeftPassage();
     bool getFreeRightPassage();
+    std::vector<std::vector<float>> getVector();
 
     ~Callback();
     
@@ -58,6 +60,7 @@ private:
     float yaw;
     bool freeLeftPassage;
     bool freeRightPassage;
+    std::vector<std::vector<float>> position;
 
 };
 

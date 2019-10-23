@@ -38,6 +38,30 @@ float Fuzzy_control::angleToGoal(cv::Point curPosition, float curYaw)
     return angle;// * 180/ 3.14;
 }
 
+void Fuzzy_control::drawPath(std::vector<std::vector<float>> position)
+{
+    cv::Mat image;
+    image = cv::imread("../testImages/SmallWorld.PNG", cv::IMREAD_COLOR);
+
+    for (int i = 0; i < position.size(); i++)
+    {
+        int x = int(position[i][0] * 72 + 555);
+        int y = int(-(position[i][1] * 72) + 380);
+        //std::cout << "(" << cb.getVector()[i][0] << "," << cb.getVector()[i][1] << ")" << std::endl;
+
+        cv::circle(image, cv::Point(x,y), 2, cv::Scalar(0, 0, 255), 0, 1, 0);
+
+        /*image.at<cv::Vec3b>(y,x)[0] = 0;
+        image.at<cv::Vec3b>(y,x)[1] = 0;
+        image.at<cv::Vec3b>(y,x)[2] = 255;*/
+    }
+
+    cv::namedWindow("Path", CV_WINDOW_AUTOSIZE);
+    cv::imshow("Path", image);
+
+    cv::waitKey();
+}
+
 Fuzzy_control::~Fuzzy_control()
 {
 }
