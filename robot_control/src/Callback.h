@@ -33,7 +33,7 @@ public:
 
     void statCallback(ConstWorldStatisticsPtr &_msg);
     void poseCallback(ConstPosesStampedPtr &_msg);
-    void cameraCallback(ConstImageStampedPtr &msg);
+    //void cameraCallback(ConstImageStampedPtr &msg);
     void lidarCallback(ConstLaserScanStampedPtr &msg);
 
     EulerAngles ToEulerAngles(Quaternion);

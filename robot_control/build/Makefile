@@ -177,6 +177,33 @@ src/Fuzzy_control.cpp.s:
 	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.s
 .PHONY : src/Fuzzy_control.cpp.s
 
+src/MarbleDetection.o: src/MarbleDetection.cpp.o
+
+.PHONY : src/MarbleDetection.o
+
+# target to build an object file
+src/MarbleDetection.cpp.o:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o
+.PHONY : src/MarbleDetection.cpp.o
+
+src/MarbleDetection.i: src/MarbleDetection.cpp.i
+
+.PHONY : src/MarbleDetection.i
+
+# target to preprocess a source file
+src/MarbleDetection.cpp.i:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.i
+.PHONY : src/MarbleDetection.cpp.i
+
+src/MarbleDetection.s: src/MarbleDetection.cpp.s
+
+.PHONY : src/MarbleDetection.s
+
+# target to generate assembly for a file
+src/MarbleDetection.cpp.s:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.s
+.PHONY : src/MarbleDetection.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -219,6 +246,9 @@ help:
 	@echo "... src/Fuzzy_control.o"
 	@echo "... src/Fuzzy_control.i"
 	@echo "... src/Fuzzy_control.s"
+	@echo "... src/MarbleDetection.o"
+	@echo "... src/MarbleDetection.i"
+	@echo "... src/MarbleDetection.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

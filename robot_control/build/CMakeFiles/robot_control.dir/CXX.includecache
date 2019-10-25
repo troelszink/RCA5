@@ -46,6 +46,22 @@ iostream
 math.h
 -
 
+/home/troelszink/Desktop/RCA5/robot_control/src/MarbleDetection.cpp
+MarbleDetection.h
+/home/troelszink/Desktop/RCA5/robot_control/src/MarbleDetection.h
+
+/home/troelszink/Desktop/RCA5/robot_control/src/MarbleDetection.h
+gazebo/gazebo_client.hh
+-
+gazebo/msgs/msgs.hh
+-
+gazebo/transport/transport.hh
+-
+opencv2/opencv.hpp
+-
+iostream
+-
+
 /home/troelszink/Desktop/RCA5/robot_control/src/main.cpp
 gazebo/gazebo_client.hh
 -
@@ -65,6 +81,8 @@ Fuzzy_control.h
 /home/troelszink/Desktop/RCA5/robot_control/src/Fuzzy_control.h
 Callback.h
 /home/troelszink/Desktop/RCA5/robot_control/src/Callback.h
+MarbleDetection.h
+/home/troelszink/Desktop/RCA5/robot_control/src/MarbleDetection.h
 
 /usr/include/gazebo-10/gazebo/common/Animation.hh
 string

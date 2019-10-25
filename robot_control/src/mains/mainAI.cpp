@@ -12,7 +12,6 @@
 
 #include "Fuzzy_control.h"
 #include "Callback.h"
-#include "MarbleDetection.h"
 
 using namespace fl;
 
@@ -25,7 +24,6 @@ int main(int _argc, char **_argv)
     // Create objects
     Callback cb;
     Fuzzy_control fc;
-    MarbleDetection md;
 
     // Load gazebo 
     gazebo::client::setup(_argc, _argv);
@@ -42,7 +40,7 @@ int main(int _argc, char **_argv)
         node->Subscribe("~/pose/info", &Callback::poseCallback, &cb);
 
     gazebo::transport::SubscriberPtr cameraSubscriber =
-        node->Subscribe("~/pioneer2dx/camera/link/camera/image", &MarbleDetection::cameraCallback, &md);
+        node->Subscribe("~/pioneer2dx/camera/link/camera/image", &Callback::cameraCallback, &cb);
 
     gazebo::transport::SubscriberPtr lidarSubscriber =
         node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", &Callback::lidarCallback, &cb);
