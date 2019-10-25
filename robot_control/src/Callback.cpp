@@ -43,14 +43,14 @@ void Callback::poseCallback(ConstPosesStampedPtr &_msg)
             curPosition.x = _msg->pose(i).position().x();
             curPosition.y = _msg->pose(i).position().y();
 
-         std::cout << std::setprecision(2) << std::fixed << std::setw(6)
+         /*std::cout << std::setprecision(2) << std::fixed << std::setw(6)
                     << _msg->pose(i).position().x() << std::setw(6)
                     << _msg->pose(i).position().y() << std::setw(6)
                     << _msg->pose(i).position().z() << std::setw(6)
                     << _msg->pose(i).orientation().w() << std::setw(6)
                     << _msg->pose(i).orientation().x() << std::setw(6)
                     << _msg->pose(i).orientation().y() << std::setw(6)
-                    << _msg->pose(i).orientation().z() << std::endl;
+                    << _msg->pose(i).orientation().z() << std::endl;*/
 
             // Storing the current position in a vector
             std::vector<float> points;

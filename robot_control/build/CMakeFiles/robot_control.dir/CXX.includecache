@@ -61,6 +61,8 @@ opencv2/opencv.hpp
 -
 iostream
 -
+vector
+-
 
 /home/troelszink/Desktop/RCA5/robot_control/src/main.cpp
 gazebo/gazebo_client.hh

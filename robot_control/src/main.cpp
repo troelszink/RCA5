@@ -60,44 +60,20 @@ int main(int _argc, char **_argv)
     worldPublisher->WaitForConnection();
     worldPublisher->Publish(controlMessage);
 
+    const int key_left = 81;
+    const int key_up = 82;
+    const int key_down = 84;
+    const int key_right = 83;
     const int key_esc = 27;
 
     float speed = 0.0;
     float dir = 0.0;
-
-    float range_min = 0.08;
-    float range_max = 10;
-    float lidarangle_min = 2.26889;
-    float lidarangle_max = -2.2689;
-    float angle_min = 0;
-    float angle_max = 2*M_PI;
-
 
     //getValues("~/pioneer2dx/camera/link/camera/image");
     //getValues("~/pioneer2dx/camera/link/camera/image);
 
   // gazebo::transport::SubscriberPtr valueSubscriber =
     //   node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", getValues);
-
-      // FUZZY LOGIC
-
-      Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V3.fll");
-
-      std::string status;
-      
-      if (not engine->isReady(&status))
-      {
-          throw Exception("[engine error] engine is not ready:n" + status, FL_AT);
-      }
-
-      InputVariable* DirectionToObstacle = engine->getInputVariable("DirectionToObstacle");
-      InputVariable* DistanceToObstacle = engine->getInputVariable("DistanceToObstacle");
-      InputVariable* CornerType = engine->getInputVariable("CornerType");
-      InputVariable* DirectionToGoal = engine->getInputVariable("DirectionToGoal");
-      InputVariable* FreeLeftPassage = engine->getInputVariable("FreeLeftPassage");
-      InputVariable* FreeRightPassage = engine->getInputVariable("FreeRightPassage");
-      OutputVariable* Steer = engine->getOutputVariable("Steer");
-      OutputVariable* Speed = engine->getOutputVariable("Speed");
 
 
     // Loop
@@ -109,53 +85,22 @@ int main(int _argc, char **_argv)
       int key = cv::waitKey(1);
       mutex.unlock();
 
-      // Setting input values
-      DistanceToObstacle->setValue(fc.normalize(cb.getShortestRange(), range_min, range_max));
-      DirectionToObstacle->setValue(fc.normalize(cb.getShortestAngle(), lidarangle_min, lidarangle_max));
-      CornerType->setValue(cb.getCornerType());
-      DirectionToGoal->setValue(fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max));
-      FreeLeftPassage->setValue(cb.getFreeLeftPassage());
-      FreeRightPassage->setValue(cb.getFreeRightPassage());
-
-      engine->process();
-
-      // Printing values to the terminal
-      /*std::cout << "Range: " << fc.normalize(cb.getShortestRange(), range_min, range_max) << "     ";
-      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), lidarangle_min, lidarangle_max) << "     ";
-      std::cout << "DirectionToGoal: " << fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max) << "     ";
-      std::cout << "Steer: " << Steer->getValue() << "     ";
-      std::cout << "Speed: " << Speed->getValue() << std::endl;*/
-
-      //std::cout << "Left passage: " << cb.getFreeLeftPassage() << "     " << "Right passage: " << cb.getFreeRightPassage() << std::endl;
-
-      // Setting output values
-      dir = (Steer->getValue()) * 2;
-      speed = (Speed->getValue());
-
-      // If a corner is hit
-      if (DistanceToObstacle->getValue() == -1)
-      {
-          speed = -(Speed->getValue()) * 100;
-          //dir = (Steer->getValue()) * 100;
-      }
-
-      if (fc.distanceToGoal(cb.getCurPosition()) < 0.5)
-      {
-        speed = 0;
-        dir = 0;
-        std::cout << "You reached the goal!" << std::endl;
-        break;
-      }
-
-      // Distance to goal
-      //std::cout << fc.distanceToGoal(cb.getCurPosition()) << std::endl;
-
-      // Angle to goal
-      //std::cout << fc.angleToGoal(cb.getCurPosition(), cb.getYaw()) << "      "  <<  cb.getYaw()*180/M_PI << std:: endl;
-      //std::cout << fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max) << std::endl;
-
       if (key == key_esc)
         break;
+
+      if ((key == key_up) && (speed <= 1.2f))
+        speed += 0.05;
+      else if ((key == key_down) && (speed >= -1.2f))
+        speed -= 0.05;
+      else if ((key == key_right) && (dir <= 0.4f))
+        dir += 0.1;
+      else if ((key == key_left) && (dir >= -0.4f))
+        dir -= 0.1;
+      else {
+        // slow down
+        //      speed *= 0.1;
+        //      dir *= 0.1;
+      }
 
       // Generate a pose
       ignition::math::Pose3d pose(double(speed), 0, 0, 0, 0, double(dir));

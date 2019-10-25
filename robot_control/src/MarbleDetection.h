@@ -9,6 +9,7 @@
 #include <opencv2/opencv.hpp>
 
 #include <iostream>
+#include <vector>
 
 class MarbleDetection
 {
@@ -18,6 +19,10 @@ public:
     MarbleDetection();
 
     void cameraCallback(ConstImageStampedPtr &msg);
+    cv::Mat preprocessing(cv::Mat);
+    cv::Mat binaryThreshold(cv::Mat);
+    cv::Mat edgeDetection(cv::Mat);
+    cv::Mat houghCircles(cv::Mat);
 
     ~MarbleDetection();
 
