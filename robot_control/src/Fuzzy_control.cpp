@@ -45,6 +45,8 @@ void Fuzzy_control::drawPath(std::vector<std::vector<float>> position)
 
     for (int i = 0; i < position.size(); i++)
     {
+        // 72 is length and width of a field in the world
+        // (555,380) is the origo of the image, which is (0,0) in the world
         int x = int(position[i][0] * 72 + 555);
         int y = int(-(position[i][1] * 72) + 380);
         //std::cout << "(" << cb.getVector()[i][0] << "," << cb.getVector()[i][1] << ")" << std::endl;
