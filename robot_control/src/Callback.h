@@ -29,7 +29,7 @@ public:
         double roll, pitch, yaw;
     };
     
-    Callback();
+    Callback(cv::Point2f, float);
 
     void statCallback(ConstWorldStatisticsPtr &_msg);
     void poseCallback(ConstPosesStampedPtr &_msg);
@@ -41,7 +41,7 @@ public:
     float getShortestRange();
     float getShortestAngle();
     float getCornerType();
-    cv::Point getCurPosition();
+    cv::Point2f getCurPosition();
     float getYaw();
     bool getFreeLeftPassage();
     bool getFreeRightPassage();
@@ -49,18 +49,21 @@ public:
 
     ~Callback();
     
-private:
+protected:
 
-   
     float shortest_range = 10;
     float shortest_angle = 0;
     float angle_inc;
     float corner_type;
-    cv::Point curPosition;
+    cv::Point2f curPosition;
     float yaw;
     bool freeLeftPassage;
     bool freeRightPassage;
     std::vector<std::vector<float>> position;
+
+    int countIterations = 0;
+    float sum = 0;
+    float average = 0;
 
 };
 

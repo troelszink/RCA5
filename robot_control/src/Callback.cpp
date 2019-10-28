@@ -1,9 +1,10 @@
 
 #include "Callback.h"
 
-Callback::Callback()
+Callback::Callback(cv::Point2f _curPosition, float _yaw)
 {
-   
+    curPosition = _curPosition;
+    yaw = _yaw;
 }
 
 void Callback::statCallback(ConstWorldStatisticsPtr &_msg) 
@@ -152,7 +153,22 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
         else if ( i >= nranges - 33 - 7 && i <= nranges - 33 + 7 ) // left
         {
             leftPassageVal += range;
-        }                                                                           
+        }        
+
+        // Middle sensor (to calculate distance from robot to marble)
+        if (i == nranges/2)
+        {
+            countIterations++;
+            sum += range;
+
+            if (countIterations == 100)
+            {
+                average = sum / 100;
+                //std::cout << "Distance to circle: " << average << std::endl;
+                countIterations = 0;
+                sum = 0;
+            }
+        }                                                                   
         
         // Angle: radianer, range: antal blokke (nok cm)
     }
@@ -239,7 +255,7 @@ float Callback::getCornerType()
     return corner_type;
 }
 
-cv::Point Callback:: getCurPosition()
+cv::Point2f Callback:: getCurPosition()
 {
     return curPosition;
 }

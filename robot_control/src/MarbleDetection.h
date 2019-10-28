@@ -11,6 +11,8 @@
 #include <iostream>
 #include <vector>
 
+#include "Callback.h"
+
 class MarbleDetection
 {
     
@@ -24,11 +26,18 @@ public:
     cv::Mat edgeDetection(cv::Mat);
     cv::Mat houghCircles(cv::Mat);
 
+    void addObject(Callback&);
+    void marbleLocation(float, float, float);
+
     ~MarbleDetection();
 
 private:
 
-
+    float focalLength = 277.559; // See Mathematica
+    float marbleRadius = 0.5;
+    float cameraWidth = 320;
+    float FOV = 1.047;
+    Callback* callback;
 
 };
 
