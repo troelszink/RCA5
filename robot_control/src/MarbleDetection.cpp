@@ -153,7 +153,7 @@ void MarbleDetection::marbleLocation(float marbleWidth, float centerX, float cen
 
     // Location
     float x2 = callback->getCurPosition().x + distanceToMarble * cos(angle); // Equations found in Mathematica
-    float y2 = callback->getCurPosition().y + distanceToMarble * sin(angle) - opposite;
+    float y2 = callback->getCurPosition().y + distanceToMarble * sin(angle)/* - opposite*/;
 
     std::cout << "DistanceToMarble: " << distanceToMarble << std::endl;
     std::cout << "The location of the marble is: (" << x2 << "," << y2 << ")" << std::endl;

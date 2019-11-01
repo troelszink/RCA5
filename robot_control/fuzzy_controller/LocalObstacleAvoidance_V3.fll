@@ -108,8 +108,6 @@ RuleBlock: mamdani
     # RULES FOR CORNER_TYPE
     rule: if DistanceToObstacle is Small and DirectionToObstacle is Forward and CornerType is Left then Steer is Right and Speed is Slow
     rule: if DistanceToObstacle is Small and DirectionToObstacle is Forward and CornerType is Right then Steer is Left and Speed is Slow
-    #rule: if DistanceToObstacle is Medium and DirectionToObstacle is Forward and CornerType is Left then Steer is DiagonalRight and Speed is Medium
-    #rule: if DistanceToObstacle is Medium and DirectionToObstacle is Forward and CornerType is Right then Steer is DiagonalLeft and Speed is Medium
     rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalLeft and CornerType is Left then Steer is DiagonalRight and Speed is Slow
     rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalLeft and CornerType is Right then Steer is DiagonalLeft and Speed is Slow
     rule: if DistanceToObstacle is Small and DirectionToObstacle is DiagonalRight and CornerType is Left then Steer is DiagonalRight and Speed is Slow
