@@ -41,30 +41,30 @@ float Fuzzy_control::angleToGoal(cv::Point curPosition, float curYaw)
 void Fuzzy_control::drawPathSW(std::vector<std::vector<float>> position)
 {
     cv::Mat image;
-    image = cv::imread("../testImages/SmallWorldV2.png", cv::IMREAD_COLOR);
+    image = cv::imread("../testImages/SmallWorldV2-2.png", cv::IMREAD_COLOR);
 
-    float resize = 5;
-    cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, CV_INTER_LINEAR);
+    // Only first time
+    /*float resize = 30;
+    cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
+
+    cv::Point2f center = cv::Point2f(resize * 10, resize * 7.5);
+    float scaling = resize * 1.41735;*/
+
+    float resize = 30;
 
     cv::Point2f center = cv::Point2f(resize * 10, resize * 7.5);
     float scaling = resize * 1.41735;
 
     for (int i = 0; i < position.size(); i++)
     {
-        // 72 is length and width of a field in the world
-        // (555,380) is the origo of the image, which is (0,0) in the world
         int x = int(position[i][0] * scaling + center.x);
         int y = int(-position[i][1] * scaling + center.y);;
         //std::cout << "(" << cb.getVector()[i][0] << "," << cb.getVector()[i][1] << ")" << std::endl;
 
-        cv::circle(image, cv::Point(x,y), 2, cv::Scalar(0, 0, 255), 0, 1, 0);
-
-        /*image.at<cv::Vec3b>(y,x)[0] = 0;
-        image.at<cv::Vec3b>(y,x)[1] = 0;
-        image.at<cv::Vec3b>(y,x)[2] = 255;*/
+        cv::circle(image, cv::Point(x,y), 2, cv::Scalar(255, 0, 0), 0, 1, 0);
     }
 
-    cv::imwrite( "../testImages/SmallWorldV2-1.png", image );
+    cv::imwrite( "../testImages/SmallWorldV2-3.png", image );
 
     cv::namedWindow("Path", CV_WINDOW_AUTOSIZE);
     cv::imshow("Path", image);
@@ -77,25 +77,25 @@ void Fuzzy_control::drawPathBW(std::vector<std::vector<float>> position)
     cv::Mat image;
     image = cv::imread("../testImages/BigWorldV2.png", cv::IMREAD_COLOR);
 
+    // Only first time
+    /*float resize = 5;
+    cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
+
+    cv::Point2f center = cv::Point2f(resize * 60, resize * 40);
+    float scaling = resize * 1.41735;*/
+
     float resize = 5;
-    cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows));
 
     cv::Point2f center = cv::Point2f(resize * 60, resize * 40);
     float scaling = resize * 1.41735;
 
     for (int i = 0; i < position.size(); i++)
     {
-        // 72 is length and width of a field in the world
-        // (555,380) is the origo of the image, which is (0,0) in the world
         int x = int(position[i][0] * scaling + center.x);
         int y = int(-position[i][1] * scaling + center.y);
         //std::cout << "(" << cb.getVector()[i][0] << "," << cb.getVector()[i][1] << ")" << std::endl;
 
         cv::circle(image, cv::Point(x,y), 2, cv::Scalar(0, 0, 255), 0, 1, 0);
-
-        /*image.at<cv::Vec3b>(y,x)[0] = 0;
-        image.at<cv::Vec3b>(y,x)[1] = 0;
-        image.at<cv::Vec3b>(y,x)[2] = 255;*/
     }
 
     cv::imwrite("../testImages/BigWorldV2-1.png", image);
