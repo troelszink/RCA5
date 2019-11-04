@@ -20,6 +20,7 @@ void MarbleDetection::cameraCallback(ConstImageStampedPtr &msg)
     cv::cvtColor(im, im, CV_RGB2BGR);
 
     cv::Mat imPre = preprocessing(im);
+    //cv::Mat edgeDet = edgeDetection(imPre);
     cv::Mat result = houghCircles(imPre);
 
     mutex.lock();
@@ -34,7 +35,13 @@ cv::Mat MarbleDetection::preprocessing(cv::Mat im)
     cv::cvtColor(im, imGray, CV_BGR2GRAY);
 
     // Reduce the noise
-    cv::GaussianBlur(imGray, imGray, cv::Size(15, 15), 0, 0, cv::BORDER_DEFAULT);
+    //cv::GaussianBlur(imGray, imGray, cv::Size(15, 15), 0, 0, cv::BORDER_DEFAULT);
+    cv::fastNlMeansDenoising(imGray, imGray, 10, 7, 11);
+    //cv::Mat imBF;
+    //cv::bilateralFilter(imGray, imBF, 10, 50, 50, cv::BORDER_DEFAULT);
+    //cv::medianBlur(imGray, imGray, 15);
+    //cv::Mat imCanny;
+    //cv::Canny(imGray, imCanny, 60, 180);
 
     return imGray;
 }
@@ -88,10 +95,13 @@ cv::Mat MarbleDetection::edgeDetection(cv::Mat im)
 
 cv::Mat MarbleDetection::houghCircles(cv::Mat im)
 {
-
     // Detection of the marble
     //cv::Mat imDet = binaryThreshold(im);
     cv::Mat imDet = edgeDetection(im);
+
+    cv::Mat imCanny;
+    double canny_value = cv::threshold(imDet, imCanny, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+    std::cout << canny_value << std::endl;
 
     static cv::Point current(-1, -1);
     int width = 320;
@@ -104,8 +114,8 @@ cv::Mat MarbleDetection::houghCircles(cv::Mat im)
     cv::HoughCircles(imDet, circles, CV_HOUGH_GRADIENT,
                  1,   // accumulator resolution (size of the image / 2)
                  3000,  // minimum distance between two circles
-                 60, // Canny high threshold // 350
-                 10, // minimum number of votes // 10
+                 canny_value, // Canny high threshold // 350
+                 30, // minimum number of votes // 10
                  1, 200); // min and max radius
 
     /// Draw the circles detected
@@ -124,7 +134,7 @@ cv::Mat MarbleDetection::houghCircles(cv::Mat im)
                     //std::cout << "Position of the white ball is:" << center << " with diameter: " << diameter << std::endl;
                     current = center;
 
-                    marbleLocation(diameter, center.x, center.y);
+                    //marbleLocation(diameter, center.x, center.y);
 
                     //float angle = atan2(0, center.x - width/2) * 180/M_PI;
                     //std::cout << "Angle: " << angle << std::endl;
