@@ -172,6 +172,6 @@ int main(int _argc, char **_argv)
     gazebo::client::shutdown();
 
     // Draw path for the robot
-    fc.drawPathSW(cb.getVector());
-    //fc.drawPathBW(cb.getVector());
+    //fc.drawPathSW(cb.getVector());
+    fc.drawPathBW(cb.getVector());
 }

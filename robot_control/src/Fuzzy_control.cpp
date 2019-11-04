@@ -75,7 +75,7 @@ void Fuzzy_control::drawPathSW(std::vector<std::vector<float>> position)
 void Fuzzy_control::drawPathBW(std::vector<std::vector<float>> position)
 {
     cv::Mat image;
-    image = cv::imread("../testImages/BigWorldV2.png", cv::IMREAD_COLOR);
+    image = cv::imread("../testImages/BigWorldV2-3.png", cv::IMREAD_COLOR);
 
     // Only first time
     /*float resize = 5;
@@ -95,10 +95,10 @@ void Fuzzy_control::drawPathBW(std::vector<std::vector<float>> position)
         int y = int(-position[i][1] * scaling + center.y);
         //std::cout << "(" << cb.getVector()[i][0] << "," << cb.getVector()[i][1] << ")" << std::endl;
 
-        cv::circle(image, cv::Point(x,y), 2, cv::Scalar(0, 0, 255), 0, 1, 0);
+        cv::circle(image, cv::Point(x,y), 2, cv::Scalar(255, 165, 0), 0, 1, 0);
     }
 
-    cv::imwrite("../testImages/BigWorldV2-1.png", image);
+    cv::imwrite("../testImages/BigWorldV2-4.png", image);
 
     cv::namedWindow("Path", CV_WINDOW_AUTOSIZE);
     cv::imshow("Path", image);
