@@ -38,6 +38,10 @@ private:
     float cameraWidth = 320;
     float FOV = 1.047;
     Callback* callback;
+    int countDiameter = 0;
+    int sumDiameter = 0;
+    int sumX = 0;
+    int sumY = 0;
 
 };
 
