@@ -72,8 +72,7 @@ OutputVariable: Speed
     defuzzifier: Centroid 100
     default: nan
     lock-previous: false
-    #term: None Triangle 0.000 0.250
-    term: Slow Triangle 0.050 0.000 0.100
+    term: Slow Triangle 0.000 0.050 0.100
     term: Medium Triangle 0.000 0.400 0.800
     term: Fast Triangle 0.600 0.800 1.000
 
