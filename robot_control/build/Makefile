@@ -204,6 +204,33 @@ src/MarbleDetection.cpp.s:
 	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.s
 .PHONY : src/MarbleDetection.cpp.s
 
+src/PathPlanning.o: src/PathPlanning.cpp.o
+
+.PHONY : src/PathPlanning.o
+
+# target to build an object file
+src/PathPlanning.cpp.o:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o
+.PHONY : src/PathPlanning.cpp.o
+
+src/PathPlanning.i: src/PathPlanning.cpp.i
+
+.PHONY : src/PathPlanning.i
+
+# target to preprocess a source file
+src/PathPlanning.cpp.i:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/PathPlanning.cpp.i
+.PHONY : src/PathPlanning.cpp.i
+
+src/PathPlanning.s: src/PathPlanning.cpp.s
+
+.PHONY : src/PathPlanning.s
+
+# target to generate assembly for a file
+src/PathPlanning.cpp.s:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/PathPlanning.cpp.s
+.PHONY : src/PathPlanning.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -249,6 +276,9 @@ help:
 	@echo "... src/MarbleDetection.o"
 	@echo "... src/MarbleDetection.i"
 	@echo "... src/MarbleDetection.s"
+	@echo "... src/PathPlanning.o"
+	@echo "... src/PathPlanning.i"
+	@echo "... src/PathPlanning.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

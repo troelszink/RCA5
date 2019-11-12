@@ -13,7 +13,6 @@
 #include "Fuzzy_control.h"
 #include "Callback.h"
 #include "MarbleDetection.h"
-#include "PathPlanning.h"
 
 using namespace fl;
 
@@ -27,7 +26,6 @@ int main(int _argc, char **_argv)
     Callback cb(cb.getCurPosition(), cb.getYaw());
     Fuzzy_control fc;
     MarbleDetection md;
-    PathPlanning pf;
 
     md.addObject(cb);
 
@@ -79,9 +77,6 @@ int main(int _argc, char **_argv)
   // gazebo::transport::SubscriberPtr valueSubscriber =
     //   node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", getValues);
 
-    // Path planning
-    pf.mapIntoCells();
-    pf.wavefront();
 
     // Loop
     while (true) 
