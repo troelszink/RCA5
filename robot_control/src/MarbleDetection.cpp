@@ -185,37 +185,37 @@ void MarbleDetection::marbleLocation(float marbleWidth, float centerX, float cen
     {
         x2 = callback->getCurPosition().x + distanceToMarble * cos(marbleAngle); // Equations found in Mathematica
         y2 = callback->getCurPosition().y - distanceToMarble * sin(marbleAngle);
-        std::cout << "4th and 1st" << std::endl;
+        //std::cout << "4th and 1st" << std::endl;
     }
     // Between 1st and 2nd quadrant
     else if(callback->getYaw() < 0.75*M_PI && callback->getYaw() >= 0.25*M_PI)
     {
         x2 = callback->getCurPosition().x + distanceToMarble * sin(marbleAngle); // Equations found in Mathematica
         y2 = callback->getCurPosition().y + distanceToMarble * cos(marbleAngle);
-        std::cout << "1st and 2nd" << std::endl;
+        //std::cout << "1st and 2nd" << std::endl;
     }
     // Between 2nd and 3rd quadrant
     else if(callback->getYaw() < -0.75*M_PI && callback->getYaw() >= 0.75*M_PI)
     {
         x2 = callback->getCurPosition().x - distanceToMarble * cos(marbleAngle); // Equations found in Mathematica
         y2 = callback->getCurPosition().y + distanceToMarble * sin(marbleAngle);
-        std::cout << "2nd and 3rd" << std::endl;
+        //std::cout << "2nd and 3rd" << std::endl;
     }
     // Between 3rd and 4th quadrant
     else if (callback->getYaw() < -0.25*M_PI && callback->getYaw() >= -0.75*M_PI)
     {
         x2 = callback->getCurPosition().x - distanceToMarble * sin(marbleAngle); // Equations found in Mathematica
         y2 = callback->getCurPosition().y - distanceToMarble * cos(marbleAngle);
-        std::cout << "3rd and 4th" << std::endl;
+        //std::cout << "3rd and 4th" << std::endl;
     }
 
-    std::cout << "DistanceToMarble: " << distanceToMarble << std::endl;
+    /*std::cout << "DistanceToMarble: " << distanceToMarble << std::endl;
     std::cout << "The location of the marble is: (" << x2 << "," << y2 << ")" << std::endl;
     std::cout << callback->getCurPosition().x << "," << callback->getCurPosition().y << std::endl;
 
     //std::cout << "Distance: " << distanceToMarble << std::endl;
     std::cout << "marbleAngle : " << marbleAngle*180/M_PI << std::endl;
-    std::cout << "Yaw : " << callback->getYaw()*180/M_PI << std::endl;
+    std::cout << "Yaw : " << callback->getYaw()*180/M_PI << std::endl;*/
 }
 
 MarbleDetection::~MarbleDetection()

@@ -16,7 +16,7 @@ struct cellValue
 {
     cv::Point2f p1;
     cv::Point2f p2;
-    int value;
+    int value = -1;
 };
 
 class PathPlanning
@@ -27,13 +27,16 @@ public:
     PathPlanning();
 
     void mapIntoCells();
-    cv::Mat wavefront();
+    std::vector<cellValue> wavefront();
+    cv::Point2f robotControl(std::vector<cellValue>, cv::Point2f);
+    cv::Point2f getGoal();
 
     ~PathPlanning();
 
 private:
 
-
+    cv::Point2f start = cv::Point2f(0, 0);
+    cv::Point2f goal = cv::Point2f(-3, -4);
 
 };
 

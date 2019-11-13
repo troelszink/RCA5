@@ -22,16 +22,17 @@ public:
     Fuzzy_control();
 
     float normalize(float val, float min, float max);
-    float distanceToGoal(cv::Point);
-    float angleToGoal(cv::Point, float);
+    float distanceToGoal(cv::Point2f);
+    float angleToGoal(cv::Point2f, float);
     void drawPathSW(std::vector<std::vector<float>>);
     void drawPathBW(std::vector<std::vector<float>>);
+    void setGoal(cv::Point2f);
 
     ~Fuzzy_control();
 
 private:
 
-    cv::Point goal = cv::Point(10, -25);
+    cv::Point2f goal = cv::Point2f(0, 0);
 
 };
 

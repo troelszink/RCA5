@@ -13,14 +13,14 @@ float Fuzzy_control::normalize(float val, float min, float max)
         return norm;
 }
 
-float Fuzzy_control::distanceToGoal(cv::Point curPosition)
+float Fuzzy_control::distanceToGoal(cv::Point2f curPosition)
 {
     float distance = cv::norm(goal - curPosition);
 
     return distance;
 }
 
-float Fuzzy_control::angleToGoal(cv::Point curPosition, float curYaw)
+float Fuzzy_control::angleToGoal(cv::Point2f curPosition, float curYaw)
 {
     /*float dotProduct = (curPosition.x * goal.x) + (curPosition.y * goal.y);
     float curPosLen = sqrt(pow(curPosition.x, 2) + pow(curPosition.y, 2));
@@ -104,6 +104,11 @@ void Fuzzy_control::drawPathBW(std::vector<std::vector<float>> position)
     cv::imshow("Path", image);
 
     cv::waitKey();
+}
+
+void Fuzzy_control::setGoal(cv::Point2f _goal)
+{
+    goal = _goal;
 }
 
 Fuzzy_control::~Fuzzy_control()
