@@ -8,8 +8,8 @@ PathPlanning::PathPlanning()
 void PathPlanning::mapIntoCells()
 {
     cv::Mat image;
-    image = cv::imread("../testImages/SmallWorldV2.png", cv::IMREAD_COLOR);
-    int resize = 30;
+    image = cv::imread("../testImages/BigWorldV2.png", cv::IMREAD_COLOR);
+    int resize = 10;
     cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows));
 
     int GRID_SIZE = 0.50 * resize;
@@ -307,6 +307,328 @@ cv::Point2f PathPlanning::robotControl(std::vector<cellValue> cellVector, cv::Po
 cv::Point2f PathPlanning::getGoal()
 {
     return goal;
+}
+
+
+std::vector<cellValue> PathPlanning::brushfire()
+{
+    cv::Mat image;
+    image = cv::imread("../testImages/BigWorldV2.png", cv::IMREAD_COLOR);
+    int resize = 1;
+    cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows));
+
+    float GRID_SIZE = 0.50 * resize;
+
+	int width = image.cols;
+	int height = image.rows;
+    std::cout << "Width: " << width << " Height: " << height << std::endl;
+	std::vector<cv::Rect> mCells;
+
+    std::vector<cellValue> cellVector;
+    int count = 0;
+    bool check = false;
+    int gridCnt = 0;
+
+    for (float y = 0; y < height; y += GRID_SIZE) 
+	{
+		for (float x = 0; x < width; x += GRID_SIZE) 
+		{
+            gridCnt++;
+
+            struct cellValue c;
+            c.p1 = cv::Point2f(x, y);
+            c.p2 = cv::Point2f(x + GRID_SIZE, y + GRID_SIZE);
+
+            for (int i = c.p1.x; i <= c.p2.x; i++)
+            {
+                for (int j = c.p1.y; j <= c.p2.y; j++)
+                {
+                    cv::Vec3b point = image.at<cv::Vec3b>(j, i);
+
+                    // Give the value 1 to obstacles
+                    if (point[0] < 240)
+                    {
+                        c.value = 1;
+
+                        if (check == false)
+                        {
+                            count++;
+                            check = true;
+                        }
+                    }
+                }
+            }
+            cellVector.push_back(c);
+            //std::cout << "p1: " << "(" << cellVector[0].p1.x << "," << cellVector[0].p1.y << ")" << std::endl;
+            //std::cout << "p2: " << "(" << cellVector[0].p2.x << "," << cellVector[0].p2.y << ")" << std::endl;
+            //std::cout << "value: " << cellVector[0].value << std::endl;
+            check = false;
+		}
+	}
+
+    std::cout << count << std::endl;
+    std::cout << "Grid: " << gridCnt << std::endl;
+
+    cv::Point2f center = cv::Point2f(60, 40);
+    float scaling = 1.41735;
+
+    int cellsFilled = 0;
+    int i = 0;
+    int j = 0;
+    int cellsNotFilled = resize * 240 * 160 - count;
+    int up = 240;
+    int right = 1;
+    int down = 240;
+    int left = 1;
+    int cellCheck = 1;
+
+
+    while (cellsFilled < cellsNotFilled)
+    {
+        if (cellVector[i].value == cellCheck)
+        {
+            if (i - up > 0) // upper neighbor
+            {
+                if (cellVector[i - up].value == 0)
+                {
+                    cellVector[i - up].value = cellCheck + 1;
+                    cellsFilled++;                   
+                }
+            }
+            if (i + right < cellVector.size()) // right neighbor
+            {
+                if (cellVector[i + right].value == 0)
+                {
+                    cellVector[i + right].value = cellCheck + 1;
+                    cellsFilled++;                   
+                }
+            }
+            if (i + down < cellVector.size()) // lower neighbor
+            {
+                if (cellVector[i + down].value == 0)
+                {
+                    cellVector[i + down].value = cellCheck + 1;
+                    cellsFilled++;                
+                }
+            }
+            if (i - left > 0) // left neighbor
+            {
+                if (cellVector[i - left].value == 0)
+                {
+                    cellVector[i - left].value = cellCheck + 1;
+                    cellsFilled++;
+                }
+            }
+        }
+        
+        i++;
+
+        if (i == cellVector.size())
+        {
+            i = 0;
+            cellCheck++;
+        }
+    }
+
+    std::vector<cellValue> maxCell;
+
+    for (int i = 0; i < cellVector.size(); i++)
+    {
+        if (cellVector[i].value == 1)
+        {
+            continue;
+        }
+        if (i - up > 0) // upper neighbor
+        {
+            if (cellVector[i - up].value > cellVector[i].value)
+            {
+                continue;                 
+            }
+        }
+        if (i + right < cellVector.size()) // right neighbor
+        {
+            if (cellVector[i + right].value > cellVector[i].value)
+            {
+                continue;                   
+            }
+        }
+        if (i + down < cellVector.size()) // lower neighbor
+        {
+            if (cellVector[i + down].value > cellVector[i].value)
+            {
+                continue;                 
+            }
+        }
+        if (i - left > 0) // left neighbor
+        {
+            if (cellVector[i - left].value > cellVector[i].value)
+            {
+                continue;
+            }
+        }
+
+        if (isOuterWall(i, cellVector) && isValidRoom(i, cellVector))
+        {
+            maxCell.push_back(cellVector[i]);
+        }
+    }
+
+    bool check2 = false;
+
+    for (int i = 0; i < cellVector.size(); i++)
+    {
+        for (int j = 0; j < maxCell.size(); j++)
+        {
+            if (cellVector[i].p1 == maxCell[j].p1)
+            {
+                check2 = true;
+            }
+        }
+        if (check2 == false)
+        {
+            std::cout << cellVector[i].value;
+
+            if (cellVector[i].value < 10)
+            {
+                std::cout << " ";
+            }  
+            if ((i + 1) % 240 == 0)
+            {
+                std::cout << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "\033[1;31m" << cellVector[i].value << "\033[0m";
+
+            if (cellVector[i].value < 10)
+            {
+                std::cout << " ";
+            }  
+            if ((i + 1) % 240 == 0)
+            {
+                std::cout << std::endl;
+            }
+
+            check2 = false;         
+        }
+        
+    }
+    
+    return cellVector;
+}
+
+bool PathPlanning::isOuterWall(int index, std::vector<cellValue> cellVector)
+{
+    int up = 240;
+    int right = 1;
+    int down = 240;
+    int left = 1;
+    int i = index;
+    int countUp = 0;
+    int countRight = 0;
+    int countDown = 0;
+    int countLeft = 0;
+
+    while(true)
+    {
+        while (true)
+        {
+            countUp++;
+            if (i - up < 0) // upper neighbor
+            {
+                return false;
+            } 
+            if (cellVector[i - up].value == 1)
+            {
+                break;
+            }
+            i = i - up;
+        }
+
+        i = index;
+        while (true)
+        {
+            countRight++;
+            if ((i + right) % 240 == 0) // upper neighbor
+            {
+                return false;
+            } 
+            if (cellVector[i + right].value == 1)
+            {
+                break;
+            }
+            i = i + right;
+        }
+
+        i = index;
+        while (true)
+        {
+            countDown++;
+            if (i + down >= cellVector.size()) // upper neighbor
+            {
+                return false;
+            } 
+            if (cellVector[i + down].value == 1)
+            {
+                break;
+            }
+            i = i + down;
+        }
+
+        i = index;
+        while (true)
+        {
+            countLeft++;
+            if ((i - left) % 240 == 239) // upper neighbor
+            {
+                return false;
+            } 
+            if (cellVector[i - left].value == 1)
+            {
+                break;
+            }
+            i = i - left;
+        }
+
+        break;
+    }
+
+    // Remove these four counters, if we want to cout the GVD from the corners as well
+    if (countLeft == countRight || countUp == countDown)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool PathPlanning::isValidRoom(int i, std::vector<cellValue> cellVector)
+{
+    int up = 240;
+    int right = 1;
+    int down = 240;
+    int left = 1;
+
+    if ((i + right) % 240 != 0 && (i - left) % 240 != 239)
+    {
+        if (cellVector[i + right].value == 1 && cellVector[i - left].value == 1)
+        {
+            return false;
+        }
+    }
+
+    if (i - up >= 0 && i + down < cellVector.size())
+    {
+        if (cellVector[i - up].value == 1 && cellVector[i + down].value == 1)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 PathPlanning::~PathPlanning()

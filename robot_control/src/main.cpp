@@ -105,8 +105,9 @@ int main(int _argc, char **_argv)
       OutputVariable* Speed = engine->getOutputVariable("Speed");
 
     // Path planning
-    pp.mapIntoCells();
-    std::vector<cellValue> wavefrontVec = pp.wavefront();
+    //pp.mapIntoCells();
+    //std::vector<cellValue> wavefrontVec = pp.wavefront();
+    pp.brushfire();
 
     // Loop
     while (true) 
@@ -156,14 +157,14 @@ int main(int _argc, char **_argv)
           break;
       }
 
-      if (fc.distanceToGoal(cb.getCurPosition()) < 0.3)
+      /*if (fc.distanceToGoal(cb.getCurPosition()) < 0.3)
       {
           //speed = 0;
           //dir = 0;
           std::cout << "WayPoint reached" << std::endl;
           cv::Point2f wayPoint = pp.robotControl(wavefrontVec, cb.getCurPosition());
           fc.setGoal(wayPoint);
-      }
+      }*/
 
       // Distance to goal
       //std::cout << fc.distanceToGoal(cb.getCurPosition()) << std::endl;

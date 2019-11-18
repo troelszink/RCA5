@@ -16,7 +16,7 @@ struct cellValue
 {
     cv::Point2f p1;
     cv::Point2f p2;
-    int value = -1;
+    int value = 0;
 };
 
 class PathPlanning
@@ -30,13 +30,16 @@ public:
     std::vector<cellValue> wavefront();
     cv::Point2f robotControl(std::vector<cellValue>, cv::Point2f);
     cv::Point2f getGoal();
+    std::vector<cellValue> brushfire();
+    bool isOuterWall(int, std::vector<cellValue>);
+    bool isValidRoom(int, std::vector<cellValue>);
 
     ~PathPlanning();
 
 private:
 
     cv::Point2f start = cv::Point2f(0, 0);
-    cv::Point2f goal = cv::Point2f(-3, -4);
+    cv::Point2f goal = cv::Point2f(5, -4);
 
 };
 
