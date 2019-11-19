@@ -1,22 +1,22 @@
 Determining if the pthread_create exist failed with the following output:
 Change Dir: /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_7837c/fast"
-/usr/bin/make -f CMakeFiles/cmTC_7837c.dir/build.make CMakeFiles/cmTC_7837c.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_87aa4/fast"
+/usr/bin/make -f CMakeFiles/cmTC_87aa4.dir/build.make CMakeFiles/cmTC_87aa4.dir/build
 make[1]: Entering directory '/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_7837c.dir/CheckSymbolExists.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_7837c.dir/CheckSymbolExists.c.o   -c /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_7837c
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7837c.dir/link.txt --verbose=1
-/usr/bin/cc      -rdynamic CMakeFiles/cmTC_7837c.dir/CheckSymbolExists.c.o  -o cmTC_7837c 
-CMakeFiles/cmTC_7837c.dir/CheckSymbolExists.c.o: In function `main':
+Building C object CMakeFiles/cmTC_87aa4.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_87aa4.dir/CheckSymbolExists.c.o   -c /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_87aa4
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_87aa4.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_87aa4.dir/CheckSymbolExists.c.o  -o cmTC_87aa4 
+CMakeFiles/cmTC_87aa4.dir/CheckSymbolExists.c.o: In function `main':
 CheckSymbolExists.c:(.text+0x1b): undefined reference to `pthread_create'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_7837c.dir/build.make:97: recipe for target 'cmTC_7837c' failed
-make[1]: *** [cmTC_7837c] Error 1
+CMakeFiles/cmTC_87aa4.dir/build.make:97: recipe for target 'cmTC_87aa4' failed
+make[1]: *** [cmTC_87aa4] Error 1
 make[1]: Leaving directory '/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_7837c/fast' failed
-make: *** [cmTC_7837c/fast] Error 2
+Makefile:126: recipe for target 'cmTC_87aa4/fast' failed
+make: *** [cmTC_87aa4/fast] Error 2
 
 File /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */
@@ -36,20 +36,20 @@ int main(int argc, char** argv)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_ca35b/fast"
-/usr/bin/make -f CMakeFiles/cmTC_ca35b.dir/build.make CMakeFiles/cmTC_ca35b.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_3d338/fast"
+/usr/bin/make -f CMakeFiles/cmTC_3d338.dir/build.make CMakeFiles/cmTC_3d338.dir/build
 make[1]: Entering directory '/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_ca35b.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_ca35b.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
-Linking C executable cmTC_ca35b
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ca35b.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_ca35b.dir/CheckFunctionExists.c.o  -o cmTC_ca35b -lpthreads 
+Building C object CMakeFiles/cmTC_3d338.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_3d338.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_3d338
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3d338.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_3d338.dir/CheckFunctionExists.c.o  -o cmTC_3d338 -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_ca35b.dir/build.make:97: recipe for target 'cmTC_ca35b' failed
-make[1]: *** [cmTC_ca35b] Error 1
+CMakeFiles/cmTC_3d338.dir/build.make:97: recipe for target 'cmTC_3d338' failed
+make[1]: *** [cmTC_3d338] Error 1
 make[1]: Leaving directory '/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_ca35b/fast' failed
-make: *** [cmTC_ca35b/fast] Error 2
+Makefile:126: recipe for target 'cmTC_3d338/fast' failed
+make: *** [cmTC_3d338/fast] Error 2
 
 

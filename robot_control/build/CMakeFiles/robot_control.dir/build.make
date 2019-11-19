@@ -105,9 +105,33 @@ CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.provides: CMakeFiles/robot_
 CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.provides.build: CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o
 
 
+CMakeFiles/robot_control.dir/src/Localization.cpp.o: CMakeFiles/robot_control.dir/flags.make
+CMakeFiles/robot_control.dir/src/Localization.cpp.o: ../src/Localization.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/robot_control.dir/src/Localization.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/robot_control.dir/src/Localization.cpp.o -c /home/troelszink/Desktop/RCA5/robot_control/src/Localization.cpp
+
+CMakeFiles/robot_control.dir/src/Localization.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/robot_control.dir/src/Localization.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/troelszink/Desktop/RCA5/robot_control/src/Localization.cpp > CMakeFiles/robot_control.dir/src/Localization.cpp.i
+
+CMakeFiles/robot_control.dir/src/Localization.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/robot_control.dir/src/Localization.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/troelszink/Desktop/RCA5/robot_control/src/Localization.cpp -o CMakeFiles/robot_control.dir/src/Localization.cpp.s
+
+CMakeFiles/robot_control.dir/src/Localization.cpp.o.requires:
+
+.PHONY : CMakeFiles/robot_control.dir/src/Localization.cpp.o.requires
+
+CMakeFiles/robot_control.dir/src/Localization.cpp.o.provides: CMakeFiles/robot_control.dir/src/Localization.cpp.o.requires
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Localization.cpp.o.provides.build
+.PHONY : CMakeFiles/robot_control.dir/src/Localization.cpp.o.provides
+
+CMakeFiles/robot_control.dir/src/Localization.cpp.o.provides.build: CMakeFiles/robot_control.dir/src/Localization.cpp.o
+
+
 CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o: CMakeFiles/robot_control.dir/flags.make
 CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o: ../src/MarbleDetection.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o -c /home/troelszink/Desktop/RCA5/robot_control/src/MarbleDetection.cpp
 
 CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.i: cmake_force
@@ -131,7 +155,7 @@ CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o.provides.build: CMakeFile
 
 CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o: CMakeFiles/robot_control.dir/flags.make
 CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o: ../src/PathPlanning.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o -c /home/troelszink/Desktop/RCA5/robot_control/src/PathPlanning.cpp
 
 CMakeFiles/robot_control.dir/src/PathPlanning.cpp.i: cmake_force
@@ -155,7 +179,7 @@ CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o.provides.build: CMakeFiles/r
 
 CMakeFiles/robot_control.dir/src/main.cpp.o: CMakeFiles/robot_control.dir/flags.make
 CMakeFiles/robot_control.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/robot_control.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/robot_control.dir/src/main.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/robot_control.dir/src/main.cpp.o -c /home/troelszink/Desktop/RCA5/robot_control/src/main.cpp
 
 CMakeFiles/robot_control.dir/src/main.cpp.i: cmake_force
@@ -181,6 +205,7 @@ CMakeFiles/robot_control.dir/src/main.cpp.o.provides.build: CMakeFiles/robot_con
 robot_control_OBJECTS = \
 "CMakeFiles/robot_control.dir/src/Callback.cpp.o" \
 "CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o" \
+"CMakeFiles/robot_control.dir/src/Localization.cpp.o" \
 "CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o" \
 "CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o" \
 "CMakeFiles/robot_control.dir/src/main.cpp.o"
@@ -190,6 +215,7 @@ robot_control_EXTERNAL_OBJECTS =
 
 robot_control: CMakeFiles/robot_control.dir/src/Callback.cpp.o
 robot_control: CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o
+robot_control: CMakeFiles/robot_control.dir/src/Localization.cpp.o
 robot_control: CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o
 robot_control: CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o
 robot_control: CMakeFiles/robot_control.dir/src/main.cpp.o
@@ -347,7 +373,7 @@ robot_control: /usr/lib/x86_64-linux-gnu/libavcodec.so
 robot_control: /usr/lib/x86_64-linux-gnu/libavutil.so
 robot_control: /usr/lib/x86_64-linux-gnu/libavutil.so
 robot_control: CMakeFiles/robot_control.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable robot_control"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/troelszink/Desktop/RCA5/robot_control/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable robot_control"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/robot_control.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -357,6 +383,7 @@ CMakeFiles/robot_control.dir/build: robot_control
 
 CMakeFiles/robot_control.dir/requires: CMakeFiles/robot_control.dir/src/Callback.cpp.o.requires
 CMakeFiles/robot_control.dir/requires: CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.o.requires
+CMakeFiles/robot_control.dir/requires: CMakeFiles/robot_control.dir/src/Localization.cpp.o.requires
 CMakeFiles/robot_control.dir/requires: CMakeFiles/robot_control.dir/src/MarbleDetection.cpp.o.requires
 CMakeFiles/robot_control.dir/requires: CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o.requires
 CMakeFiles/robot_control.dir/requires: CMakeFiles/robot_control.dir/src/main.cpp.o.requires

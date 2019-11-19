@@ -177,6 +177,33 @@ src/Fuzzy_control.cpp.s:
 	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Fuzzy_control.cpp.s
 .PHONY : src/Fuzzy_control.cpp.s
 
+src/Localization.o: src/Localization.cpp.o
+
+.PHONY : src/Localization.o
+
+# target to build an object file
+src/Localization.cpp.o:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Localization.cpp.o
+.PHONY : src/Localization.cpp.o
+
+src/Localization.i: src/Localization.cpp.i
+
+.PHONY : src/Localization.i
+
+# target to preprocess a source file
+src/Localization.cpp.i:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Localization.cpp.i
+.PHONY : src/Localization.cpp.i
+
+src/Localization.s: src/Localization.cpp.s
+
+.PHONY : src/Localization.s
+
+# target to generate assembly for a file
+src/Localization.cpp.s:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/Localization.cpp.s
+.PHONY : src/Localization.cpp.s
+
 src/MarbleDetection.o: src/MarbleDetection.cpp.o
 
 .PHONY : src/MarbleDetection.o
@@ -273,6 +300,9 @@ help:
 	@echo "... src/Fuzzy_control.o"
 	@echo "... src/Fuzzy_control.i"
 	@echo "... src/Fuzzy_control.s"
+	@echo "... src/Localization.o"
+	@echo "... src/Localization.i"
+	@echo "... src/Localization.s"
 	@echo "... src/MarbleDetection.o"
 	@echo "... src/MarbleDetection.i"
 	@echo "... src/MarbleDetection.s"

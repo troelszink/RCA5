@@ -550,7 +550,7 @@ bool PathPlanning::isOuterWall(int index, std::vector<cellValue> cellVector)
         while (true)
         {
             countRight++;
-            if ((i + right) % 240 == 0) // upper neighbor
+            if ((i + right) % 240 == 0) // right neighbor
             {
                 return false;
             } 
@@ -565,7 +565,7 @@ bool PathPlanning::isOuterWall(int index, std::vector<cellValue> cellVector)
         while (true)
         {
             countDown++;
-            if (i + down >= cellVector.size()) // upper neighbor
+            if (i + down >= cellVector.size()) // down neighbor
             {
                 return false;
             } 
@@ -580,7 +580,7 @@ bool PathPlanning::isOuterWall(int index, std::vector<cellValue> cellVector)
         while (true)
         {
             countLeft++;
-            if ((i - left) % 240 == 239) // upper neighbor
+            if ((i - left) % 240 == 239) // left neighbor
             {
                 return false;
             } 

@@ -108,7 +108,8 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     for (int i = 0; i < nranges; i++) 
     {
         float angle = angle_min + i * angle_increment;
-        float range = std::min(float(msg->scan().ranges(i)), range_max);             
+        float range = std::min(float(msg->scan().ranges(i)), range_max);
+        std::cout << "iC: " << i << " Range: " << range << std::endl;
         //    double intensity = msg->scan().intensities(i);
         cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
                             200.5f - range_min * px_per_m * std::sin(angle));
