@@ -19,8 +19,9 @@ struct particle
 {
     int id;
     cv::Point2f coord;
-    double yaw;
-    double weight;
+    float yaw;
+    float weight;
+    std::vector<float> lidarData;
 };
 
 class Localization
@@ -30,15 +31,19 @@ public:
 
     Localization();
 
-    //void particleFilter();
-    //std::vector<particle> generateParticles(int);
-    std::vector<double> lidarDistance(cv::Point2f);
+    cv::Point2f localize(std::vector<float>);
+    std::vector<particle> generateParticles(int);
+    std::vector<float> lidarDistance(cv::Point2f, float);
+    std::vector<particle> updateWeigths(std::vector<particle>, std::vector<float>);
+    std::vector<particle> resample(std::vector<particle>);
+    void displayParticles(std::vector<particle>);
 
     ~Localization();
 
 private:
 
     int numberOfParticles;
+    Callback* callback;
 
 };
 

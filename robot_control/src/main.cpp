@@ -86,8 +86,10 @@ int main(int _argc, char **_argv)
     float angle_max = 2*M_PI;
 
     //loc.particleFilter();
-    cv::Point2f pt(60, 40);
-    std::vector<double> lidarVector = loc.lidarDistance(pt);
+    //cv::Point2f pt(60, 40);
+    //std::vector<double> lidarVector = loc.lidarDistance(pt);
+  
+    std::vector<particle> particleVector = loc.generateParticles(100);
 
     // Loop
     while (true) 
@@ -97,6 +99,9 @@ int main(int _argc, char **_argv)
       mutex.lock();
       int key = cv::waitKey(1);
       mutex.unlock();
+
+      loc.updateWeigths(particleVector, cb.getRangeVector());
+      //loc.localize(cb.getRangeVector());
 
       if (key == key_esc)
         break;

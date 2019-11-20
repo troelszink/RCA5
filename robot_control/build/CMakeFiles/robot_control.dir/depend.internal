@@ -1589,6 +1589,9 @@ CMakeFiles/robot_control.dir/src/PathPlanning.cpp.o
  /usr/include/x86_64-linux-gnu/sys/stat.h
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h
  /usr/include/x86_64-linux-gnu/sys/types.h
+CMakeFiles/robot_control.dir/src/QLearning.cpp.o
+ /home/troelszink/Desktop/RCA5/robot_control/src/QLearning.cpp
+ /home/troelszink/Desktop/RCA5/robot_control/src/QLearning.h
 CMakeFiles/robot_control.dir/src/main.cpp.o
  /home/troelszink/Desktop/RCA5/robot_control/src/Callback.h
  /home/troelszink/Desktop/RCA5/robot_control/src/Fuzzy_control.h

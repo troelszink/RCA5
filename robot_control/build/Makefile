@@ -258,6 +258,33 @@ src/PathPlanning.cpp.s:
 	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/PathPlanning.cpp.s
 .PHONY : src/PathPlanning.cpp.s
 
+src/QLearning.o: src/QLearning.cpp.o
+
+.PHONY : src/QLearning.o
+
+# target to build an object file
+src/QLearning.cpp.o:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/QLearning.cpp.o
+.PHONY : src/QLearning.cpp.o
+
+src/QLearning.i: src/QLearning.cpp.i
+
+.PHONY : src/QLearning.i
+
+# target to preprocess a source file
+src/QLearning.cpp.i:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/QLearning.cpp.i
+.PHONY : src/QLearning.cpp.i
+
+src/QLearning.s: src/QLearning.cpp.s
+
+.PHONY : src/QLearning.s
+
+# target to generate assembly for a file
+src/QLearning.cpp.s:
+	$(MAKE) -f CMakeFiles/robot_control.dir/build.make CMakeFiles/robot_control.dir/src/QLearning.cpp.s
+.PHONY : src/QLearning.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -309,6 +336,9 @@ help:
 	@echo "... src/PathPlanning.o"
 	@echo "... src/PathPlanning.i"
 	@echo "... src/PathPlanning.s"
+	@echo "... src/QLearning.o"
+	@echo "... src/QLearning.i"
+	@echo "... src/QLearning.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

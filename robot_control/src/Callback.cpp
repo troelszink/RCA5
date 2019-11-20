@@ -105,11 +105,14 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     float leftPassageVal = 0;
     float rightPassageVal = 0;
 
+    std::vector<float> rangeVec;
+
     for (int i = 0; i < nranges; i++) 
     {
         float angle = angle_min + i * angle_increment;
         float range = std::min(float(msg->scan().ranges(i)), range_max);
-        std::cout << "iC: " << i << " Range: " << range << std::endl;
+        rangeVec.push_back(range);
+        //std::cout << "iC: " << i << " Range: " << range << std::endl;
         //    double intensity = msg->scan().intensities(i);
         cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
                             200.5f - range_min * px_per_m * std::sin(angle));
@@ -173,6 +176,8 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
         
         // Angle: radianer, range: antal blokke (nok cm)
     }
+
+    rangeVector = rangeVec;
 
     if ( rightPassageVal > (15 * 2) ) // sensors times distance
     {
@@ -279,6 +284,11 @@ bool Callback::getFreeRightPassage()
 std::vector<std::vector<float>> Callback::getVector()
 {
     return position;
+}
+
+std::vector<float> Callback::getRangeVector()
+{
+    return rangeVector;
 }
 
 Callback::~Callback()

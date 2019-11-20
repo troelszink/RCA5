@@ -29,7 +29,7 @@ public:
         double roll, pitch, yaw;
     };
     
-    Callback(cv::Point2f, float);
+    Callback(cv::Point2f, float/*, std::vector<float>*/);
 
     void statCallback(ConstWorldStatisticsPtr &_msg);
     void poseCallback(ConstPosesStampedPtr &_msg);
@@ -46,6 +46,7 @@ public:
     bool getFreeLeftPassage();
     bool getFreeRightPassage();
     std::vector<std::vector<float>> getVector();
+    std::vector<float> getRangeVector();
 
     ~Callback();
     
@@ -60,6 +61,7 @@ protected:
     bool freeLeftPassage;
     bool freeRightPassage;
     std::vector<std::vector<float>> position;
+    std::vector<float> rangeVector;
 
     int countIterations = 0;
     float sum = 0;
