@@ -1,6 +1,5 @@
 #pragma once
 #include <opencv2/opencv.hpp>
-#include <opencv2/core.hpp>
 
 #define COLUMNS 120
 #define ROWS 80
