@@ -37,12 +37,12 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
         p.coord = cv::Point2f(x_rand, y_rand);
 
         float yaw_rand = (float) rand() / (float) RAND_MAX;
-        yaw_rand *= 2*M_PI;
+        yaw_rand *= 2*M_PI - M_PI;
         p.yaw = yaw_rand;
 
         p.weight = 1;
 
-        p.lidarData = lidarDistance(p.coord, p.yaw);
+        //p.lidarData = lidarDistance(p.coord, p.yaw);
 
         particleVector.push_back(p);
         //std::cout << "ID: " << p.id << " Coord: " << p.coord.x << "," << p.coord.y << "     Yaw: " << p.yaw << "    Weight: " << p.weight << std::endl;
@@ -123,12 +123,13 @@ std::vector<float> Localization::lidarDistance(cv::Point2f pixel, float yaw)
 // See Algorithm 17 in the book
 std::vector<particle> Localization::updateWeigths(std::vector<particle> particleVector, std::vector<float> rangeVector)
 {
-    int measurements = 100;
+   
+
+    int measurements = 1;
     float scaling = 1.41735;
 
-    //for (int i = 0; i < measurements; i++)
-    //{
-        displayParticles(particleVector);
+    for (int m = 0; m < measurements; m++)
+    {   
         std::cout << "Update Weights" << std::endl;
         //std::cout << "Size of rangeVector: " << rangeVector.size() << std::endl;
 
@@ -137,6 +138,12 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
 
         for (int i = 0; i < particleVector.size(); i++)
         {
+            particleVector[i].lidarData = lidarDistance(particleVector[i].coord, particleVector[i].yaw);
+            particleVector[i].coord.x += (float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+            particleVector[i].coord.y += (float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+            particleVector[i].yaw += (float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+            std::cout << (float) rand() / (float) RAND_MAX * 0.5 -0.25 << std::endl;
+
             float sum = 0;
 
             for (int j = 0; j < rangeVector.size(); j++)
@@ -153,6 +160,7 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
             sum /= rangeVector.size();
             particleVector[i].weight = sum;
             sumOfWeigths += sum;
+
         }
 
         // Normalizing
@@ -166,7 +174,8 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         // Resampling
         particleVector = resample(particleVector);
 
-    //}
+        displayParticles(particleVector);
+    }
 
     //std::cout << "P(x): " << p << std::endl;
 
@@ -194,7 +203,7 @@ std::vector<particle> Localization::resample(std::vector<particle> particleVecto
         {
             //i = i % N + 1;
             i++;
-            if ( i >= 100)
+            if ( i >= particleVector.size())
             {
                 std::cout << "I too high" << std::endl;  
                 i = 0;
@@ -214,24 +223,25 @@ void Localization::displayParticles(std::vector<particle> particleVector)
 {
     cv::Mat image;
     image = cv::imread("../testImages/BigWorldV2.png", cv::IMREAD_COLOR);
+    int resize = 5;
+    cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
 
     for (int i = 0; i < particleVector.size(); i++)
     {
         cv::Point2f coord = particleVector[i].coord;
 
-        image.at<cv::Vec3b>(coord.y, coord.x)[0] = 0;
-        image.at<cv::Vec3b>(coord.y, coord.x)[1] = 0;
-        image.at<cv::Vec3b>(coord.y, coord.x)[2] = 255;
+        image.at<cv::Vec3b>(coord.y * resize, coord.x * resize)[0] = 0;
+        image.at<cv::Vec3b>(coord.y * resize, coord.x * resize)[1] = 0;
+        image.at<cv::Vec3b>(coord.y * resize, coord.x * resize)[2] = 255;
     }
 
-    int resize = 10;
+    resize = 2;
     cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
-
     //std::cout << particleVector[0].coord.x << "," << particleVector[0].coord.y << std::endl;
 
     cv::namedWindow("Particles", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Particles", image);
-    //cv::waitKey();
+    cv::waitKey(10);
 }
 
 Localization::~Localization()

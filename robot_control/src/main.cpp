@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include <stdlib.h>
-#include <time.h>
 
 // Classes
 
@@ -69,10 +68,6 @@ int main(int _argc, char **_argv)
     worldPublisher->WaitForConnection();
     worldPublisher->Publish(controlMessage);
 
-    const int key_left = 81;
-    const int key_up = 82;
-    const int key_down = 84;
-    const int key_right = 83;
     const int key_esc = 27;
 
     float speed = 0.0;
@@ -85,11 +80,41 @@ int main(int _argc, char **_argv)
     float angle_min = 0;
     float angle_max = 2*M_PI;
 
-    //loc.particleFilter();
-    //cv::Point2f pt(60, 40);
-    //std::vector<double> lidarVector = loc.lidarDistance(pt);
-  
-    std::vector<particle> particleVector = loc.generateParticles(100);
+
+    //getValues("~/pioneer2dx/camera/link/camera/image");
+    //getValues("~/pioneer2dx/camera/link/camera/image);
+
+  // gazebo::transport::SubscriberPtr valueSubscriber =
+    //   node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", getValues);
+
+      // FUZZY LOGIC
+
+      Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V3.fll");
+
+      std::string status;
+      
+      if (not engine->isReady(&status))
+      {
+          throw Exception("[engine error] engine is not ready:n" + status, FL_AT);
+      }
+
+      InputVariable* DirectionToObstacle = engine->getInputVariable("DirectionToObstacle");
+      InputVariable* DistanceToObstacle = engine->getInputVariable("DistanceToObstacle");
+      InputVariable* CornerType = engine->getInputVariable("CornerType");
+      InputVariable* DirectionToGoal = engine->getInputVariable("DirectionToGoal");
+      InputVariable* FreeLeftPassage = engine->getInputVariable("FreeLeftPassage");
+      InputVariable* FreeRightPassage = engine->getInputVariable("FreeRightPassage");
+      OutputVariable* Steer = engine->getOutputVariable("Steer");
+      OutputVariable* Speed = engine->getOutputVariable("Speed");
+
+      // Localization
+      std::vector<particle> particleVector = loc.generateParticles(200);
+      std::vector<cv::Point2f> pathVector;
+      for (int i = 0; i < 30; i++)
+      {
+          pathVector.push_back(cv::Point2f(i, 0));
+      }
+      int goalCounter = 0;
 
     // Loop
     while (true) 
@@ -100,25 +125,59 @@ int main(int _argc, char **_argv)
       int key = cv::waitKey(1);
       mutex.unlock();
 
-      loc.updateWeigths(particleVector, cb.getRangeVector());
-      //loc.localize(cb.getRangeVector());
+      // Setting input values
+      DistanceToObstacle->setValue(fc.normalize(cb.getShortestRange(), range_min, range_max));
+      DirectionToObstacle->setValue(fc.normalize(cb.getShortestAngle(), lidarangle_min, lidarangle_max));
+      CornerType->setValue(cb.getCornerType());
+      DirectionToGoal->setValue(fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max));
+      FreeLeftPassage->setValue(cb.getFreeLeftPassage());
+      FreeRightPassage->setValue(cb.getFreeRightPassage());
+
+      engine->process();
+
+      // Setting output values
+      dir = (Steer->getValue()) * 2;
+      speed = (Speed->getValue()) / 5;
+
+      // If a corner is hit
+      if (DistanceToObstacle->getValue() == -1)
+      {
+          speed = -(Speed->getValue()) * 100;
+          //dir = (Steer->getValue()) * 100;
+      }
+
+      // Checking the end goal for path planning
+      if (abs(cb.getCurPosition().x - pathVector[goalCounter].x) < 0.1 && abs(cb.getCurPosition().y - pathVector[goalCounter].y) < 0.1)
+      {
+          goalCounter++;
+          speed = 0;
+          dir = 0;
+
+          // Generate a pose
+          ignition::math::Pose3d pose(double(speed), 0, 0, 0, 0, double(dir));
+
+          // Convert to a pose message
+          gazebo::msgs::Pose msg;
+          gazebo::msgs::Set(&msg, pose);
+          movementPublisher->Publish(msg);
+
+          float deltaX = pathVector[goalCounter].x - pathVector[goalCounter - 1].x;
+          float deltaY = pathVector[goalCounter].y - pathVector[goalCounter - 1].y;
+
+          for (int i = 0; i < particleVector.size(); i++)
+          {
+              particleVector[i].coord.x += deltaX;
+              particleVector[i].coord.y += deltaY;
+          }
+
+          particleVector = loc.updateWeigths(particleVector, cb.getRangeVector());
+          fc.setGoal(pathVector[goalCounter]);
+          std::cout << "You reached the goal!" << std::endl;
+          //break;
+      }
 
       if (key == key_esc)
         break;
-
-      if ((key == key_up) && (speed <= 1.2f))
-        speed += 0.05;
-      else if ((key == key_down) && (speed >= -1.2f))
-        speed -= 0.05;
-      else if ((key == key_right) && (dir <= 0.4f))
-        dir += 0.1;
-      else if ((key == key_left) && (dir >= -0.4f))
-        dir -= 0.1;
-      else {
-        // slow down
-        //      speed *= 0.1;
-        //      dir *= 0.1;
-      }
 
       // Generate a pose
       ignition::math::Pose3d pose(double(speed), 0, 0, 0, 0, double(dir));
