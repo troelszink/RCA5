@@ -12,7 +12,14 @@
 
 #include "Callback.h"
 
-struct cellValue
+struct cellValueWF // Wavefront
+{
+    cv::Point2f p1;
+    cv::Point2f p2;
+    int value = -1;
+};
+
+struct cellValueBF // Brushfire
 {
     cv::Point2f p1;
     cv::Point2f p2;
@@ -27,12 +34,12 @@ public:
     PathPlanning();
 
     void mapIntoCells();
-    std::vector<cellValue> wavefront();
-    cv::Point2f robotControl(std::vector<cellValue>, cv::Point2f);
+    std::vector<cellValueWF> wavefront();
+    cv::Point2f robotControl(std::vector<cellValueWF>, cv::Point2f);
     cv::Point2f getGoal();
-    std::vector<cellValue> brushfire();
-    bool isOuterWall(int, std::vector<cellValue>);
-    bool isValidRoom(int, std::vector<cellValue>);
+    std::vector<cellValueBF> brushfire();
+    bool removeCorners(int, std::vector<cellValueBF>);
+    bool isValidRoom(int, std::vector<cellValueBF>);
 
     ~PathPlanning();
 

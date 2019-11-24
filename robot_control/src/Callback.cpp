@@ -178,7 +178,7 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     }
 
     rangeVector = rangeVec;
-
+    
     if ( rightPassageVal > (15 * 2) ) // sensors times distance
     {
         freeRightPassage = true;

@@ -36,14 +36,15 @@ cv::Mat MarbleDetection::preprocessing(cv::Mat im)
 
     // Reduce the noise
     //cv::GaussianBlur(imGray, imGray, cv::Size(15, 15), 0, 0, cv::BORDER_DEFAULT);
-    cv::fastNlMeansDenoising(imGray, imGray, 10, 7, 11);
+    cv::Mat imDenoising;
+    cv::fastNlMeansDenoising(imGray, imDenoising, 10, 7, 11);
     //cv::Mat imBF;
     //cv::bilateralFilter(imGray, imBF, 10, 50, 50, cv::BORDER_DEFAULT);
     //cv::medianBlur(imGray, imGray, 15);
     //cv::Mat imCanny;
     //cv::Canny(imGray, imCanny, 60, 180);
 
-    return imGray;
+    return imDenoising;
 }
 
 cv::Mat MarbleDetection::binaryThreshold(cv::Mat im)
@@ -85,10 +86,10 @@ cv::Mat MarbleDetection::edgeDetection(cv::Mat im)
     /// Total Gradient (approximate)
     cv::addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad );
 
-    //cv::Mat gradL, gradU;
-    //cv::threshold(grad, grad, 30, 255, CV_THRESH_BINARY);
-    //cv::threshold(grad, gradU, 80, 255, CV_THRESH_BINARY_INV);
-    //cv::bitwise_and(gradL, gradU, grad);
+    /*cv::Mat gradL, gradU;
+    cv::threshold(grad, gradL, 30, 255, CV_THRESH_BINARY);
+    cv::threshold(grad, gradU, 80, 255, CV_THRESH_BINARY_INV);
+    cv::bitwise_and(gradL, gradU, grad);*/
 
     return grad;
 }
@@ -106,6 +107,7 @@ cv::Mat MarbleDetection::houghCircles(cv::Mat im)
     static cv::Point current(-1, -1);
     int width = 320;
     int height = 240;
+    int iterations = 10;
 
     std::vector<cv::Vec3f> circles;
 
@@ -114,8 +116,8 @@ cv::Mat MarbleDetection::houghCircles(cv::Mat im)
     cv::HoughCircles(imDet, circles, CV_HOUGH_GRADIENT,
                  1,   // accumulator resolution (size of the image / 2)
                  3000,  // minimum distance between two circles
-                 canny_value, // Canny high threshold // 350
-                 30, // minimum number of votes // 10
+                 canny_value, // Canny high threshold
+                 30, // minimum number of votes
                  1, 200); // min and max radius
 
     /// Draw the circles detected
@@ -134,11 +136,11 @@ cv::Mat MarbleDetection::houghCircles(cv::Mat im)
             sumX += center.x;
             sumY += center.y;
             
-            if (countDiameter == 5)
+            if (countDiameter == iterations)
             {
-                diameter = sumDiameter / 5;
-                center.x = sumX / 5;
-                center.y = sumY / 5;
+                diameter = sumDiameter / iterations;
+                center.x = sumX / iterations;
+                center.y = sumY / iterations;
 
                 if (current != center)
                     {
@@ -209,13 +211,88 @@ void MarbleDetection::marbleLocation(float marbleWidth, float centerX, float cen
         //std::cout << "3rd and 4th" << std::endl;
     }
 
-    /*std::cout << "DistanceToMarble: " << distanceToMarble << std::endl;
+    std::cout << "DistanceToMarble: " << distanceToMarble << std::endl;
     std::cout << "The location of the marble is: (" << x2 << "," << y2 << ")" << std::endl;
-    std::cout << callback->getCurPosition().x << "," << callback->getCurPosition().y << std::endl;
+    std::cout << "The location of the robot: " << callback->getCurPosition().x << "," << callback->getCurPosition().y << std::endl;
 
     //std::cout << "Distance: " << distanceToMarble << std::endl;
-    std::cout << "marbleAngle : " << marbleAngle*180/M_PI << std::endl;
-    std::cout << "Yaw : " << callback->getYaw()*180/M_PI << std::endl;*/
+    //std::cout << "marbleAngle : " << marbleAngle*180/M_PI << std::endl;
+    //std::cout << "Yaw : " << callback->getYaw()*180/M_PI << std::endl;
+}
+
+void MarbleDetection::drawTest()
+{
+    cv::Mat image;
+    image = cv::imread("../testImages/BigWorldV2.png", cv::IMREAD_COLOR);
+    float scaling = 1.41735;
+    cv::Point2f center = cv::Point2f(60, 40);
+
+    // Draw the scenarios - Positions found in Gazebo and with the camera
+
+    // Scenario 1
+    float S1_x = 21.5 * scaling + center.x;
+    float S1M_y = -(0.25 * scaling) + center.y;
+    float S1R_y = -(2.22 * scaling) + center.y;
+    image.at<cv::Vec3b>(S1M_y, S1_x)[0] = 0;
+    image.at<cv::Vec3b>(S1M_y, S1_x)[1] = 0;
+    image.at<cv::Vec3b>(S1M_y, S1_x)[2] = 255; // Red for marble
+    image.at<cv::Vec3b>(S1R_y, S1_x)[0] = 255; // Blue for robot
+    image.at<cv::Vec3b>(S1R_y, S1_x)[1] = 0;
+    image.at<cv::Vec3b>(S1R_y, S1_x)[2] = 0;
+    // Scenario 2
+    float S2_x = 21.5 * scaling + center.x;
+    float S2R_y = -(4.51 * scaling) + center.y;
+    image.at<cv::Vec3b>(S2R_y, S2_x)[0] = 255;
+    image.at<cv::Vec3b>(S2R_y, S2_x)[1] = 0;
+    image.at<cv::Vec3b>(S2R_y, S2_x)[2] = 0;
+    // Scenario 3
+    float S3_x = 21.5 * scaling + center.x;
+    float S3R_y = -(11.13 * scaling) + center.y;
+    image.at<cv::Vec3b>(S3R_y, S3_x)[0] = 255;
+    image.at<cv::Vec3b>(S3R_y, S3_x)[1] = 0;
+    image.at<cv::Vec3b>(S3R_y, S3_x)[2] = 0;
+    // Scenario 4
+    float S4R_x = -(12.57 * scaling) + center.x;
+    float S4R_y = -(11.0 * scaling) + center.y;
+    float S4M1_x = -12.57 * scaling + center.x;
+    float S4M1_y = -(18.5 * scaling) + center.y;
+    float S4M2_x = -(9.07 * scaling) + center.x;
+    float S4M2_y = -(18.5 * scaling) + center.y;
+    float S4M3_x = -(9.07 * scaling) + center.x;
+    float S4M3_y = -(15.0 * scaling) + center.y;
+    image.at<cv::Vec3b>(S4M1_y, S4M1_x)[0] = 0;
+    image.at<cv::Vec3b>(S4M1_y, S4M1_x)[1] = 0;
+    image.at<cv::Vec3b>(S4M1_y, S4M1_x)[2] = 255;
+    image.at<cv::Vec3b>(S4M2_y, S4M2_x)[0] = 0;
+    image.at<cv::Vec3b>(S4M2_y, S4M2_x)[1] = 0;
+    image.at<cv::Vec3b>(S4M2_y, S4M2_x)[2] = 255;
+    image.at<cv::Vec3b>(S4M3_y, S4M3_x)[0] = 0;
+    image.at<cv::Vec3b>(S4M3_y, S4M3_x)[1] = 0;
+    image.at<cv::Vec3b>(S4M3_y, S4M3_x)[2] = 255;
+    image.at<cv::Vec3b>(S4R_y, S4R_x)[0] = 255;
+    image.at<cv::Vec3b>(S4R_y, S4R_x)[1] = 0;
+    image.at<cv::Vec3b>(S4R_y, S4R_x)[2] = 0;
+    // Scenario 5
+    float S5_x = 4.44 * scaling + center.x;
+    float S5M_y = -(4.35 * scaling) + center.y;
+    float S5R_y = -(2.43 * scaling) + center.y;
+    image.at<cv::Vec3b>(S5M_y, S5_x)[0] = 0;
+    image.at<cv::Vec3b>(S5M_y, S5_x)[1] = 0;
+    image.at<cv::Vec3b>(S5M_y, S5_x)[2] = 255;
+    image.at<cv::Vec3b>(S5R_y, S5_x)[0] = 255;
+    image.at<cv::Vec3b>(S5R_y, S5_x)[1] = 0;
+    image.at<cv::Vec3b>(S5R_y, S5_x)[2] = 0;
+
+    // Resize the image
+    float resize = 10;
+    cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
+
+    cv::imwrite( "../testImages/BigWorldV2-MarbleDetection.png", image );
+
+    cv::namedWindow("Marble Detection", CV_WINDOW_AUTOSIZE);
+    cv::imshow("Marble Detection", image);
+
+    cv::waitKey();
 }
 
 MarbleDetection::~MarbleDetection()

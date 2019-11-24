@@ -34,7 +34,7 @@ void PathPlanning::mapIntoCells()
 	}
 }
 
-std::vector<cellValue> PathPlanning::wavefront()
+std::vector<cellValueWF> PathPlanning::wavefront()
 {
     cv::Mat image;
     image = cv::imread("../testImages/SmallWorldV2.png", cv::IMREAD_COLOR);
@@ -49,7 +49,7 @@ std::vector<cellValue> PathPlanning::wavefront()
 	std::vector<cv::Rect> mCells;
 
     //cv::Mat cells;
-    std::vector<cellValue> cellVector;
+    std::vector<cellValueWF> cellVector;
     int count = 0;
     bool check = false;
     int gridCnt = 0;
@@ -60,7 +60,7 @@ std::vector<cellValue> PathPlanning::wavefront()
 		{
             gridCnt++;
 
-            struct cellValue c;
+            struct cellValueWF c;
             c.p1 = cv::Point2f(x, y);
             c.p2 = cv::Point2f(x + GRID_SIZE, y + GRID_SIZE);
 
@@ -122,7 +122,7 @@ std::vector<cellValue> PathPlanning::wavefront()
     {
         std::cout << "Not a valid goal." << std::endl;
     }
-    std::cout << xPixel/0.5 << " " << yPixel/0.5 << " " << cellIndex << std::endl;
+    //std::cout << xPixel/0.5 << " " << yPixel/0.5 << " " << cellIndex << std::endl;
 
     int cellsFilled = 0;
     int i = cellIndex - 1; // Starting to the left of the goal position
@@ -235,7 +235,7 @@ std::vector<cellValue> PathPlanning::wavefront()
     return cellVector;
 }
 
-cv::Point2f PathPlanning::robotControl(std::vector<cellValue> cellVector, cv::Point2f currentPos)
+cv::Point2f PathPlanning::robotControl(std::vector<cellValueWF> cellVector, cv::Point2f currentPos)
 {
     cv::Point2f wayPoint;
 
@@ -310,7 +310,7 @@ cv::Point2f PathPlanning::getGoal()
 }
 
 
-std::vector<cellValue> PathPlanning::brushfire()
+std::vector<cellValueBF> PathPlanning::brushfire()
 {
     cv::Mat image;
     image = cv::imread("../testImages/BigWorldV2.png", cv::IMREAD_COLOR);
@@ -324,7 +324,7 @@ std::vector<cellValue> PathPlanning::brushfire()
     std::cout << "Width: " << width << " Height: " << height << std::endl;
 	std::vector<cv::Rect> mCells;
 
-    std::vector<cellValue> cellVector;
+    std::vector<cellValueBF> cellVector;
     int count = 0;
     bool check = false;
     int gridCnt = 0;
@@ -335,7 +335,7 @@ std::vector<cellValue> PathPlanning::brushfire()
 		{
             gridCnt++;
 
-            struct cellValue c;
+            struct cellValueBF c;
             c.p1 = cv::Point2f(x, y);
             c.p2 = cv::Point2f(x + GRID_SIZE, y + GRID_SIZE);
 
@@ -430,7 +430,7 @@ std::vector<cellValue> PathPlanning::brushfire()
         }
     }
 
-    std::vector<cellValue> maxCell;
+    std::vector<cellValueBF> maxCell;
 
     for (int i = 0; i < cellVector.size(); i++)
     {
@@ -467,13 +467,44 @@ std::vector<cellValue> PathPlanning::brushfire()
             }
         }
 
-        if (isOuterWall(i, cellVector) && isValidRoom(i, cellVector))
+        if (removeCorners(i, cellVector) && isValidRoom(i, cellVector))
         {
             maxCell.push_back(cellVector[i]);
+
+            for (float f = cellVector[i].p1.x; f < cellVector[i].p2.x; f++)
+            {
+                for (float s = cellVector[i].p1.y; s < cellVector[i].p2.y; s++)
+                {
+                    image.at<cv::Vec3b>(s, f)[0] = 255;
+                    image.at<cv::Vec3b>(s, f)[1] = 0;
+                    image.at<cv::Vec3b>(s, f)[2] = 0;
+                }
+            }
         }
+        else if (isValidRoom(i, cellVector))
+        {
+            for (float f = cellVector[i].p1.x; f < cellVector[i].p2.x; f++)
+            {
+                for (float s = cellVector[i].p1.y; s < cellVector[i].p2.y; s++)
+                {
+                    image.at<cv::Vec3b>(s, f)[0] = 0;
+                    image.at<cv::Vec3b>(s, f)[1] = 0;
+                    image.at<cv::Vec3b>(s, f)[2] = 255;
+                }
+            }
+        }
+        
     }
 
-    bool check2 = false;
+    resize = 10;
+    cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
+    cv::namedWindow("Brushfire", CV_WINDOW_AUTOSIZE);
+    cv::imshow("Brushfire", image);
+    cv::imwrite( "../testImages/BigWorldV2-BF1.png", image );
+    cv::waitKey();
+
+    // Couting the Brushfire and GVD in the terminal
+    /*bool check2 = false;
 
     for (int i = 0; i < cellVector.size(); i++)
     {
@@ -499,6 +530,7 @@ std::vector<cellValue> PathPlanning::brushfire()
         }
         else
         {
+            // Print red to indicate where the GVD is
             std::cout << "\033[1;31m" << cellVector[i].value << "\033[0m";
 
             if (cellVector[i].value < 10)
@@ -511,14 +543,13 @@ std::vector<cellValue> PathPlanning::brushfire()
             }
 
             check2 = false;         
-        }
-        
-    }
+        }  
+    }*/
     
     return cellVector;
 }
 
-bool PathPlanning::isOuterWall(int index, std::vector<cellValue> cellVector)
+bool PathPlanning::removeCorners(int index, std::vector<cellValueBF> cellVector)
 {
     int up = 240;
     int right = 1;
@@ -594,7 +625,7 @@ bool PathPlanning::isOuterWall(int index, std::vector<cellValue> cellVector)
         break;
     }
 
-    // Remove these four counters, if we want to cout the GVD from the corners as well
+    // Removing the GVD in the corners, so we just have the points in the middle of each room
     if (countLeft == countRight || countUp == countDown)
     {
         return true;
@@ -605,27 +636,100 @@ bool PathPlanning::isOuterWall(int index, std::vector<cellValue> cellVector)
     }
 }
 
-bool PathPlanning::isValidRoom(int i, std::vector<cellValue> cellVector)
+bool PathPlanning::isValidRoom(int index, std::vector<cellValueBF> cellVector)
 {
     int up = 240;
     int right = 1;
     int down = 240;
     int left = 1;
 
-    if ((i + right) % 240 != 0 && (i - left) % 240 != 239)
+    // Checks if the current cell's left and right neighbours are both wall -> Then it is not a valid room
+    if ((index + right) % 240 != 0 && (index - left) % 240 != 239)
     {
-        if (cellVector[i + right].value == 1 && cellVector[i - left].value == 1)
+        if (cellVector[index + right].value == 1 && cellVector[index - left].value == 1)
         {
             return false;
         }
     }
 
-    if (i - up >= 0 && i + down < cellVector.size())
+    // Checks if the current cell's up and down neighbours are both wall -> Then it is not a valid room
+    if (index - up >= 0 && index + down < cellVector.size())
     {
-        if (cellVector[i - up].value == 1 && cellVector[i + down].value == 1)
+        if (cellVector[index - up].value == 1 && cellVector[index + down].value == 1)
         {
             return false;
         }
+    }
+
+    // Checks if there is a outer wall
+    int i = index;
+    int countUp = 0;
+    int countRight = 0;
+    int countDown = 0;
+    int countLeft = 0;
+
+    while(true)
+    {
+        while (true)
+        {
+            countUp++;
+            if (i - up < 0) // upper neighbor
+            {
+                return false;
+            } 
+            if (cellVector[i - up].value == 1)
+            {
+                break;
+            }
+            i = i - up;
+        }
+
+        i = index;
+        while (true)
+        {
+            countRight++;
+            if ((i + right) % 240 == 0) // right neighbor
+            {
+                return false;
+            } 
+            if (cellVector[i + right].value == 1)
+            {
+                break;
+            }
+            i = i + right;
+        }
+
+        i = index;
+        while (true)
+        {
+            countDown++;
+            if (i + down >= cellVector.size()) // down neighbor
+            {
+                return false;
+            } 
+            if (cellVector[i + down].value == 1)
+            {
+                break;
+            }
+            i = i + down;
+        }
+
+        i = index;
+        while (true)
+        {
+            countLeft++;
+            if ((i - left) % 240 == 239) // left neighbor
+            {
+                return false;
+            } 
+            if (cellVector[i - left].value == 1)
+            {
+                break;
+            }
+            i = i - left;
+        }
+
+        break;
     }
 
     return true;

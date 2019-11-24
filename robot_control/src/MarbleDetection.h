@@ -28,6 +28,7 @@ public:
 
     void addObject(Callback&);
     void marbleLocation(float, float, float);
+    void drawTest();
 
     ~MarbleDetection();
 

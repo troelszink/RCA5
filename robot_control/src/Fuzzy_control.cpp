@@ -41,19 +41,19 @@ float Fuzzy_control::angleToGoal(cv::Point2f curPosition, float curYaw)
 void Fuzzy_control::drawPathSW(std::vector<std::vector<float>> position)
 {
     cv::Mat image;
-    image = cv::imread("../testImages/SmallWorldV2-2.png", cv::IMREAD_COLOR);
+    image = cv::imread("../testImages/SmallWorldV2.png", cv::IMREAD_COLOR);
 
     // Only first time
-    /*float resize = 30;
+    float resize = 30;
     cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
 
     cv::Point2f center = cv::Point2f(resize * 10, resize * 7.5);
-    float scaling = resize * 1.41735;*/
+    float scaling = resize * 1.41735;
 
-    float resize = 30;
+    /*float resize = 30;
 
     cv::Point2f center = cv::Point2f(resize * 10, resize * 7.5);
-    float scaling = resize * 1.41735;
+    float scaling = resize * 1.41735;*/
 
     for (int i = 0; i < position.size(); i++)
     {
@@ -64,7 +64,7 @@ void Fuzzy_control::drawPathSW(std::vector<std::vector<float>> position)
         cv::circle(image, cv::Point(x,y), 2, cv::Scalar(255, 0, 0), 0, 1, 0);
     }
 
-    cv::imwrite( "../testImages/SmallWorldV2-3.png", image );
+    cv::imwrite( "../testImages/SmallWorldV2-WF1.png", image );
 
     cv::namedWindow("Path", CV_WINDOW_AUTOSIZE);
     cv::imshow("Path", image);
