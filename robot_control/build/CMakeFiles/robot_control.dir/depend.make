@@ -1594,7 +1594,9 @@ CMakeFiles/robot_control.dir/src/QLearning.cpp.o: ../src/QLearning.h
 
 CMakeFiles/robot_control.dir/src/main.cpp.o: ../src/Callback.h
 CMakeFiles/robot_control.dir/src/main.cpp.o: ../src/Fuzzy_control.h
+CMakeFiles/robot_control.dir/src/main.cpp.o: ../src/Localization.h
 CMakeFiles/robot_control.dir/src/main.cpp.o: ../src/MarbleDetection.h
+CMakeFiles/robot_control.dir/src/main.cpp.o: ../src/PathPlanning.h
 CMakeFiles/robot_control.dir/src/main.cpp.o: ../src/main.cpp
 CMakeFiles/robot_control.dir/src/main.cpp.o: /usr/include/gazebo-10/gazebo/common/Animation.hh
 CMakeFiles/robot_control.dir/src/main.cpp.o: /usr/include/gazebo-10/gazebo/common/Assert.hh

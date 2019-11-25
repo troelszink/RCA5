@@ -22,14 +22,25 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
 
     std::vector<particle> particleVector;
 
-    // Start at 0. Standard deviation equal to 1
+    /*// Start at 0. Standard deviation equal to 1
     std::normal_distribution<float> normal_x(0, 1);
     std::normal_distribution<float> normal_y(0, 1);
-    std::normal_distribution<float> normal_yaw(0, 1);
+    std::normal_distribution<float> normal_yaw(0, 1);*/
 
-    for (int i = 0; i < numberOfParticles; i++)
+    // We set a particle's position to be equal to the robots initial position.
+    particle p;
+    p.id = 0;
+    float x = 0;
+    float y = 0;
+    p.coord = cv::Point2f(x, y);
+    p.yaw = 0;
+    p.weight = 1;
+    particleVector.push_back(p);
+
+    // Generates the rest of the particles
+    for (int i = 1; i < numberOfParticles; i++)
     {
-        particle p;
+        //particle p;
         p.id = i;
 
 		float x_rand = rand() % 120 + 1;
@@ -67,7 +78,7 @@ std::vector<float> Localization::lidarDistance(cv::Point2f pixel, float yaw)
 
     std::vector<float> lidarVector;
 
-    for (int i = 0; i < nranges; i++)
+    for (int i = 0; i < nranges; i+=10) // Changed from i++ to i+=10
     {
         float x = pixel.x;
         float y = pixel.y;
@@ -123,8 +134,6 @@ std::vector<float> Localization::lidarDistance(cv::Point2f pixel, float yaw)
 // See Algorithm 17 in the book
 std::vector<particle> Localization::updateWeigths(std::vector<particle> particleVector, std::vector<float> rangeVector)
 {
-   
-
     int measurements = 1;
     float scaling = 1.41735;
 
@@ -142,7 +151,7 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
             particleVector[i].coord.x += (float) rand() / (float) RAND_MAX * 0.5 - 0.25;
             particleVector[i].coord.y += (float) rand() / (float) RAND_MAX * 0.5 - 0.25;
             particleVector[i].yaw += (float) rand() / (float) RAND_MAX * 0.5 - 0.25;
-            std::cout << (float) rand() / (float) RAND_MAX * 0.5 -0.25 << std::endl;
+            //std::cout << (float) rand() / (float) RAND_MAX * 0.5 -0.25 << std::endl;
 
             float sum = 0;
 
@@ -239,6 +248,7 @@ void Localization::displayParticles(std::vector<particle> particleVector)
     cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
     //std::cout << particleVector[0].coord.x << "," << particleVector[0].coord.y << std::endl;
 
+    cv::imwrite("../testImages/BigWorldV2-Localization.png", image );
     cv::namedWindow("Particles", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Particles", image);
     cv::waitKey(10);

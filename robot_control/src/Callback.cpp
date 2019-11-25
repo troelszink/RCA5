@@ -107,7 +107,7 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
 
     std::vector<float> rangeVec;
 
-    for (int i = 0; i < nranges; i++) 
+    for (int i = 0; i < nranges; i+=sensorIncrement) // Changed from i++ to i+=10
     {
         float angle = angle_min + i * angle_increment;
         float range = std::min(float(msg->scan().ranges(i)), range_max);
@@ -289,6 +289,11 @@ std::vector<std::vector<float>> Callback::getVector()
 std::vector<float> Callback::getRangeVector()
 {
     return rangeVector;
+}
+
+void Callback::setSensorIncrement(int _sensorIncrement)
+{
+    sensorIncrement = _sensorIncrement;
 }
 
 Callback::~Callback()

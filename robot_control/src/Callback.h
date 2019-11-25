@@ -47,6 +47,7 @@ public:
     bool getFreeRightPassage();
     std::vector<std::vector<float>> getVector();
     std::vector<float> getRangeVector();
+    void setSensorIncrement(int);
 
     ~Callback();
     
@@ -62,6 +63,7 @@ protected:
     bool freeRightPassage;
     std::vector<std::vector<float>> position;
     std::vector<float> rangeVector;
+    int sensorIncrement = 1;
 
     int countIterations = 0;
     float sum = 0;
