@@ -28,23 +28,26 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
     std::normal_distribution<float> normal_yaw(0, 1);*/
 
     // We set a particle's position to be equal to the robots initial position.
-    particle p;
+    /*particle p;
     p.id = 0;
     float x = 0;
     float y = 0;
     p.coord = cv::Point2f(x, y);
     p.yaw = 0;
     p.weight = 1;
-    particleVector.push_back(p);
+    particleVector.push_back(p);*/
 
+    particle p;
     // Generates the rest of the particles
-    for (int i = 1; i < numberOfParticles; i++)
+    for (int i = 0; i < numberOfParticles; i++)
     {
-        //particle p;
         p.id = i;
 
-		float x_rand = rand() % 120 + 1;
-        float y_rand = rand() % 80 + 1;
+		//float x_rand = rand() % 120 + 1;
+        //float y_rand = rand() % 80 + 1;
+        // The global center of our environment
+        float x_rand = 60;
+        float y_rand = 40;
         p.coord = cv::Point2f(x_rand, y_rand);
 
         float yaw_rand = (float) rand() / (float) RAND_MAX;
@@ -145,12 +148,18 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         float sigma = 1;
         float sumOfWeigths = 0;
 
+        // Add noise according to a uniform distribution
+        //std::vector<float> noise = uniformNoise(particleVector);
+        std::default_random_engine generator;
+        std::uniform_real_distribution<double> distribution(-0.5, 0.5);
+        // REMEMBER TO ADD NOISE IN THE DIRECTION THE PARTICLES ARE FACING
+
         for (int i = 0; i < particleVector.size(); i++)
         {
             particleVector[i].lidarData = lidarDistance(particleVector[i].coord, particleVector[i].yaw);
-            particleVector[i].coord.x += (float) rand() / (float) RAND_MAX * 0.5 - 0.25;
-            particleVector[i].coord.y += (float) rand() / (float) RAND_MAX * 0.5 - 0.25;
-            particleVector[i].yaw += (float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+            particleVector[i].coord.x += distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+            particleVector[i].coord.y += distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+            particleVector[i].yaw += distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
             //std::cout << (float) rand() / (float) RAND_MAX * 0.5 -0.25 << std::endl;
 
             float sum = 0;
@@ -196,7 +205,6 @@ std::vector<particle> Localization::resample(std::vector<particle> particleVecto
 {
     std::cout<<"Resample" << std::endl;
 
-
     std::vector<particle> newParticleVector;
 
     float N = particleVector.size();
@@ -212,9 +220,9 @@ std::vector<particle> Localization::resample(std::vector<particle> particleVecto
         {
             //i = i % N + 1;
             i++;
-            if ( i >= particleVector.size())
+            if (i >= particleVector.size())
             {
-                std::cout << "I too high" << std::endl;  
+                //std::cout << "I too high" << std::endl;  
                 i = 0;
             }
             c += particleVector[i].weight;
@@ -226,6 +234,31 @@ std::vector<particle> Localization::resample(std::vector<particle> particleVecto
     //std::cout << "Size: " << newParticleVector.size() << std::endl;
 
     return newParticleVector;
+}
+
+std::vector<float> Localization::uniformNoise(std::vector<particle> particleVector)
+{
+    std::vector<float> noise;
+
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution(-1, 1);
+
+    int nParticles = particleVector.size();
+    int nExperiments = 1000;
+    int p[nParticles] = {};
+
+    for (int i = 0; i < nParticles; i++)
+    {
+        for (int j = 0; j < nExperiments; ++j) 
+        {
+            double randNumber = distribution(generator);
+            ++p[int(nParticles * randNumber)];
+        }
+
+        //noise.push_back()
+    }
+
+    return noise;
 }
 
 void Localization::displayParticles(std::vector<particle> particleVector)

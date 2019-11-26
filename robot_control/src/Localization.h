@@ -36,6 +36,7 @@ public:
     std::vector<float> lidarDistance(cv::Point2f, float);
     std::vector<particle> updateWeigths(std::vector<particle>, std::vector<float>);
     std::vector<particle> resample(std::vector<particle>);
+    std::vector<float> uniformNoise(std::vector<particle>);
     void displayParticles(std::vector<particle>);
 
     ~Localization();
@@ -43,7 +44,6 @@ public:
 private:
 
     int numberOfParticles;
-    Callback* callback;
 
 };
 

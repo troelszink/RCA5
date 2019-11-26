@@ -20,7 +20,6 @@ void MarbleDetection::cameraCallback(ConstImageStampedPtr &msg)
     cv::cvtColor(im, im, CV_RGB2BGR);
 
     cv::Mat imPre = preprocessing(im);
-    //cv::Mat edgeDet = edgeDetection(imPre);
     cv::Mat result = houghCircles(imPre);
 
     mutex.lock();
@@ -35,31 +34,10 @@ cv::Mat MarbleDetection::preprocessing(cv::Mat im)
     cv::cvtColor(im, imGray, CV_BGR2GRAY);
 
     // Reduce the noise
-    //cv::GaussianBlur(imGray, imGray, cv::Size(15, 15), 0, 0, cv::BORDER_DEFAULT);
     cv::Mat imDenoising;
     cv::fastNlMeansDenoising(imGray, imDenoising, 10, 7, 11);
-    //cv::Mat imBF;
-    //cv::bilateralFilter(imGray, imBF, 10, 50, 50, cv::BORDER_DEFAULT);
-    //cv::medianBlur(imGray, imGray, 15);
-    //cv::Mat imCanny;
-    //cv::Canny(imGray, imCanny, 60, 180);
 
     return imDenoising;
-}
-
-cv::Mat MarbleDetection::binaryThreshold(cv::Mat im)
-{
-    //cv::Mat imGraySplit[3];
-    //cv::split(imGray, imGraySplit);
-    double luminanceThreshLow = 90;
-    double luminanceThreshHigh = 180;
-    double luminance_maxValue = 255;
-    cv::Mat luminanceBinaryLow, luminanceBinaryHigh, luminanceBinary;
-    cv::threshold(im, luminanceBinaryLow, luminanceThreshLow, luminance_maxValue, CV_THRESH_BINARY);
-    cv::threshold(im, luminanceBinaryHigh, luminanceThreshHigh, luminance_maxValue, CV_THRESH_BINARY_INV);
-    cv::bitwise_and(luminanceBinaryLow, luminanceBinaryHigh, luminanceBinary);
-
-    return luminanceBinary;
 }
 
 cv::Mat MarbleDetection::edgeDetection(cv::Mat im)
@@ -97,12 +75,10 @@ cv::Mat MarbleDetection::edgeDetection(cv::Mat im)
 cv::Mat MarbleDetection::houghCircles(cv::Mat im)
 {
     // Detection of the marble
-    //cv::Mat imDet = binaryThreshold(im);
     cv::Mat imDet = edgeDetection(im);
 
     cv::Mat imCanny;
     double canny_value = cv::threshold(imDet, imCanny, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-    //std::cout << canny_value << std::endl;
 
     static cv::Point current(-1, -1);
     int width = 320;

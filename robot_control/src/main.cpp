@@ -103,7 +103,7 @@ int main(int _argc, char **_argv)
       OutputVariable* Speed = engine->getOutputVariable("Speed");
 
       // Localization
-      std::vector<particle> particleVector = loc.generateParticles(1000);
+      std::vector<particle> particleVector = loc.generateParticles(500);
       std::vector<cv::Point2f> pathVector;
       for (int i = 0; i < 40; i++)
       {
@@ -134,13 +134,6 @@ int main(int _argc, char **_argv)
       dir = (Steer->getValue()) * 2;
       speed = (Speed->getValue());
 
-      // If a corner is hit
-      if (DistanceToObstacle->getValue() == -1)
-      {
-          speed = -(Speed->getValue()) * 100;
-          //dir = (Steer->getValue()) * 100;
-      }
-
       // Checking the end goal for path planning
       if (abs(cb.getCurPosition().x - pathVector[goalCounter].x) < 0.1 && abs(cb.getCurPosition().y - pathVector[goalCounter].y) < 0.1)
       {
@@ -168,7 +161,6 @@ int main(int _argc, char **_argv)
           particleVector = loc.updateWeigths(particleVector, cb.getRangeVector());
           fc.setGoal(pathVector[goalCounter]);
           std::cout << "You reached the goal!" << std::endl;
-          //break;
       }
 
       std::cout << "Current position: " << cb.getCurPosition().x << "," << cb.getCurPosition().y << std::endl;
