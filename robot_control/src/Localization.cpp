@@ -330,21 +330,21 @@ void Localization::createCSVfile(std::vector<std::vector<float>> _coordinatesVec
     std::fstream fout; 
   
     // opens an existing csv file or creates a new file. 
-    fout.open("../otherFiles/Coordinates.csv", std::ios::out | std::ios::app); 
+    fout.open("../otherFiles/Coordinates2.csv", std::ios::out | std::ios::app); 
   
     // Insert the data to the file 
-    fout << _coordinatesVector[0][0] << ", "
-         << _coordinatesVector[0][1] << ", "
-         << 60 << ", "
+    fout << _coordinatesVector[0][0] << "; "
+         << _coordinatesVector[0][1] << "; "
+         << 60 << "; "
          << 40
          << "\n"; 
 
     for (int i = 1; i < _coordinatesVector.size(); i++)
     {
         // Insert the data to the file 
-        fout << _coordinatesVector[i][0] << ", "
-             << _coordinatesVector[i][1] << ", "
-             << _coordinatesVector[i - 1][2] << ", "
+        fout << _coordinatesVector[i][0] << "; "
+             << _coordinatesVector[i][1] << "; "
+             << _coordinatesVector[i - 1][2] << "; "
              << _coordinatesVector[i - 1][3]
              << "\n"; 
     }

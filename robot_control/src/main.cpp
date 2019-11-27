@@ -110,13 +110,13 @@ int main(int _argc, char **_argv)
       {
           pathVector.push_back(cv::Point2f(i, 0));
       }
-      for (int i = 1; i < 23; i++)
+      for (int i = 1; i < 20; i++)
       {
-          pathVector.push_back(cv::Point2f(20, i));
+          pathVector.push_back(cv::Point2f(19, i));
       }
-      for (int i = 1; i < 21; i++)
+      for (int i = 1; i < 20; i++)
       {
-          pathVector.push_back(cv::Point2f(20 + i, 22));
+          pathVector.push_back(cv::Point2f(19 + i, 19));
       } 
       int goalCounter = 0;
 
@@ -144,7 +144,7 @@ int main(int _argc, char **_argv)
       speed = (Speed->getValue());
 
       // Checking the end goal for path planning
-      if (abs(cb.getCurPosition().x - pathVector[goalCounter].x) < 0.1 && abs(cb.getCurPosition().y - pathVector[goalCounter].y) < 0.1)
+      if (abs(cb.getCurPosition().x - pathVector[goalCounter].x) < 0.2 && abs(cb.getCurPosition().y - pathVector[goalCounter].y) < 0.2)
       {
           goalCounter++;
           speed = 0;
