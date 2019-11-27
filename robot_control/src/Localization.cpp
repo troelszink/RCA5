@@ -3,6 +3,7 @@
 
 Localization::Localization()
 {
+    nCoordinates = 0;
 }
 
 cv::Point2f Localization::localize(std::vector<float> rangeVector)
@@ -135,7 +136,7 @@ std::vector<float> Localization::lidarDistance(cv::Point2f pixel, float yaw)
 }
 
 // See Algorithm 17 in the book
-std::vector<particle> Localization::updateWeigths(std::vector<particle> particleVector, std::vector<float> rangeVector)
+std::vector<particle> Localization::updateWeigths(std::vector<particle> particleVector, std::vector<float> rangeVector, cv::Point2f curPosition)
 {
     int measurements = 1;
     float scaling = 1.41735;
@@ -149,18 +150,40 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         float sumOfWeigths = 0;
 
         // Add noise according to a uniform distribution
-        //std::vector<float> noise = uniformNoise(particleVector);
-        std::default_random_engine generator;
+        //std::default_random_engine generator;
+        std::random_device rd;
+        std::mt19937 generator(rd());
         std::uniform_real_distribution<double> distribution(-0.5, 0.5);
-        // REMEMBER TO ADD NOISE IN THE DIRECTION THE PARTICLES ARE FACING
 
         for (int i = 0; i < particleVector.size(); i++)
         {
             particleVector[i].lidarData = lidarDistance(particleVector[i].coord, particleVector[i].yaw);
-            particleVector[i].coord.x += distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
-            particleVector[i].coord.y += distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+            //particleVector[i].coord.x += distribution(generator);
+            //particleVector[i].coord.y += distribution(generator);
             particleVector[i].yaw += distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
             //std::cout << (float) rand() / (float) RAND_MAX * 0.5 -0.25 << std::endl;
+
+            // Generating noise in proportion to which quadrant the particle are facing outwards to
+            if (particleVector[i].yaw >= 0 && particleVector[i].yaw < 0.5*M_PI) // 1st quadrant
+            {
+                particleVector[i].coord.x += cos(particleVector[i].yaw) * distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+                particleVector[i].coord.y += -sin(particleVector[i].yaw) * distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+            } 
+            else if (particleVector[i].yaw >= 0.5*M_PI && particleVector[i].yaw < M_PI) // 2nd quadrant
+            {
+                particleVector[i].coord.x += -cos(M_PI - particleVector[i].yaw) * distribution(generator);
+                particleVector[i].coord.y += -sin(M_PI - particleVector[i].yaw) * distribution(generator);
+            }
+            else if (particleVector[i].yaw >= -M_PI && particleVector[i].yaw < -0.5*M_PI) // 3rd quadrant
+            {
+                particleVector[i].coord.x += -cos(M_PI + particleVector[i].yaw) * distribution(generator);
+                particleVector[i].coord.y += sin(M_PI + particleVector[i].yaw) * distribution(generator);
+            }
+            else if (particleVector[i].yaw >= -0.5*M_PI && particleVector[i].yaw < 0) // 4th quadrant
+            {
+                particleVector[i].coord.x += cos(particleVector[i].yaw) * distribution(generator);
+                particleVector[i].coord.y += -sin(particleVector[i].yaw) * distribution(generator); // Negative "-" as we need y to be positive, but it becomes negative, because of negative yaw
+            }
 
             float sum = 0;
 
@@ -193,6 +216,8 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         particleVector = resample(particleVector);
 
         displayParticles(particleVector);
+
+        saveCoords(particleVector, curPosition);
     }
 
     //std::cout << "P(x): " << p << std::endl;
@@ -236,31 +261,6 @@ std::vector<particle> Localization::resample(std::vector<particle> particleVecto
     return newParticleVector;
 }
 
-std::vector<float> Localization::uniformNoise(std::vector<particle> particleVector)
-{
-    std::vector<float> noise;
-
-    std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(-1, 1);
-
-    int nParticles = particleVector.size();
-    int nExperiments = 1000;
-    int p[nParticles] = {};
-
-    for (int i = 0; i < nParticles; i++)
-    {
-        for (int j = 0; j < nExperiments; ++j) 
-        {
-            double randNumber = distribution(generator);
-            ++p[int(nParticles * randNumber)];
-        }
-
-        //noise.push_back()
-    }
-
-    return noise;
-}
-
 void Localization::displayParticles(std::vector<particle> particleVector)
 {
     cv::Mat image;
@@ -286,6 +286,71 @@ void Localization::displayParticles(std::vector<particle> particleVector)
 	cv::imshow("Particles", image);
     cv::waitKey(10);
 }
+
+void Localization::saveCoords(std::vector<particle> particleVector, cv::Point2f curPosition)
+ {
+    nCoordinates++;
+
+    // Average coordinates of the particles
+    float sumX, sumY = 0;
+    float averageX, averageY = 0;
+    int N = particleVector.size();
+    float scaling = 1.41735;
+
+    for (int i = 0; i < N; i++)
+    {
+        sumX += particleVector[i].coord.x;
+        sumY += particleVector[i].coord.y;
+    }
+    averageX = sumX / N;
+    averageY = sumY / N;
+
+    float robotX = curPosition.x * scaling + 60; // 60 is the center of the image in pixels (x-direction)
+    float robotY = -(curPosition.y * scaling) + 40; // 40 is the center of the image in pixels (y-direction)
+
+    std::vector<float> coordinates;
+
+    coordinates.push_back(robotX);
+    coordinates.push_back(robotY);
+    coordinates.push_back(averageX);
+    coordinates.push_back(averageY);
+
+    // Push these coordinates onto a vector
+    coordinatesVector.push_back(coordinates);
+
+    if (nCoordinates == 55) // Choose number of coordinates to generate
+    {
+        createCSVfile(coordinatesVector);
+    }
+ }
+
+void Localization::createCSVfile(std::vector<std::vector<float>> _coordinatesVector)
+ {
+    // file pointer 
+    std::fstream fout; 
+  
+    // opens an existing csv file or creates a new file. 
+    fout.open("../otherFiles/Coordinates.csv", std::ios::out | std::ios::app); 
+  
+    // Insert the data to the file 
+    fout << _coordinatesVector[0][0] << ", "
+         << _coordinatesVector[0][1] << ", "
+         << 60 << ", "
+         << 40
+         << "\n"; 
+
+    for (int i = 1; i < _coordinatesVector.size(); i++)
+    {
+        // Insert the data to the file 
+        fout << _coordinatesVector[i][0] << ", "
+             << _coordinatesVector[i][1] << ", "
+             << _coordinatesVector[i - 1][2] << ", "
+             << _coordinatesVector[i - 1][3]
+             << "\n"; 
+    }
+
+    std::cout << "Done creating CSV-file!" << std::endl;
+ }
 
 Localization::~Localization()
 {

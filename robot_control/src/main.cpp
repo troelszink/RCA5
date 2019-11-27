@@ -104,11 +104,20 @@ int main(int _argc, char **_argv)
 
       // Localization
       std::vector<particle> particleVector = loc.generateParticles(500);
+      // Making a route for the robot to go
       std::vector<cv::Point2f> pathVector;
-      for (int i = 0; i < 40; i++)
+      for (int i = 0; i < 20; i++)
       {
           pathVector.push_back(cv::Point2f(i, 0));
       }
+      for (int i = 1; i < 23; i++)
+      {
+          pathVector.push_back(cv::Point2f(20, i));
+      }
+      for (int i = 1; i < 21; i++)
+      {
+          pathVector.push_back(cv::Point2f(20 + i, 22));
+      } 
       int goalCounter = 0;
 
     // Loop
@@ -149,16 +158,49 @@ int main(int _argc, char **_argv)
           gazebo::msgs::Set(&msg, pose);
           movementPublisher->Publish(msg);
 
-          float deltaX = pathVector[goalCounter].x - pathVector[goalCounter - 1].x;
-          float deltaY = pathVector[goalCounter].y - pathVector[goalCounter - 1].y;
+          float scaling = 1.41735;
+
+          float deltaX = (pathVector[goalCounter].x - pathVector[goalCounter - 1].x) * scaling;
+          float deltaY = (pathVector[goalCounter].y - pathVector[goalCounter - 1].y) * scaling;
+          float length = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
 
           for (int i = 0; i < particleVector.size(); i++)
           {
-              particleVector[i].coord.x += deltaX;
-              particleVector[i].coord.y += deltaY;
+                // Muligivs ændre tilbage til hvad det var før
+                if (pathVector[goalCounter].y > pathVector[goalCounter - 1].y)
+                {
+                    particleVector[i].coord.x += deltaX;
+                    particleVector[i].coord.y -= deltaY;
+                }
+                else if (pathVector[goalCounter].y <= pathVector[goalCounter - 1].y)
+                {
+                    particleVector[i].coord.x += deltaX;
+                    particleVector[i].coord.y += deltaY;
+                }
+
+                /*if (particleVector[i].yaw >= 0 && particleVector[i].yaw < 0.5*M_PI) // 1st quadrant
+                {
+                    particleVector[i].coord.x += cos(particleVector[i].yaw) * length;
+                    particleVector[i].coord.y += -sin(particleVector[i].yaw) * length;
+                } 
+                else if (particleVector[i].yaw >= 0.5*M_PI && particleVector[i].yaw < M_PI) // 2nd quadrant
+                {
+                    particleVector[i].coord.x += -cos(M_PI - particleVector[i].yaw) * length;
+                    particleVector[i].coord.y += -sin(M_PI - particleVector[i].yaw) * length;
+                }
+                else if (particleVector[i].yaw >= -M_PI && particleVector[i].yaw < -0.5*M_PI) // 3rd quadrant
+                {
+                    particleVector[i].coord.x += -cos(M_PI + particleVector[i].yaw) * length;
+                    particleVector[i].coord.y += sin(M_PI + particleVector[i].yaw) * length;
+                }
+                else if (particleVector[i].yaw >= -0.5*M_PI && particleVector[i].yaw < 0) // 4th quadrant
+                {
+                    particleVector[i].coord.x += cos(particleVector[i].yaw) * length;
+                    particleVector[i].coord.y += -sin(particleVector[i].yaw) * length; // Negative "-" as we need y to be positive, but it becomes negative, because of negative yaw
+                }*/
           }
 
-          particleVector = loc.updateWeigths(particleVector, cb.getRangeVector());
+          particleVector = loc.updateWeigths(particleVector, cb.getRangeVector(), cb.getCurPosition());
           fc.setGoal(pathVector[goalCounter]);
           std::cout << "You reached the goal!" << std::endl;
       }

@@ -69,6 +69,8 @@ time.h
 -
 random
 -
+fstream
+-
 Callback.h
 /home/troelszink/Desktop/RCA5/robot_control/src/Callback.h
 
@@ -118,6 +120,8 @@ QLearning.h
 
 /home/troelszink/Desktop/RCA5/robot_control/src/QLearning.h
 opencv2/opencv.hpp
+-
+opencv2/core.hpp
 -
 
 /home/troelszink/Desktop/RCA5/robot_control/src/main.cpp

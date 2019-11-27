@@ -20,10 +20,10 @@ void MarbleDetection::cameraCallback(ConstImageStampedPtr &msg)
     cv::cvtColor(im, im, CV_RGB2BGR);
 
     cv::Mat imPre = preprocessing(im);
-    cv::Mat result = houghCircles(imPre);
+    //cv::Mat result = houghCircles(imPre);
 
     mutex.lock();
-    cv::imshow("camera", result);
+    cv::imshow("camera", imPre);
     mutex.unlock();
 }
 

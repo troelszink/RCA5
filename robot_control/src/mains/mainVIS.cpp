@@ -72,7 +72,7 @@ int main(int _argc, char **_argv)
     float dir = 0.0;
 
     // Draw the tests
-    md.drawTest();
+    //md.drawTest();
 
     // Loop
     while (true) 
