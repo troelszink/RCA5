@@ -106,19 +106,21 @@ int main(int _argc, char **_argv)
       std::vector<particle> particleVector = loc.generateParticles(500);
       // Making a route for the robot to go
       std::vector<cv::Point2f> pathVector;
-      for (int i = 0; i < 20; i++)
+      for (int i = 0; i < 20; i++) // < 20
       {
           pathVector.push_back(cv::Point2f(i, 0));
       }
       for (int i = 1; i < 20; i++)
       {
-          pathVector.push_back(cv::Point2f(19, i));
+          pathVector.push_back(cv::Point2f(19, i)); // (19, i)
       }
       for (int i = 1; i < 20; i++)
       {
           pathVector.push_back(cv::Point2f(19 + i, 19));
-      } 
+      }
       int goalCounter = 0;
+
+    //loc.plotPathFromCSV();
 
     // Loop
     while (true) 
@@ -140,7 +142,7 @@ int main(int _argc, char **_argv)
       engine->process();
 
       // Setting output values
-      dir = (Steer->getValue()) * 2;
+      dir = (Steer->getValue()) * 3;
       speed = (Speed->getValue());
 
       // Checking the end goal for path planning
@@ -203,6 +205,11 @@ int main(int _argc, char **_argv)
           particleVector = loc.updateWeigths(particleVector, cb.getRangeVector(), cb.getCurPosition());
           fc.setGoal(pathVector[goalCounter]);
           std::cout << "You reached the goal!" << std::endl;
+
+          if (goalCounter == 56)
+          {
+              break;
+          }
       }
 
       std::cout << "Current position: " << cb.getCurPosition().x << "," << cb.getCurPosition().y << std::endl;
@@ -224,5 +231,7 @@ int main(int _argc, char **_argv)
 
     // Draw path for the robot
     //fc.drawPathSW(cb.getVector());
-   // fc.drawPathBW(cb.getVector());
+    //fc.drawPathBW(cb.getVector());
+    // Draw path for the particles
+    loc.drawPathBWParticles(cb.getVector());
 }

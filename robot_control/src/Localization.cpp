@@ -153,7 +153,10 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         //std::default_random_engine generator;
         std::random_device rd;
         std::mt19937 generator(rd());
-        std::uniform_real_distribution<double> distribution(-0.5, 0.5);
+        //std::uniform_real_distribution<double> distribution(-0.5, 0.5);
+        int mean = 0;
+        int stdDev = 1;
+        std::normal_distribution<double> distribution(mean, stdDev);
 
         for (int i = 0; i < particleVector.size(); i++)
         {
@@ -288,7 +291,7 @@ void Localization::displayParticles(std::vector<particle> particleVector)
 }
 
 void Localization::saveCoords(std::vector<particle> particleVector, cv::Point2f curPosition)
- {
+{
     nCoordinates++;
 
     // Average coordinates of the particles
@@ -304,6 +307,12 @@ void Localization::saveCoords(std::vector<particle> particleVector, cv::Point2f 
     }
     averageX = sumX / N;
     averageY = sumY / N;
+    
+    // Using these coordinates in drawPathBWParticles()
+    std::vector<float> coordinatesParticle;
+    coordinatesParticle.push_back(averageX);
+    coordinatesParticle.push_back(averageY);
+    coordinatesParticles.push_back(coordinatesParticle);
 
     float robotX = curPosition.x * scaling + 60; // 60 is the center of the image in pixels (x-direction)
     float robotY = -(curPosition.y * scaling) + 40; // 40 is the center of the image in pixels (y-direction)
@@ -322,35 +331,71 @@ void Localization::saveCoords(std::vector<particle> particleVector, cv::Point2f 
     {
         createCSVfile(coordinatesVector);
     }
- }
+}
 
 void Localization::createCSVfile(std::vector<std::vector<float>> _coordinatesVector)
- {
-    // file pointer 
+{
+    // File pointer 
     std::fstream fout; 
   
-    // opens an existing csv file or creates a new file. 
-    fout.open("../otherFiles/Coordinates2.csv", std::ios::out | std::ios::app); 
+    // Opens an existing csv file or creates a new file. 
+    fout.open("../otherFiles/CoordinatesNormalDis.csv", std::ios::out | std::ios::app); 
   
-    // Insert the data to the file 
-    fout << _coordinatesVector[0][0] << "; "
-         << _coordinatesVector[0][1] << "; "
-         << 60 << "; "
+    // Insert the data to the file (the first row)
+    fout << _coordinatesVector[0][0] << ", "
+         << _coordinatesVector[0][1] << ", "
+         << 60 << ", "
          << 40
          << "\n"; 
 
+    // Insert the data to the file (the rest of the rows)
     for (int i = 1; i < _coordinatesVector.size(); i++)
     {
-        // Insert the data to the file 
-        fout << _coordinatesVector[i][0] << "; "
-             << _coordinatesVector[i][1] << "; "
-             << _coordinatesVector[i - 1][2] << "; "
+        fout << _coordinatesVector[i][0] << ", "
+             << _coordinatesVector[i][1] << ", "
+             << _coordinatesVector[i - 1][2] << ", "
              << _coordinatesVector[i - 1][3]
              << "\n"; 
     }
 
     std::cout << "Done creating CSV-file!" << std::endl;
- }
+}
+
+void Localization::drawPathBWParticles(std::vector<std::vector<float>> position)
+{
+    cv::Mat image;
+    image = cv::imread("../testImages/BigWorldV2.png", cv::IMREAD_COLOR);
+
+    // Only first time
+    float resize = 10;
+    cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
+
+    cv::Point2f center = cv::Point2f(resize * 60, resize * 40);
+    float scaling = resize * 1.41735;
+
+    for (int i = 0; i < position.size(); i++)
+    {
+        float x = position[i][0] * scaling + center.x;
+        float y = -position[i][1] * scaling + center.y;
+
+        cv::circle(image, cv::Point(x,y), 2, cv::Scalar(0, 0, 255), 0, 1, 0);
+    }
+
+    for (int i = 0; i < coordinatesParticles.size(); i++)
+    {
+        float x = coordinatesParticles[i][0] * resize;
+        float y = coordinatesParticles[i][1] * resize;
+
+        cv::circle(image, cv::Point(x,y), 2, cv::Scalar(255, 0, 0), 0, 1, 0);
+    }
+
+    cv::imwrite("../testImages/BigWorldV2-LocalizationAvsPNormalDis.png", image);
+
+    cv::namedWindow("Path", CV_WINDOW_AUTOSIZE);
+    cv::imshow("Path", image);
+
+    cv::waitKey();
+}
 
 Localization::~Localization()
 {

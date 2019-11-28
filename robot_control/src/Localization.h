@@ -40,6 +40,7 @@ public:
     void displayParticles(std::vector<particle>);
     void saveCoords(std::vector<particle>, cv::Point2f);
     void createCSVfile(std::vector<std::vector<float>>);
+    void drawPathBWParticles(std::vector<std::vector<float>>);
 
     ~Localization();
 
@@ -48,6 +49,7 @@ private:
     int numberOfParticles;
     int nCoordinates = 0;
     std::vector<std::vector<float>> coordinatesVector;
+    std::vector<std::vector<float>> coordinatesParticles;
 
 };
 
