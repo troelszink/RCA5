@@ -103,24 +103,38 @@ int main(int _argc, char **_argv)
       OutputVariable* Speed = engine->getOutputVariable("Speed");
 
       // Localization
-      std::vector<particle> particleVector = loc.generateParticles(500);
+      std::vector<particle> particleVector = loc.generateParticles(100); // 250
       // Making a route for the robot to go
       std::vector<cv::Point2f> pathVector;
-      for (int i = 0; i < 20; i++) // < 20
+      /*for (float i = 0; i < 25; i+=0.1)
       {
           pathVector.push_back(cv::Point2f(i, 0));
       }
-      for (int i = 1; i < 20; i++)
+      for (float i = 2; i < 20; i+=0.1)
       {
-          pathVector.push_back(cv::Point2f(19, i)); // (19, i)
+          pathVector.push_back(cv::Point2f(24, i));
       }
-      for (int i = 1; i < 20; i++)
+      for (float i = 2; i < 17; i+=0.1)
       {
-          pathVector.push_back(cv::Point2f(19 + i, 19));
+          pathVector.push_back(cv::Point2f(24 + i, 19));
+      }*/
+      for (float i = 0; i <= 30; i+=0.1)
+      {
+          pathVector.push_back(cv::Point2f(i, 0));
       }
+      for (float i = 2; i <= 25; i+=0.1)
+      {
+          pathVector.push_back(cv::Point2f(30, -i));
+      }
+      /*for (float i = 2; i <= 15; i+=0.1)
+      {
+          pathVector.push_back(cv::Point2f(34 - i, -13));
+      }
+      for (float i = 2; i <= 8; i+=0.1)
+      {
+          pathVector.push_back(cv::Point2f(19, -13 + i));
+      }*/
       int goalCounter = 0;
-
-    //loc.plotPathFromCSV();
 
     // Loop
     while (true) 
@@ -169,7 +183,7 @@ int main(int _argc, char **_argv)
           for (int i = 0; i < particleVector.size(); i++)
           {
                 // Muligivs ændre tilbage til hvad det var før
-                if (pathVector[goalCounter].y > pathVector[goalCounter - 1].y)
+                /*if (pathVector[goalCounter].y > pathVector[goalCounter - 1].y)
                 {
                     particleVector[i].coord.x += deltaX;
                     particleVector[i].coord.y -= deltaY;
@@ -178,9 +192,9 @@ int main(int _argc, char **_argv)
                 {
                     particleVector[i].coord.x += deltaX;
                     particleVector[i].coord.y += deltaY;
-                }
+                }*/
 
-                /*if (particleVector[i].yaw >= 0 && particleVector[i].yaw < 0.5*M_PI) // 1st quadrant
+                if (particleVector[i].yaw >= 0 && particleVector[i].yaw < 0.5*M_PI) // 1st quadrant
                 {
                     particleVector[i].coord.x += cos(particleVector[i].yaw) * length;
                     particleVector[i].coord.y += -sin(particleVector[i].yaw) * length;
@@ -199,14 +213,14 @@ int main(int _argc, char **_argv)
                 {
                     particleVector[i].coord.x += cos(particleVector[i].yaw) * length;
                     particleVector[i].coord.y += -sin(particleVector[i].yaw) * length; // Negative "-" as we need y to be positive, but it becomes negative, because of negative yaw
-                }*/
+                }
           }
 
           particleVector = loc.updateWeigths(particleVector, cb.getRangeVector(), cb.getCurPosition());
           fc.setGoal(pathVector[goalCounter]);
           std::cout << "You reached the goal!" << std::endl;
 
-          if (goalCounter == 56)
+          if (goalCounter == 525)
           {
               break;
           }

@@ -23,21 +23,6 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
 
     std::vector<particle> particleVector;
 
-    /*// Start at 0. Standard deviation equal to 1
-    std::normal_distribution<float> normal_x(0, 1);
-    std::normal_distribution<float> normal_y(0, 1);
-    std::normal_distribution<float> normal_yaw(0, 1);*/
-
-    // We set a particle's position to be equal to the robots initial position.
-    /*particle p;
-    p.id = 0;
-    float x = 0;
-    float y = 0;
-    p.coord = cv::Point2f(x, y);
-    p.yaw = 0;
-    p.weight = 1;
-    particleVector.push_back(p);*/
-
     particle p;
     // Generates the rest of the particles
     for (int i = 0; i < numberOfParticles; i++)
@@ -51,9 +36,10 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
         float y_rand = 40;
         p.coord = cv::Point2f(x_rand, y_rand);
 
-        float yaw_rand = (float) rand() / (float) RAND_MAX;
-        yaw_rand *= 2*M_PI - M_PI;
-        p.yaw = yaw_rand;
+        std::random_device rd;
+        std::mt19937 generator(rd());
+        std::uniform_real_distribution<double> distribution(-M_PI, M_PI);
+        p.yaw = distribution(generator);
 
         p.weight = 1;
 
@@ -146,7 +132,7 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         std::cout << "Update Weights" << std::endl;
         //std::cout << "Size of rangeVector: " << rangeVector.size() << std::endl;
 
-        float sigma = 1;
+        float sigma = 0.5; // For the General Normal Distribution
         float sumOfWeigths = 0;
 
         // Add noise according to a uniform distribution
@@ -155,7 +141,7 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         std::mt19937 generator(rd());
         //std::uniform_real_distribution<double> distribution(-0.5, 0.5);
         int mean = 0;
-        int stdDev = 1;
+        float stdDev = 0.1;
         std::normal_distribution<double> distribution(mean, stdDev);
 
         for (int i = 0; i < particleVector.size(); i++)
@@ -192,11 +178,11 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
 
             for (int j = 0; j < rangeVector.size(); j++)
             {
-                float d = rangeVector[j] * scaling;
-                float y = particleVector[i].lidarData[j];
+                float y = rangeVector[j] * scaling;
+                float d = particleVector[i].lidarData[j];
 
                 // General Normal Distribution
-                sum += 1/(sigma*sqrt(2*M_PI)) * exp(-pow(y-d, 2) / (2*pow(sigma, 2)));
+                sum += 1/(sigma*sqrt(2*M_PI)) * exp(-pow(y-d, 2) / (2*pow(sigma, 2))); // Changed from y-d to d-y
 
                 //std::cout << "LidarData: " << d << std::endl;
             }
@@ -257,6 +243,7 @@ std::vector<particle> Localization::resample(std::vector<particle> particleVecto
         }
 
         newParticleVector.push_back(particleVector[i]);
+        //newParticleVector[j].yaw = particleVector[j].yaw;
         //std::cout << "i: " << i << std::endl;
     }
     //std::cout << "Size: " << newParticleVector.size() << std::endl;
@@ -284,7 +271,7 @@ void Localization::displayParticles(std::vector<particle> particleVector)
     cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
     //std::cout << particleVector[0].coord.x << "," << particleVector[0].coord.y << std::endl;
 
-    cv::imwrite("../testImages/BigWorldV2-Localization.png", image );
+    cv::imwrite("../testImages/BigWorldV2-Localization2.png", image );
     cv::namedWindow("Particles", CV_WINDOW_AUTOSIZE);
 	cv::imshow("Particles", image);
     cv::waitKey(10);
@@ -327,7 +314,7 @@ void Localization::saveCoords(std::vector<particle> particleVector, cv::Point2f 
     // Push these coordinates onto a vector
     coordinatesVector.push_back(coordinates);
 
-    if (nCoordinates == 55) // Choose number of coordinates to generate
+    if (nCoordinates == 500) // Choose number of coordinates to generate
     {
         createCSVfile(coordinatesVector);
     }
@@ -338,8 +325,9 @@ void Localization::createCSVfile(std::vector<std::vector<float>> _coordinatesVec
     // File pointer 
     std::fstream fout; 
   
-    // Opens an existing csv file or creates a new file. 
-    fout.open("../otherFiles/CoordinatesNormalDis.csv", std::ios::out | std::ios::app); 
+    // Opens an existing csv file or creates a new file.
+    // Remember to delete old file, if you are using the same name. Else there will be data from several tests in the same file
+    fout.open("../otherFiles/CoordinatesNew3.csv", std::ios::out | std::ios::app); 
   
     // Insert the data to the file (the first row)
     fout << _coordinatesVector[0][0] << ", "
@@ -389,7 +377,7 @@ void Localization::drawPathBWParticles(std::vector<std::vector<float>> position)
         cv::circle(image, cv::Point(x,y), 2, cv::Scalar(255, 0, 0), 0, 1, 0);
     }
 
-    cv::imwrite("../testImages/BigWorldV2-LocalizationAvsPNormalDis.png", image);
+    cv::imwrite("../testImages/BigWorldV2-LocalizationAvsPNew3.png", image);
 
     cv::namedWindow("Path", CV_WINDOW_AUTOSIZE);
     cv::imshow("Path", image);
