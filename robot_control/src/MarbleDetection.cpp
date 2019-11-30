@@ -20,10 +20,11 @@ void MarbleDetection::cameraCallback(ConstImageStampedPtr &msg)
     cv::cvtColor(im, im, CV_RGB2BGR);
 
     cv::Mat imPre = preprocessing(im);
-    //cv::Mat result = houghCircles(imPre);
+    cv::Mat imDet = edgeDetection(imPre);
+    cv::Mat result = houghCircles(imDet;
 
     mutex.lock();
-    cv::imshow("camera", imPre);
+    cv::imshow("camera", result);
     mutex.unlock();
 }
 
@@ -52,31 +53,21 @@ cv::Mat MarbleDetection::edgeDetection(cv::Mat im)
     cv::Mat abs_grad_x, abs_grad_y;
 
     /// Gradient X
-    //Scharr( src_gray, grad_x, ddepth, 1, 0, scale, delta, BORDER_DEFAULT );
     cv::Sobel( im, grad_x, ddepth, 1, 0, 1, scale, delta, cv::BORDER_DEFAULT );
     cv::convertScaleAbs( grad_x, abs_grad_x );
 
     /// Gradient Y
-    //Scharr( src_gray, grad_y, ddepth, 0, 1, scale, delta, BORDER_DEFAULT );
     cv::Sobel( im, grad_y, ddepth, 0, 1, 1, scale, delta, cv::BORDER_DEFAULT );
     cv::convertScaleAbs( grad_y, abs_grad_y );
 
     /// Total Gradient (approximate)
     cv::addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad );
 
-    /*cv::Mat gradL, gradU;
-    cv::threshold(grad, gradL, 30, 255, CV_THRESH_BINARY);
-    cv::threshold(grad, gradU, 80, 255, CV_THRESH_BINARY_INV);
-    cv::bitwise_and(gradL, gradU, grad);*/
-
     return grad;
 }
 
-cv::Mat MarbleDetection::houghCircles(cv::Mat im)
+cv::Mat MarbleDetection::houghCircles(cv::Mat imDet)
 {
-    // Detection of the marble
-    cv::Mat imDet = edgeDetection(im);
-
     cv::Mat imCanny;
     double canny_value = cv::threshold(imDet, imCanny, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 

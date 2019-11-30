@@ -106,18 +106,6 @@ int main(int _argc, char **_argv)
       std::vector<particle> particleVector = loc.generateParticles(100); // 250
       // Making a route for the robot to go
       std::vector<cv::Point2f> pathVector;
-      /*for (float i = 0; i < 25; i+=0.1)
-      {
-          pathVector.push_back(cv::Point2f(i, 0));
-      }
-      for (float i = 2; i < 20; i+=0.1)
-      {
-          pathVector.push_back(cv::Point2f(24, i));
-      }
-      for (float i = 2; i < 17; i+=0.1)
-      {
-          pathVector.push_back(cv::Point2f(24 + i, 19));
-      }*/
       for (float i = 0; i <= 30; i+=0.1)
       {
           pathVector.push_back(cv::Point2f(i, 0));
@@ -126,14 +114,6 @@ int main(int _argc, char **_argv)
       {
           pathVector.push_back(cv::Point2f(30, -i));
       }
-      /*for (float i = 2; i <= 15; i+=0.1)
-      {
-          pathVector.push_back(cv::Point2f(34 - i, -13));
-      }
-      for (float i = 2; i <= 8; i+=0.1)
-      {
-          pathVector.push_back(cv::Point2f(19, -13 + i));
-      }*/
       int goalCounter = 0;
 
     // Loop
@@ -182,7 +162,7 @@ int main(int _argc, char **_argv)
 
           for (int i = 0; i < particleVector.size(); i++)
           {
-                // Muligivs ændre tilbage til hvad det var før
+                // Only if we know what the orientation of the robot is
                 /*if (pathVector[goalCounter].y > pathVector[goalCounter - 1].y)
                 {
                     particleVector[i].coord.x += deltaX;
