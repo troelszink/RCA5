@@ -139,7 +139,7 @@ void MarbleDetection::marbleLocation(float marbleWidth, float centerX, float cen
 {
     // Determining the angle to the marble
     float distanceToMarbleHor = (2 * marbleRadius * focalLength) / marbleWidth;
-    float opposite = (centerX - cameraWidth/2) / cameraWidth * FOV; // Also converting to real distance (instead of pixels)
+    float opposite = (centerX - cameraWidth/2) / cameraWidth * FOV; // Also converting to real distance (instead of pixels) - FOV is the angle in radians   
     float marbleAngle = atan(opposite / distanceToMarbleHor)/* * 180/M_PI*/;
     float angle = marbleAngle + callback->getYaw();
 
@@ -152,29 +152,29 @@ void MarbleDetection::marbleLocation(float marbleWidth, float centerX, float cen
     // Between 4th and 1st quadrant
     if (callback->getYaw() < 0.25*M_PI && callback->getYaw() >= -0.25*M_PI)
     {
-        x2 = callback->getCurPosition().x + distanceToMarble * cos(marbleAngle); // Equations found in Mathematica
-        y2 = callback->getCurPosition().y - distanceToMarble * sin(marbleAngle);
+        x2 = callback->getCurPosition().x + distanceToMarble * cos(angle); // Equations found in Mathematica
+        y2 = callback->getCurPosition().y - distanceToMarble * sin(angle);
         //std::cout << "4th and 1st" << std::endl;
     }
     // Between 1st and 2nd quadrant
     else if(callback->getYaw() < 0.75*M_PI && callback->getYaw() >= 0.25*M_PI)
     {
-        x2 = callback->getCurPosition().x + distanceToMarble * sin(marbleAngle); // Equations found in Mathematica
-        y2 = callback->getCurPosition().y + distanceToMarble * cos(marbleAngle);
+        x2 = callback->getCurPosition().x + distanceToMarble * sin(angle); // Equations found in Mathematica
+        y2 = callback->getCurPosition().y + distanceToMarble * cos(angle);
         //std::cout << "1st and 2nd" << std::endl;
     }
     // Between 2nd and 3rd quadrant
     else if(callback->getYaw() < -0.75*M_PI && callback->getYaw() >= 0.75*M_PI)
     {
-        x2 = callback->getCurPosition().x - distanceToMarble * cos(marbleAngle); // Equations found in Mathematica
-        y2 = callback->getCurPosition().y + distanceToMarble * sin(marbleAngle);
+        x2 = callback->getCurPosition().x - distanceToMarble * cos(angle); // Equations found in Mathematica
+        y2 = callback->getCurPosition().y + distanceToMarble * sin(angle);
         //std::cout << "2nd and 3rd" << std::endl;
     }
     // Between 3rd and 4th quadrant
     else if (callback->getYaw() < -0.25*M_PI && callback->getYaw() >= -0.75*M_PI)
     {
-        x2 = callback->getCurPosition().x - distanceToMarble * sin(marbleAngle); // Equations found in Mathematica
-        y2 = callback->getCurPosition().y - distanceToMarble * cos(marbleAngle);
+        x2 = callback->getCurPosition().x - distanceToMarble * sin(angle); // Equations found in Mathematica
+        y2 = callback->getCurPosition().y - distanceToMarble * cos(angle);
         //std::cout << "3rd and 4th" << std::endl;
     }
 
