@@ -6,29 +6,6 @@ QLearning::QLearning()
 {
 }
 
-void QLearning::initMap()
-{
-	cv::Mat image;
-	image = cv::imread("BigWorldV2.png", cv::IMREAD_COLOR);									//Change path
-	int width = image.cols;
-	int height = image.rows;
-
-	for (int y = 0; y < height; y++)
-	{
-		for (int x = 0; x < width; x++)
-		{
-			cv::Vec3b point = image.at<cv::Vec3b>(y, x);
-			if (point[0] < 240)
-			{
-				environment[y][x] = '#';
-			}
-			else
-			{
-				environment[y][x] = ' ';
-			}
-		}
-	}
-}
 
 void QLearning::printEnvironment()
 {
@@ -41,47 +18,103 @@ void QLearning::printEnvironment()
 	}
 }
 
-void QLearning::printQTable()
+void QLearning::printQTable(int index)
 {
 	for (int y = 0; y < ROWS; y++)
 	{
 		for (int x = 0; x < COLUMNS; x++)
-			std::cout << " " << Q[y][x].UP;
+			std::cout << " " << QVector[index][posToIndex(y, x)].UP;
 
 		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
+	for (int y = 0; y < ROWS; y++)
+	{
+		for (int x = 0; x < COLUMNS; x++)
+			std::cout << " " << QVector[index][posToIndex(y, x)].DOWN;
+
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
+	for (int y = 0; y < ROWS; y++)
+	{
+		for (int x = 0; x < COLUMNS; x++)
+			std::cout << " " << QVector[index][posToIndex(y, x)].LEFT;
+
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
+	for (int y = 0; y < ROWS; y++)
+	{
+		for (int x = 0; x < COLUMNS; x++)
+			std::cout << " " << QVector[index][posToIndex(y, x)].RIGHT;
+
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
+void QLearning::generateMarbles()
+{
+	/*std::default_random_engine generator;
+	std::uniform_int_distribution<int> distributionX(0.0, COLUMNS);
+	std::uniform_int_distribution<int> distributionY(0.0, ROWS);*/
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(0, 1);
+
+	for (int i = 0; i < 5; i++)
+	{
+		int y = dis(gen) * ROWS;
+		int x = dis(gen) * COLUMNS;
+		//int y = distributionY(generator);
+		//int x = distributionX(generator);
+		while (environment[y][x] == '#' || environment[y][x] == '+')
+		{
+			y = dis(gen) * ROWS;
+			x = dis(gen) * COLUMNS;
+			//y = distributionY(generator);
+			//x = distributionX(generator);
+		}
+
+		std::vector<int> marble_vec{ x,y };
+		marble_vector.push_back(marble_vec);
 	}
 }
 
 void QLearning::insertMarbles()
 {
-	//environment[5][5] = '+';
-	//environment[5][60] = '+';
-	//environment[5][40] = '+';
-	//environment[40][10] = '+';
-	//environment[70][10] = '+';
-	//environment[25][110] = '+';
-	//environment[70][110] = '+';
-	//environment[65][20] = '+';
-	//environment[70][50] = '+';
-	//environment[50][55] = '+';
-	//environment[70][70] = '+';
-	//environment[40][55] = '+';
 
-	//environment[10][20] = 'r';
-	//environment[10][55] = 'r';
-	//environment[25][40] = 'r';
-	//environment[50][10] = 'r';
-	//environment[30][110] = 'r';
-	//environment[60][110] = 'r';
-	//environment[50][25] = 'r';
-	//environment[75][58] = 'r';
-	//environment[55][90] = 'r';
-	//environment[68][85] = 'r';
+	//for (int i = 0; i < 5; i++)
+	//{
+	//	int x = marble_vector[i][0];
+	//	int y = marble_vector[i][1];
+	//	environment[y][x] = '+';
+	//}
 
-
-	environment[3][1] = '+';				// Test World
-	environment[3][5] = '+';
+	environment[3][2] = '+';				// Test World1
+	environment[3][10] = '+';
+	environment[6][3] = '+';
+	environment[8][10] = '+';
 	environment[3][7] = '+';
+	environment[10][1] = '+';
+	environment[11][7] = '+';
+
+
+
+	//environment[2][2] = '+';				// Test World2
+	//environment[2][6] = '+';
+	//environment[6][4] = '+';
+	//environment[11][2] = '+';
+	//environment[11][7] = '+';
+	//environment[3][11] = '+';
+
+
+
 
 
 }
@@ -121,10 +154,7 @@ float QLearning::GetReward(state s, action a)
 		if (environment[next.y][next.x] == '#')
 			return -1.0;
 
-		if (environment[next.y][next.x] == 'r')
-			return 5;
-
-		return 0;
+		return 0.0;
 	}
 }
 
@@ -132,7 +162,6 @@ float QLearning::GetReward(state s, action a)
 action QLearning::GetNextAction(state s)
 {
 	action a;
-	action maxAction = RIGHT;
 
 	float random = (float)rand() / (float)RAND_MAX;
 
@@ -140,6 +169,7 @@ action QLearning::GetNextAction(state s)
 	{
 		int i = rand() % 4;
 		//std::cout << "Random action: " << i << std::endl;
+		//randomCount++;
 
 		switch (i) {
 		case 0:   a = UP; break;
@@ -150,6 +180,7 @@ action QLearning::GetNextAction(state s)
 	}
 	else
 	{
+		//bestCount++;
 		a = GetNextBestAction(s);
 	}
 
@@ -158,20 +189,72 @@ action QLearning::GetNextAction(state s)
 
 action QLearning::GetNextBestAction(state s)
 {
+
+	std::vector<std::vector<int>> previousStatesCopy;
+	for (int i = 0; i < previousStates.size(); i++)
+		previousStatesCopy.push_back(previousStates[i]);
+
+	//std::copy(std::begin(ql.previousStates), std::end(ql.previousStates), std::begin(previousStatesCopy));
+
 	action a;
 	float vnext[4];
 
+	int index = FindQTable(previousStates);
+
 	if (!GetNextState(s, UP).is_outside_environment)
-		vnext[0] = Q[s.y][s.x].UP + alpha * (GetReward(s, UP) + discount_rate * (Q[GetNextState(s, UP).y][GetNextState(s, UP).x].UP) - Q[s.y][s.x].UP);
-	if (!GetNextState(s, DOWN).is_outside_environment) 
-		vnext[1] = Q[s.y][s.x].DOWN + alpha * (GetReward(s, DOWN) + discount_rate * (Q[GetNextState(s, DOWN).y][GetNextState(s, DOWN).x].DOWN) - Q[s.y][s.x].DOWN);
+	{
+		state next_state = GetNextState(s, UP);
+		std::vector<int> nextPosition{ next_state.y, next_state.x };
+		previousStatesCopy.push_back(nextPosition);
+		int nextIndex = FindQTable(previousStatesCopy);
+		// Best Q-value for next best action of next state
+		float aNext = GetNextBestActionIndex(next_state, nextIndex);
+
+		vnext[0] = QVector[index][posToIndex(s.y, s.x)].UP + alpha * (GetReward(s, UP) + discount_rate * (aNext) -QVector[index][posToIndex(s.y, s.x)].UP);
+	}
+	if (!GetNextState(s, DOWN).is_outside_environment)
+	{
+		state next_state = GetNextState(s, DOWN);
+		std::vector<int> nextPosition{ next_state.y, next_state.x };
+		previousStatesCopy.push_back(nextPosition);
+		int nextIndex = FindQTable(previousStatesCopy);
+		// Best Q-value for next best action of next state
+		float aNext = GetNextBestActionIndex(next_state, nextIndex);
+
+		vnext[1] = QVector[index][posToIndex(s.y, s.x)].DOWN + alpha * (GetReward(s, DOWN) + discount_rate * (aNext)-QVector[index][posToIndex(s.y, s.x)].DOWN);
+	}
 	if (!GetNextState(s, LEFT).is_outside_environment)
-		vnext[2] = Q[s.y][s.x].LEFT + alpha * (GetReward(s, LEFT) + discount_rate * (Q[GetNextState(s, LEFT).y][GetNextState(s, LEFT).x].LEFT) - Q[s.y][s.x].LEFT);
+	{
+		state next_state = GetNextState(s, LEFT);
+		std::vector<int> nextPosition{ next_state.y, next_state.x };
+		previousStatesCopy.push_back(nextPosition);
+		int nextIndex = FindQTable(previousStatesCopy);
+		// Best Q-value for next best action of next state
+		float aNext = GetNextBestActionIndex(next_state, nextIndex);
+
+		vnext[2] = QVector[index][posToIndex(s.y, s.x)].LEFT + alpha * (GetReward(s, LEFT) + discount_rate * (aNext)-QVector[index][posToIndex(s.y, s.x)].LEFT);
+	}
 	if (!GetNextState(s, RIGHT).is_outside_environment)
-		vnext[3] = Q[s.y][s.x].RIGHT + alpha * (GetReward(s, RIGHT) + discount_rate * (Q[GetNextState(s, RIGHT).y][GetNextState(s, RIGHT).x].RIGHT) - Q[s.y][s.x].RIGHT);
-		
-	int maxReward = vnext[0];
-	int maxAction = 0;
+	{
+		state next_state = GetNextState(s, RIGHT);
+		std::vector<int> nextPosition{ next_state.y, next_state.x };
+		previousStatesCopy.push_back(nextPosition);
+		int nextIndex = FindQTable(previousStatesCopy);
+		// Best Q-value for next best action of next state
+		float aNext = GetNextBestActionIndex(next_state, nextIndex);
+
+		vnext[3] = QVector[index][posToIndex(s.y, s.x)].RIGHT + alpha * (GetReward(s, RIGHT) + discount_rate * (aNext)-QVector[index][posToIndex(s.y, s.x)].RIGHT);
+	}
+
+	int randomMax = rand() % 4;
+
+	int maxReward = vnext[randomMax];
+	int maxAction = randomMax;
+
+	//std::cout << randomMax << std::endl;
+
+	//int maxReward = vnext[3];
+	//int maxAction = 3; 
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -192,17 +275,216 @@ action QLearning::GetNextBestAction(state s)
 	return a;
 }
 
-
-int QLearning::getStateNumber(state s)
+bool QLearning::newMove(state s)
 {
-	int state_number;
-	if (s.y > 0)
-		state_number = (s.y) * COLUMNS + s.x;
-	else
-		state_number = s.x;
+	for (int i = 0; i < previousStates.size(); i++)
+	{
+		if (previousStates[i][0] == s.y && previousStates[i][1] == s.x)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+int QLearning::FindQTable(std::vector<std::vector<int>> vec)
+{
+	// Find QTable if it exists
+	
+
+	for (int i = 0; i < QVector.size(); i++)
+	{
+		bool Qexists = true;
+		bool element = false;
+
+		// Check if arrays are equal
+
+		if (vec.size() == QTableHistory[i].size())
+		{
+			for (int j = 0; j < vec.size(); j++)
+			{
+				element = false;
+				for (int p = 0; p < vec.size(); p++)
+				{
+					if (vec[p] == QTableHistory[i][j])
+					{
+						element = true;
+					}
+				}
+				if (element == false)
+					Qexists = false;
+			}
+		}
+		else
+		{
+			Qexists = false;
+		}
+
+		if (Qexists == true)
+		{
+			return i;
+		}
+		
+	}
+	
+
+	// If QTable does not exist create the table
+
+	for (int y = 0; y < ROWS; y++)						// Initialize Q-Vector to 0
+	{
+		for (int x = 0; x < COLUMNS; x++)
+		{
+			Q[posToIndex(y, x)].UP = 0;
+			Q[posToIndex(y, x)].DOWN = 0;
+			Q[posToIndex(y, x)].LEFT = 0;
+			Q[posToIndex(y, x)].RIGHT = 0;
+		}
+	}
+
+	QVector.push_back(Q);
+	QTableHistory.push_back(previousStates);
+
+	return QVector.size() - 1;				// Return index of new Qtable
+}
 
 
-	return state_number;
+int QLearning::posToIndex(int y, int x)
+{
+	if (y < 1)
+		return x;
+
+	return y * COLUMNS + x;
+}
+
+std::vector<int> QLearning::indexToPos(int index)
+{
+	int x = index % COLUMNS;
+	int y = index / COLUMNS;
+
+	std::vector<int> vec{ y,x };
+	return vec;
+}
+
+float QLearning::GetNextBestActionIndex(state s, int index)
+{
+	action a;
+	float vnext[4];
+
+
+	
+	if (!GetNextState(s, UP).is_outside_environment)
+	{
+		vnext[0] = QVector[index][posToIndex(s.y, s.x)].UP + alpha * (GetReward(s, UP) + discount_rate * (QVector[index][posToIndex(GetNextState(s, UP).y, GetNextState(s, UP).x)].UP) - QVector[index][posToIndex(s.y, s.x)].UP);
+	}
+	if (!GetNextState(s, DOWN).is_outside_environment)
+	{
+		vnext[1] = QVector[index][posToIndex(s.y, s.x)].DOWN + alpha * (GetReward(s, DOWN) + discount_rate * (QVector[index][posToIndex(GetNextState(s, DOWN).y, GetNextState(s, DOWN).x)].DOWN) - QVector[index][posToIndex(s.y, s.x)].DOWN);
+	}
+	if (!GetNextState(s, LEFT).is_outside_environment)
+	{	
+		vnext[2] = QVector[index][posToIndex(s.y, s.x)].LEFT + alpha * (GetReward(s, LEFT) + discount_rate * (QVector[index][posToIndex(GetNextState(s, LEFT).y, GetNextState(s, LEFT).x)].LEFT) - QVector[index][posToIndex(s.y, s.x)].LEFT);
+	}
+	if (!GetNextState(s, RIGHT).is_outside_environment)
+	{	
+		vnext[3] = QVector[index][posToIndex(s.y, s.x)].RIGHT + alpha * (GetReward(s, RIGHT) + discount_rate * (QVector[index][posToIndex(GetNextState(s, RIGHT).y, GetNextState(s, RIGHT).x)].RIGHT) - QVector[index][posToIndex(s.y, s.x)].RIGHT);
+	}
+	int randomMax = rand() % 4;
+
+	int maxReward = vnext[randomMax];
+	int maxAction = randomMax;
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (vnext[i] > maxReward)
+		{
+			maxAction = i;
+			maxReward = vnext[i];
+		}
+	}
+
+	return maxReward;
+}
+
+
+void QLearning::printPreviousStates() 
+{
+	for (int i = 0; i < previousStates.size(); i++)
+	{
+		std::cout << " " << previousStates[i][1] << "," << previousStates[i][0];
+	}
+	std::cout << std::endl;
+}
+
+
+void QLearning::runModel()
+{
+	for (int episode = 0; episode < 1; episode++)			// Number of training episodes
+	{
+		state s = { 6, 5 };
+		state next_state;
+		int steps = 0;
+		int marbles_collected = 0;
+		int rCounter = 0;
+
+		// Reset history of moves
+		previousStates.erase(previousStates.begin(), previousStates.end());
+
+		insertMarbles();
+
+		//while (!s.is_outside_environment && steps < max_steps)		// Run until illegal move or maximum number of steps is exceeded
+		while (!s.is_outside_environment && marbles_collected != 7)
+		{
+
+			if (newMove(s))		// Check if new move
+			{
+				std::vector<int> moveVec{ s.y, s.x };
+				previousStates.push_back(moveVec);
+			}
+
+			int index = FindQTable(previousStates);
+
+			if (environment[s.y][s.x] == '+')
+			{
+				environment[s.y][s.x] = ' ';
+				marbles_collected++;
+			}
+
+			action a = GetNextBestAction(s);
+			float reward = GetReward(s, a);
+			next_state = GetNextState(s, a);
+
+			s = next_state;
+			steps++;
+
+			//std::cout << "Testing " << "      Episode: " << episode << "       Step: " << steps << std::endl;
+
+			if (steps > 1000)
+			{
+				std::cout << "Too many steps" << std::endl;
+				break;
+			}
+
+		}
+		std::cout << "Marbles collected: " << marbles_collected << "    steps: " << steps << std::endl << std::endl;
+		createCSVFile(steps, marbles_collected);
+
+	}
+	
+}
+
+void QLearning::createCSVFile(int steps, int marbles_collected)
+{
+	// File pointer 
+	std::fstream fout;
+
+	// Opens an existing csv file or creates a new file.
+   // Remember to delete old file, if you are using the same name. Else there will be data from several tests in the same file
+	fout.open("world1_ex1.csv", std::ios::out | std::ios::app);
+
+	// Insert the data to the file (the first row)
+	fout << steps << ", "
+		<< marbles_collected
+		<< "\n";
 }
 
 QLearning::~QLearning()
