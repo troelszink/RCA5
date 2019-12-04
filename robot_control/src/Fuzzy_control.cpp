@@ -8,32 +8,25 @@ Fuzzy_control::Fuzzy_control()
 float Fuzzy_control::normalize(float val, float min, float max)
 {
     float norm;
-
-        norm = 2 * ((val - min) / (max - min)) - 1;
-        return norm;
+    norm = 2 * ((val - min) / (max - min)) - 1;
+    return norm;
 }
 
 float Fuzzy_control::distanceToGoal(cv::Point2f curPosition)
 {
     float distance = cv::norm(goal - curPosition);
-
     return distance;
 }
 
 float Fuzzy_control::angleToGoal(cv::Point2f curPosition, float curYaw)
 {
-    /*float dotProduct = (curPosition.x * goal.x) + (curPosition.y * goal.y);
-    float curPosLen = sqrt(pow(curPosition.x, 2) + pow(curPosition.y, 2));
-    float goalLen = sqrt(pow(goal.x, 2) + pow(goal.y, 2));
-
-    float angle = acos((dotProduct) / (curPosLen * goalLen));*/
-
     float angleHorizontal = atan2(goal.y - curPosition.y, goal.x - curPosition.x); 
-
     float angle = (angleHorizontal - curYaw);
 
     if (angle < 0)
+    {
         angle = angle + 2*M_PI;
+    }
 
     return angle;// * 180/ 3.14;
 }
@@ -59,8 +52,6 @@ void Fuzzy_control::drawPathSW(std::vector<std::vector<float>> position)
     {
         int x = int(position[i][0] * scaling + center.x);
         int y = int(-position[i][1] * scaling + center.y);;
-        //std::cout << "(" << cb.getVector()[i][0] << "," << cb.getVector()[i][1] << ")" << std::endl;
-
         cv::circle(image, cv::Point(x,y), 2, cv::Scalar(255, 0, 0), 0, 1, 0);
     }
 
@@ -93,7 +84,6 @@ void Fuzzy_control::drawPathBW(std::vector<std::vector<float>> position)
     {
         int x = int(position[i][0] * scaling + center.x);
         int y = int(-position[i][1] * scaling + center.y);
-        //std::cout << "(" << cb.getVector()[i][0] << "," << cb.getVector()[i][1] << ")" << std::endl;
 
         cv::circle(image, cv::Point(x,y), 2, cv::Scalar(0, 0, 255), 0, 1, 0);
     }
