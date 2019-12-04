@@ -111,19 +111,14 @@ cv::Mat MarbleDetection::houghCircles(cv::Mat imDet)
 
                 if (current != center)
                     {
-                        //std::cout << "Position of the white ball is:" << center << " with diameter: " << diameter << std::endl;
                         current = center;
-
                         marbleLocation(diameter, center.x, center.y);
-                        //float angle = atan2(0, center.x - width/2) * 180/M_PI;
-                        //std::cout << "Angle: " << angle << std::endl;
                     }
 
                 countDiameter = 0;
                 sumDiameter = 0;
                 sumX = 0;
                 sumY = 0;
-                //cv::waitKey();
             }
         }
 
@@ -154,14 +149,12 @@ void MarbleDetection::marbleLocation(float marbleWidth, float centerX, float cen
     {
         x2 = callback->getCurPosition().x + distanceToMarble * cos(angle); // Equations found in Mathematica
         y2 = callback->getCurPosition().y - distanceToMarble * sin(angle);
-        //std::cout << "4th and 1st" << std::endl;
     }
     // Between 1st and 2nd quadrant
     else if(callback->getYaw() < 0.75*M_PI && callback->getYaw() >= 0.25*M_PI)
     {
         x2 = callback->getCurPosition().x + distanceToMarble * sin(angle); // Equations found in Mathematica
         y2 = callback->getCurPosition().y + distanceToMarble * cos(angle);
-        //std::cout << "1st and 2nd" << std::endl;
     }
     // Between 2nd and 3rd quadrant
     else if(callback->getYaw() < -0.75*M_PI && callback->getYaw() >= 0.75*M_PI)
@@ -175,16 +168,11 @@ void MarbleDetection::marbleLocation(float marbleWidth, float centerX, float cen
     {
         x2 = callback->getCurPosition().x - distanceToMarble * sin(angle); // Equations found in Mathematica
         y2 = callback->getCurPosition().y - distanceToMarble * cos(angle);
-        //std::cout << "3rd and 4th" << std::endl;
     }
 
-    std::cout << "DistanceToMarble: " << distanceToMarble << std::endl;
+    //std::cout << "DistanceToMarble: " << distanceToMarble << std::endl;
     std::cout << "The location of the marble is: (" << x2 << "," << y2 << ")" << std::endl;
     std::cout << "The location of the robot: " << callback->getCurPosition().x << "," << callback->getCurPosition().y << std::endl;
-
-    //std::cout << "Distance: " << distanceToMarble << std::endl;
-    //std::cout << "marbleAngle : " << marbleAngle*180/M_PI << std::endl;
-    //std::cout << "Yaw : " << callback->getYaw()*180/M_PI << std::endl;
 }
 
 void MarbleDetection::drawTest()
