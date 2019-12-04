@@ -71,9 +71,6 @@ int main(int _argc, char **_argv)
     float speed = 0.0;
     float dir = 0.0;
 
-    // Draw the tests
-    //md.drawTest();
-
     // Loop
     while (true) 
     {      
@@ -99,8 +96,6 @@ int main(int _argc, char **_argv)
         //      speed *= 0.1;
         //      dir *= 0.1;
       }
-
-      //std::cout << cb.getCurPosition() << std::endl;
 
       // Generate a pose
       ignition::math::Pose3d pose(double(speed), 0, 0, 0, 0, double(dir));
