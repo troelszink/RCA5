@@ -51,9 +51,6 @@ int main(int _argc, char **_argv)
     gazebo::transport::SubscriberPtr poseSubscriber =
         node->Subscribe("~/pose/info", &Callback::poseCallback, &cb);
 
-    /*gazebo::transport::SubscriberPtr cameraSubscriber =
-        node->Subscribe("~/pioneer2dx/camera/link/camera/image", &MarbleDetection::cameraCallback, &md);*/
-
     gazebo::transport::SubscriberPtr lidarSubscriber =
         node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", &Callback::lidarCallback, &cb);
 
@@ -139,7 +136,7 @@ int main(int _argc, char **_argv)
       dir = (Steer->getValue()) * 3;
       speed = (Speed->getValue());
 
-      // Checking the end goal for path planning
+      // Checking the end goal
       if (abs(cb.getCurPosition().x - pathVector[goalCounter].x) < 0.2 && abs(cb.getCurPosition().y - pathVector[goalCounter].y) < 0.2)
       {
           goalCounter++;
@@ -162,18 +159,6 @@ int main(int _argc, char **_argv)
 
           for (int i = 0; i < particleVector.size(); i++)
           {
-                // Only if we know what the orientation of the robot is
-                /*if (pathVector[goalCounter].y > pathVector[goalCounter - 1].y)
-                {
-                    particleVector[i].coord.x += deltaX;
-                    particleVector[i].coord.y -= deltaY;
-                }
-                else if (pathVector[goalCounter].y <= pathVector[goalCounter - 1].y)
-                {
-                    particleVector[i].coord.x += deltaX;
-                    particleVector[i].coord.y += deltaY;
-                }*/
-
                 if (particleVector[i].yaw >= 0 && particleVector[i].yaw < 0.5*M_PI) // 1st quadrant
                 {
                     particleVector[i].coord.x += cos(particleVector[i].yaw) * length;
@@ -223,9 +208,6 @@ int main(int _argc, char **_argv)
     // Make sure to shut everything down.
     gazebo::client::shutdown();
 
-    // Draw path for the robot
-    //fc.drawPathSW(cb.getVector());
-    //fc.drawPathBW(cb.getVector());
     // Draw path for the particles
     loc.drawPathBWParticles(cb.getVector());
 }
