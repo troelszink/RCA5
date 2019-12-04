@@ -10,21 +10,14 @@ Callback::Callback(cv::Point2f _curPosition, float _yaw)
 void Callback::statCallback(ConstWorldStatisticsPtr &_msg) 
 {
     (void)_msg;
-    // Dump the message contents to stdout.
-    //  std::cout << _msg->DebugString();
-    //  std::cout << std::flush;
 }
 
 void Callback::poseCallback(ConstPosesStampedPtr &_msg) 
 {
-    // Dump the message contents to stdout.
-    //  std::cout << _msg->DebugString();
-
     for (int i = 0; i < _msg->pose_size(); i++) 
     {
         if (_msg->pose(i).name() == "pioneer2dx") 
         {
-
             Quaternion q;
 
             q.w = _msg->pose(i).orientation().w();
@@ -36,22 +29,8 @@ void Callback::poseCallback(ConstPosesStampedPtr &_msg)
 
             yaw = ToEulerAngles(q).yaw;
 
-            // Yaw is rotation about the z-axis in radians, from pi to -pi
-            /*std::cout << "Roll: " << ToEulerAngles(q).roll << "     ";
-            std::cout << "Pitch: " << ToEulerAngles(q).pitch << "     ";
-            std::cout << "Yaw: " << ToEulerAngles(q).yaw << "     " << std::endl;*/
-
             curPosition.x = _msg->pose(i).position().x();
             curPosition.y = _msg->pose(i).position().y();
-
-         /*std::cout << std::setprecision(2) << std::fixed << std::setw(6)
-                    << _msg->pose(i).position().x() << std::setw(6)
-                    << _msg->pose(i).position().y() << std::setw(6)
-                    << _msg->pose(i).position().z() << std::setw(6)
-                    << _msg->pose(i).orientation().w() << std::setw(6)
-                    << _msg->pose(i).orientation().x() << std::setw(6)
-                    << _msg->pose(i).orientation().y() << std::setw(6)
-                    << _msg->pose(i).orientation().z() << std::endl;*/
 
             // Storing the current position in a vector
             std::vector<float> points;
@@ -66,13 +45,10 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
 {
       static boost::mutex mutex;
 
-    //  std::cout << ">> " << msg->DebugString() << std::endl;
     float angle_min = float(msg->scan().angle_min());
-    //  double angle_max = msg->scan().angle_max();
     float angle_increment = float(msg->scan().angle_step());
 
-
-    angle_inc = angle_increment;                      //Test
+    angle_inc = angle_increment;
 
     float range_min = float(msg->scan().range_min());
     float range_max = float(msg->scan().range_max());
@@ -81,8 +57,7 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     int nsec = msg->time().nsec();
 
     int nranges = msg->scan().ranges_size();
-
-    
+ 
     int nintensities = msg->scan().intensities_size();
 
     assert(nranges == nintensities);
@@ -93,8 +68,7 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
 
     cv::Mat im(height, width, CV_8UC3);
     im.setTo(0);
-
-    
+   
     float best_range = range_max;
     float best_angle = angle_min;
 
@@ -107,13 +81,11 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
 
     std::vector<float> rangeVec;
 
-    for (int i = 0; i < nranges; i+=sensorIncrement) // Changed from i++ to i+=10
+    for (int i = 0; i < nranges; i+=sensorIncrement)
     {
         float angle = angle_min + i * angle_increment;
         float range = std::min(float(msg->scan().ranges(i)), range_max);
         rangeVec.push_back(range);
-        //std::cout << "iC: " << i << " Range: " << range << std::endl;
-        //    double intensity = msg->scan().intensities(i);
         cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
                             200.5f - range_min * px_per_m * std::sin(angle));
         cv::Point2f endpt(200.5f + range * px_per_m * std::cos(angle),
@@ -125,7 +97,6 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
         {
             best_range = range;
             best_angle = angle;
-
             best_i = i;
         }
 
@@ -147,12 +118,9 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
             corner_type = -1;
         }          
         
-        // Checking for a passage through an obstacle
-        //std::cout << i << std::endl;
         if ( i >= 33 - 7 && i <= 33 + 7 ) // right
         {
             rightPassageVal += range;
-            //std::cout << "+1" << std::endl;
         }
         else if ( i >= nranges - 33 - 7 && i <= nranges - 33 + 7 ) // left
         {
@@ -168,13 +136,10 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
             if (countIterations == 100)
             {
                 average = sum / 100;
-                //std::cout << "Distance to circle: " << average << std::endl;
                 countIterations = 0;
                 sum = 0;
             }
-        }                                                                   
-        
-        // Angle: radianer, range: antal blokke (nok cm)
+        }                                                                          
     }
 
     rangeVector = rangeVec;
@@ -196,16 +161,6 @@ void Callback::lidarCallback(ConstLaserScanStampedPtr &msg)
     {
         freeLeftPassage = false;
     }
-    
-    /*// Drawing the smallets sensor distance in a red color
-    float angle = angle_min + best_i * angle_increment;
-    float range = std::min(float(msg->scan().ranges(best_i)), range_max);             
-    cv::Point2f startpt(200.5f + range_min * px_per_m * std::cos(angle),
-                         200.5f - range_min * px_per_m * std::sin(angle));
-    cv::Point2f endpt(200.5f + range * px_per_m * std::cos(angle),
-                        200.5f - range * px_per_m * std::sin(angle));
-    cv::line(im, startpt * 16, endpt * 16, cv::Scalar(255, 255, 255, 255), 1,
-                cv::LINE_AA, 4);*/
 
     mutex.lock();
     shortest_range = best_range;
@@ -234,9 +189,13 @@ Callback::EulerAngles Callback::ToEulerAngles(Quaternion q)
     // pitch (y-axis rotation)
     double sinp = +2.0 * (q.w * q.y - q.z * q.x);
     if (fabs(sinp) >= 1)
+    {
         angles.pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+    }
     else
+    {
         angles.pitch = asin(sinp);
+    }
 
     // yaw (z-axis rotation)
     double siny_cosp = +2.0 * (q.w * q.z + q.x * q.y);
