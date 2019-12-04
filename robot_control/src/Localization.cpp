@@ -17,7 +17,8 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
     for (int i = 0; i < numberOfParticles; i++)
     {
         p.id = i;
-
+	
+	// All particles have the same start position as the initial position of the robot
         float x_rand = 60;
         float y_rand = 40;
         p.coord = cv::Point2f(x_rand, y_rand);
@@ -28,6 +29,7 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
         std::uniform_real_distribution<double> distribution(-M_PI, M_PI);
         p.yaw = distribution(generator);
 
+	// All particles is equal likely to be correct when generated, therefore weight is equal to 1
         p.weight = 1;
 
         particleVector.push_back(p);
@@ -36,6 +38,7 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
     return particleVector;
 }
 
+// Calculates the lidar-data from every particle. This is used to compare with the data given from Gazebo
 std::vector<float> Localization::lidarDistance(cv::Point2f pixel, float yaw)
 {
     cv::Mat image;
@@ -43,6 +46,7 @@ std::vector<float> Localization::lidarDistance(cv::Point2f pixel, float yaw)
     int resize = 1;
     cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows));
 
+    // Defining usefull variables
     float angleMin = -2.26889 + yaw;
     float angleIncrement = 0.022803;
     float scaling = 1.41735;
@@ -52,6 +56,7 @@ std::vector<float> Localization::lidarDistance(cv::Point2f pixel, float yaw)
 
     std::vector<float> lidarVector;
 
+    // Checking each lidar-sensor (every 10th, decreased the amount of sensors from 200 to 21)
     for (int i = 0; i < nranges; i+=10) // Changed from i++ to i+=10
     {
         float x = pixel.x;
@@ -68,12 +73,14 @@ std::vector<float> Localization::lidarDistance(cv::Point2f pixel, float yaw)
             angle = M_PI - angle;
         }
 
+	// As long as the range is smaller than max distance (minus one range increment) and the pixel is white, do the following
         while (range < (maxDistance - rangeIncrement) && image.at<cv::Vec3b>(y, x)[0] > 240)
         {
             range += rangeIncrement;
             x = pixel.x;
             y = pixel.y;
 
+	    // Checking special cases for the four different quadrants
             if (angle > -0.5*M_PI && angle < 0) // 4th quadrant
             {
                 // Negativ sign, because of negative angle (-*- = +)
@@ -117,13 +124,14 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         float sigma = 0.5; // For the General Normal Distribution
         float sumOfWeigths = 0;
 
-        // Add noise according to a uniform distribution
+        // Add noise according to a normal distribution
         std::random_device rd;
         std::mt19937 generator(rd());
         int mean = 0;
         float stdDev = 0.1;
         std::normal_distribution<double> distribution(mean, stdDev);
 
+	// Changing the position, yaw and lidar-data for each particle
         for (int i = 0; i < particleVector.size(); i++)
         {
             particleVector[i].lidarData = lidarDistance(particleVector[i].coord, particleVector[i].yaw);
@@ -153,13 +161,14 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
 
             float sum = 0;
 
+	    // Calculating the weight of each particle according to the general normal distribution
             for (int j = 0; j < rangeVector.size(); j++)
             {
                 float y = rangeVector[j] * scaling;
                 float d = particleVector[i].lidarData[j];
 
                 // General Normal Distribution
-                sum += 1/(sigma*sqrt(2*M_PI)) * exp(-pow(y-d, 2) / (2*pow(sigma, 2))); // Changed from y-d to d-y
+                sum += 1/(sigma*sqrt(2*M_PI)) * exp(-pow(y-d, 2) / (2*pow(sigma, 2)));
             }
             
             sum /= rangeVector.size();
@@ -176,8 +185,10 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         // Resampling
         particleVector = resample(particleVector);
 
+	// Show the particles in the environment
         displayParticles(particleVector);
 
+	// Save the coordinates of location of the actual robot and the estimated location - Used to make a graph in MATLAB
         saveCoords(particleVector, curPosition);
     }
 
@@ -223,6 +234,7 @@ void Localization::displayParticles(std::vector<particle> particleVector)
     int resize = 5;
     cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
 
+    // Colouring the position of each particles red
     for (int i = 0; i < particleVector.size(); i++)
     {
         cv::Point2f coord = particleVector[i].coord;
@@ -280,6 +292,7 @@ void Localization::saveCoords(std::vector<particle> particleVector, cv::Point2f 
 
     if (nCoordinates == 500) // Choose number of coordinates to generate
     {
+	// Create a CSV-file
         createCSVfile(coordinatesVector);
     }
 }
@@ -325,6 +338,7 @@ void Localization::drawPathBWParticles(std::vector<std::vector<float>> position)
     cv::Point2f center = cv::Point2f(resize * 60, resize * 40);
     float scaling = resize * 1.41735;
 
+    // Draw the actual path for the robot
     for (int i = 0; i < position.size(); i++)
     {
         float x = position[i][0] * scaling + center.x;
@@ -333,6 +347,7 @@ void Localization::drawPathBWParticles(std::vector<std::vector<float>> position)
         cv::circle(image, cv::Point(x,y), 2, cv::Scalar(0, 0, 255), 0, 1, 0);
     }
 
+    // Draw the estimed path for the robot
     for (int i = 0; i < coordinatesParticles.size(); i++)
     {
         float x = coordinatesParticles[i][0] * resize;
