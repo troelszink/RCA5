@@ -74,15 +74,7 @@ int main(int _argc, char **_argv)
     float angle_min = 0;
     float angle_max = 2*M_PI;
 
-
-    //getValues("~/pioneer2dx/camera/link/camera/image");
-    //getValues("~/pioneer2dx/camera/link/camera/image);
-
-  // gazebo::transport::SubscriberPtr valueSubscriber =
-    //   node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", getValues);
-
       // FUZZY LOGIC
-
       Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V3.fll");
 
       std::string status;
@@ -121,15 +113,6 @@ int main(int _argc, char **_argv)
 
       engine->process();
 
-      // Printing values to the terminal
-      /*std::cout << "Range: " << fc.normalize(cb.getShortestRange(), range_min, range_max) << "     ";
-      std::cout << "Angle: " << fc.normalize(cb.getShortestAngle(), lidarangle_min, lidarangle_max) << "     ";
-      std::cout << "DirectionToGoal: " << fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max) << "     ";
-      std::cout << "Steer: " << Steer->getValue() << "     ";
-      std::cout << "Speed: " << Speed->getValue() << std::endl;*/
-
-      //std::cout << "Left passage: " << cb.getFreeLeftPassage() << "     " << "Right passage: " << cb.getFreeRightPassage() << std::endl;
-
       // Setting output values
       dir = (Steer->getValue()) * 2;
       speed = (Speed->getValue());
@@ -138,7 +121,6 @@ int main(int _argc, char **_argv)
       if (DistanceToObstacle->getValue() == -1)
       {
           speed = -(Speed->getValue()) * 100;
-          //dir = (Steer->getValue()) * 100;
       }
 
       if (fc.distanceToGoal(cb.getCurPosition()) < 0.5)
@@ -148,13 +130,6 @@ int main(int _argc, char **_argv)
         std::cout << "You reached the goal!" << std::endl;
         break;
       }
-
-      // Distance to goal
-      //std::cout << fc.distanceToGoal(cb.getCurPosition()) << std::endl;
-
-      // Angle to goal
-      //std::cout << fc.angleToGoal(cb.getCurPosition(), cb.getYaw()) << "      "  <<  cb.getYaw()*180/M_PI << std:: endl;
-      //std::cout << fc.normalize(fc.angleToGoal(cb.getCurPosition(), cb.getYaw()), angle_min, angle_max) << std::endl;
 
       if (key == key_esc)
         break;
