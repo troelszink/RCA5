@@ -6,17 +6,6 @@ Localization::Localization()
     nCoordinates = 0;
 }
 
-cv::Point2f Localization::localize(std::vector<float> rangeVector)
-{
-    //  std::vector<particle> particleVector = updateWeigths(generateParticles(100), rangeVector);
-
-    //displayParticles(particleVector);
-
-    cv::Point2f point;
-
-    return point;
-}
-
 std::vector<particle> Localization::generateParticles(int _numberOfParticles)
 {
     numberOfParticles = _numberOfParticles;
@@ -24,18 +13,16 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
     std::vector<particle> particleVector;
 
     particle p;
-    // Generates the rest of the particles
+    // Generate the particles
     for (int i = 0; i < numberOfParticles; i++)
     {
         p.id = i;
 
-		//float x_rand = rand() % 120 + 1;
-        //float y_rand = rand() % 80 + 1;
-        // The global center of our environment
         float x_rand = 60;
         float y_rand = 40;
         p.coord = cv::Point2f(x_rand, y_rand);
 
+	// Generate the yaw of the particles according to a normal distribution
         std::random_device rd;
         std::mt19937 generator(rd());
         std::uniform_real_distribution<double> distribution(-M_PI, M_PI);
@@ -43,10 +30,7 @@ std::vector<particle> Localization::generateParticles(int _numberOfParticles)
 
         p.weight = 1;
 
-        //p.lidarData = lidarDistance(p.coord, p.yaw);
-
         particleVector.push_back(p);
-        //std::cout << "ID: " << p.id << " Coord: " << p.coord.x << "," << p.coord.y << "     Yaw: " << p.yaw << "    Weight: " << p.weight << std::endl;
     }
 
     return particleVector;
@@ -115,7 +99,6 @@ std::vector<float> Localization::lidarDistance(cv::Point2f pixel, float yaw)
         }
 
         lidarVector.push_back(range);
-        //std::cout << "i: " << i << " Range: " << range/scaling << std::endl;
     }
 
     return lidarVector;
@@ -130,16 +113,13 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
     for (int m = 0; m < measurements; m++)
     {   
         std::cout << "Update Weights" << std::endl;
-        //std::cout << "Size of rangeVector: " << rangeVector.size() << std::endl;
 
         float sigma = 0.5; // For the General Normal Distribution
         float sumOfWeigths = 0;
 
         // Add noise according to a uniform distribution
-        //std::default_random_engine generator;
         std::random_device rd;
         std::mt19937 generator(rd());
-        //std::uniform_real_distribution<double> distribution(-0.5, 0.5);
         int mean = 0;
         float stdDev = 0.1;
         std::normal_distribution<double> distribution(mean, stdDev);
@@ -147,16 +127,13 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
         for (int i = 0; i < particleVector.size(); i++)
         {
             particleVector[i].lidarData = lidarDistance(particleVector[i].coord, particleVector[i].yaw);
-            //particleVector[i].coord.x += distribution(generator);
-            //particleVector[i].coord.y += distribution(generator);
-            particleVector[i].yaw += distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
-            //std::cout << (float) rand() / (float) RAND_MAX * 0.5 -0.25 << std::endl;
+            particleVector[i].yaw += distribution(generator);
 
             // Generating noise in proportion to which quadrant the particle are facing outwards to
             if (particleVector[i].yaw >= 0 && particleVector[i].yaw < 0.5*M_PI) // 1st quadrant
             {
-                particleVector[i].coord.x += cos(particleVector[i].yaw) * distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
-                particleVector[i].coord.y += -sin(particleVector[i].yaw) * distribution(generator); //(float) rand() / (float) RAND_MAX * 0.5 - 0.25;
+                particleVector[i].coord.x += cos(particleVector[i].yaw) * distribution(generator);
+                particleVector[i].coord.y += -sin(particleVector[i].yaw) * distribution(generator);
             } 
             else if (particleVector[i].yaw >= 0.5*M_PI && particleVector[i].yaw < M_PI) // 2nd quadrant
             {
@@ -183,22 +160,17 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
 
                 // General Normal Distribution
                 sum += 1/(sigma*sqrt(2*M_PI)) * exp(-pow(y-d, 2) / (2*pow(sigma, 2))); // Changed from y-d to d-y
-
-                //std::cout << "LidarData: " << d << std::endl;
             }
             
             sum /= rangeVector.size();
             particleVector[i].weight = sum;
             sumOfWeigths += sum;
-
         }
 
         // Normalizing
         for (int i = 0; i < particleVector.size(); i++)
         {
             particleVector[i].weight /= sumOfWeigths;
-
-            //std::cout << "Coord: " << particleVector[i].coord.x << "," << particleVector[i].coord.y << " Weight: " << particleVector[i].weight << std::endl;
         }
 
         // Resampling
@@ -208,8 +180,6 @@ std::vector<particle> Localization::updateWeigths(std::vector<particle> particle
 
         saveCoords(particleVector, curPosition);
     }
-
-    //std::cout << "P(x): " << p << std::endl;
 
     return particleVector;
 }
@@ -232,21 +202,16 @@ std::vector<particle> Localization::resample(std::vector<particle> particleVecto
 
         while (u > c)
         {
-            //i = i % N + 1;
             i++;
             if (i >= particleVector.size())
             {
-                //std::cout << "I too high" << std::endl;  
                 i = 0;
             }
             c += particleVector[i].weight;
         }
 
         newParticleVector.push_back(particleVector[i]);
-        //newParticleVector[j].yaw = particleVector[j].yaw;
-        //std::cout << "i: " << i << std::endl;
     }
-    //std::cout << "Size: " << newParticleVector.size() << std::endl;
 
     return newParticleVector;
 }
@@ -269,7 +234,6 @@ void Localization::displayParticles(std::vector<particle> particleVector)
 
     resize = 2;
     cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows), 0, 0, cv::INTER_NEAREST);
-    //std::cout << particleVector[0].coord.x << "," << particleVector[0].coord.y << std::endl;
 
     cv::imwrite("../testImages/BigWorldV2-Localization2.png", image );
     cv::namedWindow("Particles", CV_WINDOW_AUTOSIZE);
