@@ -1,13 +1,15 @@
-# READ THIS BEFORE TESTING OUR SOLUTIONS
+# RCA5-Project for 5th semester on Civ. Robot Engineering, SDU
+
+## READ THIS BEFORE TESTING OUR SOLUTIONS
 
 There are 5 major topics divided into 6 mains. They are as follows:
 
-- mainAI-FC.cpp         - Main for Fuzzy Control
-- mainAI-QL.cpp         - Main for Q-Learning
-- mainVIS.cpp           - Main for image analysis with Computer Vision
-- mainROB-WF.cpp        - Main for Robotics, Wavefront Planner
-- mainROB-BF.cpp        - Main for Robotics, Brushfire Algorithm and the GVD
-- mainROB-Loc.cpp       - Main for Robotics, Localization
+- **mainAI-FC.cpp**         - Main for Fuzzy Control
+- **mainAI-QL.cpp**         - Main for Q-Learning
+- **mainVIS.cpp**           - Main for image analysis with Computer Vision
+- **mainROB-WF.cpp**        - Main for Robotics, Wavefront Planner
+- **mainROB-BF.cpp**        - Main for Robotics, Brushfire Algorithm and the GVD
+- **mainROB-Loc.cpp**       - Main for Robotics, Localization
 
 These mains are located in the folder: /robot_control/src/mains/
 
