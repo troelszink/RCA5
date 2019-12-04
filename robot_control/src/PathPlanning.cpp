@@ -83,15 +83,12 @@ std::vector<cellValueWF> PathPlanning::wavefront()
                 }
             }
             cellVector.push_back(c);
-            //std::cout << "p1: " << "(" << cellVector[0].p1.x << "," << cellVector[0].p1.y << ")" << std::endl;
-            //std::cout << "p2: " << "(" << cellVector[0].p2.x << "," << cellVector[0].p2.y << ")" << std::endl;
-            //std::cout << "value: " << cellVector[0].value << std::endl;
             check = false;
 		}
 	}
 
-    std::cout << count << std::endl;
-    std::cout << "Grid: " << gridCnt << std::endl;
+    //std::cout << count << std::endl;
+    //std::cout << "Grid: " << gridCnt << std::endl;
 
     cv::Point2f center = cv::Point2f(10, 7.5);
     float scaling = 1.41735;
@@ -121,7 +118,6 @@ std::vector<cellValueWF> PathPlanning::wavefront()
     {
         std::cout << "Not a valid goal." << std::endl;
     }
-    //std::cout << xPixel/0.5 << " " << yPixel/0.5 << " " << cellIndex << std::endl;
 
     int cellsFilled = 0;
     int i = cellIndex - 1; // Starting to the left of the goal position
@@ -135,24 +131,10 @@ std::vector<cellValueWF> PathPlanning::wavefront()
 
     while (cellsFilled < cellsNotFilled)
     {
-        /*j++;
-        if (j == 99999)
-        {
-            std::cout << "CellsNotFilled" << cellsNotFilled << std::endl; 
-            std::cout << "CellsFilled" << cellsFilled << std::endl;
-            std::cout << "Stopped" << std::endl;
-        }*/
         lowestNeighbor = 1000;
 
         if (cellVector[i].value < 0)
         {
-            /*if (i - 41 > 0) // upper-left neighbor
-            {
-                if (cellVector[i - 41].value > 1)
-                {
-                    lowestNeighbor = cellVector[i - 41].value;
-                }
-            }*/
             if (i - up > 0) // upper neighbor
             {
                 if (cellVector[i - up].value > 1 && cellVector[i - up].value < lowestNeighbor)
@@ -160,13 +142,6 @@ std::vector<cellValueWF> PathPlanning::wavefront()
                     lowestNeighbor = cellVector[i - up].value;
                 }
             }
-            /*if (i - 39 > 0) // upper-right neighbor
-            {
-                if (cellVector[i - 39].value > 1 && cellVector[i - 39].value < lowestNeighbor)
-                {
-                    lowestNeighbor = cellVector[i - 39].value;
-                }
-            }*/
             if (i + right < cellVector.size()) // right neighbor
             {
                 if (cellVector[i + right].value > 1 && cellVector[i + right].value < lowestNeighbor)
@@ -174,13 +149,6 @@ std::vector<cellValueWF> PathPlanning::wavefront()
                     lowestNeighbor = cellVector[i + right].value;
                 }
             }
-            /*if (i + 41 < cellVector.size()) // lower-right neighbor
-            {
-                if (cellVector[i + 41].value > 1 && cellVector[i + 41].value < lowestNeighbor)
-                {
-                    lowestNeighbor = cellVector[i + 41].value;
-                }
-            }*/
             if (i + down < cellVector.size()) // lower neighbor
             {
                 if (cellVector[i + down].value > 1 && cellVector[i + down].value < lowestNeighbor)
@@ -188,13 +156,6 @@ std::vector<cellValueWF> PathPlanning::wavefront()
                     lowestNeighbor = cellVector[i + down].value;
                 }
             }
-            /*if (i + 39 < cellVector.size()) // lower-left neighbor
-            {
-                if (cellVector[i + 39].value > 1 && cellVector[i + 39].value < lowestNeighbor)
-                {
-                    lowestNeighbor = cellVector[i + 39].value;
-                }
-            }*/
             if (i - left > 0) // left neighbor
             {
                 if (cellVector[i - left].value > 1 && cellVector[i - left].value < lowestNeighbor)
@@ -293,13 +254,6 @@ cv::Point2f PathPlanning::robotControl(std::vector<cellValueWF> cellVector, cv::
     wayPoint.x = ((cellVector[lowestNeighborIndex].p1.x + (cellVector[lowestNeighborIndex].p2.x - cellVector[lowestNeighborIndex].p1.x)/2) / 30 - center.x) / scaling;
     wayPoint.y = (-(cellVector[lowestNeighborIndex].p1.y + (cellVector[lowestNeighborIndex].p2.y - cellVector[lowestNeighborIndex].p1.y)/2) / 30 + center.y) / scaling;
 
-    std::cout << "P1: " << cellVector[lowestNeighborIndex].p1.x << "," << cellVector[lowestNeighborIndex].p1.y << std::endl;
-    std::cout << "P2: " << cellVector[lowestNeighborIndex].p2.x << "," << cellVector[lowestNeighborIndex].p2.y << std::endl;
-    std::cout << "xPixel: " << xPixel << " " << "yPixel: " << yPixel << " " << "CellIndex: " << cellIndex << std::endl;
-    std::cout << "CurrentPos: " << currentPos << std::endl;
-    std::cout << "Lowest Neighbor: " << lowestNeighborIndex << std::endl;
-    std::cout << "wayPoint: " << wayPoint.x << "," << wayPoint.y << std::endl << std::endl;
-
     return wayPoint;
 }
 
@@ -320,7 +274,6 @@ std::vector<cellValueBF> PathPlanning::brushfire()
 
 	int width = image.cols;
 	int height = image.rows;
-    std::cout << "Width: " << width << " Height: " << height << std::endl;
 	std::vector<cv::Rect> mCells;
 
     std::vector<cellValueBF> cellVector;
@@ -358,9 +311,6 @@ std::vector<cellValueBF> PathPlanning::brushfire()
                 }
             }
             cellVector.push_back(c);
-            //std::cout << "p1: " << "(" << cellVector[0].p1.x << "," << cellVector[0].p1.y << ")" << std::endl;
-            //std::cout << "p2: " << "(" << cellVector[0].p2.x << "," << cellVector[0].p2.y << ")" << std::endl;
-            //std::cout << "value: " << cellVector[0].value << std::endl;
             check = false;
 		}
 	}
@@ -501,49 +451,6 @@ std::vector<cellValueBF> PathPlanning::brushfire()
     cv::imshow("Brushfire", image);
     cv::imwrite( "../testImages/BigWorldV2-BF1.png", image );
     cv::waitKey();
-
-    // Couting the Brushfire and GVD in the terminal
-    /*bool check2 = false;
-
-    for (int i = 0; i < cellVector.size(); i++)
-    {
-        for (int j = 0; j < maxCell.size(); j++)
-        {
-            if (cellVector[i].p1 == maxCell[j].p1)
-            {
-                check2 = true;
-            }
-        }
-        if (check2 == false)
-        {
-            std::cout << cellVector[i].value;
-
-            if (cellVector[i].value < 10)
-            {
-                std::cout << " ";
-            }  
-            if ((i + 1) % 240 == 0)
-            {
-                std::cout << std::endl;
-            }
-        }
-        else
-        {
-            // Print red to indicate where the GVD is
-            std::cout << "\033[1;31m" << cellVector[i].value << "\033[0m";
-
-            if (cellVector[i].value < 10)
-            {
-                std::cout << " ";
-            }  
-            if ((i + 1) % 240 == 0)
-            {
-                std::cout << std::endl;
-            }
-
-            check2 = false;         
-        }  
-    }*/
     
     return cellVector;
 }
