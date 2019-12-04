@@ -40,7 +40,6 @@ std::vector<cellValueWF> PathPlanning::wavefront()
     image = cv::imread("../testImages/SmallWorldV2.png", cv::IMREAD_COLOR);
     int resize = 30;
     cv::resize(image, image, cv::Size(resize*image.cols, resize*image.rows));
-    //cv::cvtColor(image, image, CV_BGR2GRAY);
 
     int GRID_SIZE = 0.50 * resize;
 
