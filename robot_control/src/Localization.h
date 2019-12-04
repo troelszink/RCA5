@@ -32,7 +32,6 @@ public:
 
     Localization();
 
-    cv::Point2f localize(std::vector<float>);
     std::vector<particle> generateParticles(int);
     std::vector<float> lidarDistance(cv::Point2f, float);
     std::vector<particle> updateWeigths(std::vector<particle>, std::vector<float>, cv::Point2f);
