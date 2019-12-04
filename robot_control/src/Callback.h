@@ -29,11 +29,10 @@ public:
         double roll, pitch, yaw;
     };
     
-    Callback(cv::Point2f, float/*, std::vector<float>*/);
+    Callback(cv::Point2f, float);
 
     void statCallback(ConstWorldStatisticsPtr &_msg);
     void poseCallback(ConstPosesStampedPtr &_msg);
-    //void cameraCallback(ConstImageStampedPtr &msg);
     void lidarCallback(ConstLaserScanStampedPtr &msg);
 
     EulerAngles ToEulerAngles(Quaternion);
