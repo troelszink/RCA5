@@ -46,9 +46,6 @@ int main(int _argc, char **_argv)
     gazebo::transport::SubscriberPtr poseSubscriber =
         node->Subscribe("~/pose/info", &Callback::poseCallback, &cb);
 
-    /*gazebo::transport::SubscriberPtr cameraSubscriber =
-        node->Subscribe("~/pioneer2dx/camera/link/camera/image", &MarbleDetection::cameraCallback, &md);*/
-
     gazebo::transport::SubscriberPtr lidarSubscriber =
         node->Subscribe("~/pioneer2dx/hokuyo/link/laser/scan", &Callback::lidarCallback, &cb);
 
@@ -71,7 +68,6 @@ int main(int _argc, char **_argv)
     float dir = 0.0;
 
       // FUZZY LOGIC
-
       Engine* engine = FllImporter().fromFile("../fuzzy_controller/LocalObstacleAvoidance_V3.fll");
 
       std::string status;
