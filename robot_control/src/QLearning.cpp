@@ -59,9 +59,6 @@ void QLearning::printQTable(int index)
 
 void QLearning::generateMarbles()
 {
-	/*std::default_random_engine generator;
-	std::uniform_int_distribution<int> distributionX(0.0, COLUMNS);
-	std::uniform_int_distribution<int> distributionY(0.0, ROWS);*/
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -71,14 +68,11 @@ void QLearning::generateMarbles()
 	{
 		int y = dis(gen) * ROWS;
 		int x = dis(gen) * COLUMNS;
-		//int y = distributionY(generator);
-		//int x = distributionX(generator);
+
 		while (environment[y][x] == '#' || environment[y][x] == '+')
 		{
 			y = dis(gen) * ROWS;
 			x = dis(gen) * COLUMNS;
-			//y = distributionY(generator);
-			//x = distributionX(generator);
 		}
 
 		std::vector<int> marble_vec{ x,y };
@@ -89,33 +83,13 @@ void QLearning::generateMarbles()
 void QLearning::insertMarbles()
 {
 
-	//for (int i = 0; i < 5; i++)
-	//{
-	//	int x = marble_vector[i][0];
-	//	int y = marble_vector[i][1];
-	//	environment[y][x] = '+';
-	//}
-
-	environment[3][2] = '+';				// Test World1
-	environment[3][10] = '+';
-	environment[6][3] = '+';
-	environment[8][10] = '+';
-	environment[3][7] = '+';
-	environment[10][1] = '+';
+	environment[2][2] = '+';				// Test World2
+	environment[2][6] = '+';
+	environment[6][4] = '+';
+	environment[11][2] = '+';
 	environment[11][7] = '+';
-
-
-
-	//environment[2][2] = '+';				// Test World2
-	//environment[2][6] = '+';
-	//environment[6][4] = '+';
-	//environment[11][2] = '+';
-	//environment[11][7] = '+';
-	//environment[3][11] = '+';
-
-
-
-
+	environment[3][11] = '+';
+	environment[12][11] = '+';
 
 }
 
@@ -251,11 +225,6 @@ action QLearning::GetNextBestAction(state s)
 	int maxReward = vnext[randomMax];
 	int maxAction = randomMax;
 
-	//std::cout << randomMax << std::endl;
-
-	//int maxReward = vnext[3];
-	//int maxAction = 3; 
-
 	for (int i = 0; i < 4; i++)
 	{
 		if (vnext[i] > maxReward)
@@ -327,7 +296,6 @@ int QLearning::FindQTable(std::vector<std::vector<int>> vec)
 		
 	}
 	
-
 	// If QTable does not exist create the table
 
 	for (int y = 0; y < ROWS; y++)						// Initialize Q-Vector to 0
@@ -425,6 +393,7 @@ void QLearning::runModel()
 		int steps = 0;
 		int marbles_collected = 0;
 		int rCounter = 0;
+		float QSum = 0;
 
 		// Reset history of moves
 		previousStates.erase(previousStates.begin(), previousStates.end());
@@ -432,7 +401,7 @@ void QLearning::runModel()
 		insertMarbles();
 
 		//while (!s.is_outside_environment && steps < max_steps)		// Run until illegal move or maximum number of steps is exceeded
-		while (!s.is_outside_environment && marbles_collected != 7)
+		while (!s.is_outside_environment && marbles_collected != 3)
 		{
 
 			if (newMove(s))		// Check if new move
@@ -455,14 +424,6 @@ void QLearning::runModel()
 
 			s = next_state;
 			steps++;
-
-			//std::cout << "Testing " << "      Episode: " << episode << "       Step: " << steps << std::endl;
-
-			if (steps > 1000)
-			{
-				std::cout << "Too many steps" << std::endl;
-				break;
-			}
 
 		}
 		std::cout << "Marbles collected: " << marbles_collected << "    steps: " << steps << std::endl << std::endl;
