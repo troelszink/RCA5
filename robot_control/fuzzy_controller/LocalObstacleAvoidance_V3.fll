@@ -36,20 +36,6 @@ InputVariable: DirectionToGoal
   term: DiagonalRight Triangle 0.000 0.250 0.500
   term: Right Ramp 0.400 1.000
 
-InputVariable: FreeLeftPassage
-    enabled: true
-    range: 0.000 1.000
-    lock-range: false
-    term: False Ramp 0.250 -1.000
-    term: True Ramp -0.250 1.000
-
-InputVariable: FreeRightPassage
-    enabled: true
-    range: 0.000 1.000
-    lock-range: false
-    term: False Ramp 0.250 -1.000
-    term: True Ramp -0.250 1.000
-
 OutputVariable: Steer
     enabled: true
     range: -1.000 1.000
