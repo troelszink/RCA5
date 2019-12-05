@@ -5,6 +5,7 @@ PathPlanning::PathPlanning()
 {
 }
 
+// Used to draw the cells that we divide the environment into. Just to visualize, not necessary for our project to work
 void PathPlanning::mapIntoCells()
 {
     cv::Mat image;
@@ -34,6 +35,7 @@ void PathPlanning::mapIntoCells()
 	}
 }
 
+// Implementing the Wavefront planner to go from point A to point B
 std::vector<cellValueWF> PathPlanning::wavefront()
 {
     cv::Mat image;
@@ -47,12 +49,12 @@ std::vector<cellValueWF> PathPlanning::wavefront()
 	int height = image.rows;
 	std::vector<cv::Rect> mCells;
 
-    //cv::Mat cells;
     std::vector<cellValueWF> cellVector;
     int count = 0;
     bool check = false;
     int gridCnt = 0;
 
+    // Drawing the environment with values of '1' at the walls and '-1' at the rest (-1 is defined inside the .h-file)
     for (int y = 0; y < height - GRID_SIZE + 1; y += GRID_SIZE) 
 	{
 		for (int x = 0; x < width - GRID_SIZE + 1; x += GRID_SIZE) 
@@ -119,6 +121,7 @@ std::vector<cellValueWF> PathPlanning::wavefront()
         std::cout << "Not a valid goal." << std::endl;
     }
 
+    // Different values needed for the next part
     int cellsFilled = 0;
     int i = cellIndex - 1; // Starting to the left of the goal position
     int j = 0;
@@ -129,12 +132,15 @@ std::vector<cellValueWF> PathPlanning::wavefront()
     int down = 40;
     int left = 1;
 
+    // As long as there are still cells that are not filled with a value different from '-1', keep going
     while (cellsFilled < cellsNotFilled)
     {
         lowestNeighbor = 1000;
 
+	// Checking if the current value is an undefined valuye, '-1'
         if (cellVector[i].value < 0)
         {
+	    // Using the 4-adjadency (upper, right, lower, left) to insert values into the Wavefront planner
             if (i - up > 0) // upper neighbor
             {
                 if (cellVector[i - up].value > 1 && cellVector[i - up].value < lowestNeighbor)
@@ -179,6 +185,7 @@ std::vector<cellValueWF> PathPlanning::wavefront()
         }
     }
 
+    // Prints the Wavefront planner out to the console - Mostly for testing
     for (int i = 0; i < cellVector.size(); i++)
     {
         std::cout << cellVector[i].value << " ";
@@ -195,6 +202,7 @@ std::vector<cellValueWF> PathPlanning::wavefront()
     return cellVector;
 }
 
+// Determines the path to go for the robot
 cv::Point2f PathPlanning::robotControl(std::vector<cellValueWF> cellVector, cv::Point2f currentPos)
 {
     cv::Point2f wayPoint;
@@ -215,6 +223,7 @@ cv::Point2f PathPlanning::robotControl(std::vector<cellValueWF> cellVector, cv::
     int down = 40;
     int left = 1;
    
+	    // Checks if the robot has to go up, right, down or left to obtain the shortest path (or one of them at least)
             if (i - up > 0) // upper neighbor
             {
                 if (cellVector[i - up].value > 1 && cellVector[i - up].value < lowestNeighborValue)
@@ -251,6 +260,7 @@ cv::Point2f PathPlanning::robotControl(std::vector<cellValueWF> cellVector, cv::
                 }
             }
 
+    // Saving waypoints for the robot to follow (using the Fuzzy Controller)
     wayPoint.x = ((cellVector[lowestNeighborIndex].p1.x + (cellVector[lowestNeighborIndex].p2.x - cellVector[lowestNeighborIndex].p1.x)/2) / 30 - center.x) / scaling;
     wayPoint.y = (-(cellVector[lowestNeighborIndex].p1.y + (cellVector[lowestNeighborIndex].p2.y - cellVector[lowestNeighborIndex].p1.y)/2) / 30 + center.y) / scaling;
 
@@ -262,7 +272,7 @@ cv::Point2f PathPlanning::getGoal()
     return goal;
 }
 
-
+// Implementation of the Brushfire Algorithm together with the GVD (General Voronoi Diagram)
 std::vector<cellValueBF> PathPlanning::brushfire()
 {
     cv::Mat image;
@@ -281,6 +291,8 @@ std::vector<cellValueBF> PathPlanning::brushfire()
     bool check = false;
     int gridCnt = 0;
 
+    // Drawing the environment with values of '1' at the walls and '-1' at the rest (-1 is defined inside the .h-file)
+    // Just as we did for the Wavefront planner
     for (float y = 0; y < height; y += GRID_SIZE) 
 	{
 		for (float x = 0; x < width; x += GRID_SIZE) 
@@ -315,12 +327,13 @@ std::vector<cellValueBF> PathPlanning::brushfire()
 		}
 	}
 
-    std::cout << count << std::endl;
-    std::cout << "Grid: " << gridCnt << std::endl;
+    //std::cout << count << std::endl;
+    //std::cout << "Grid: " << gridCnt << std::endl;
 
     cv::Point2f center = cv::Point2f(60, 40);
     float scaling = 1.41735;
 
+    // Different values needed for the next part
     int cellsFilled = 0;
     int i = 0;
     int j = 0;
@@ -331,7 +344,7 @@ std::vector<cellValueBF> PathPlanning::brushfire()
     int left = 1;
     int cellCheck = 1;
 
-
+    // As long as there are still cells that are not filled with a value different from '-1', keep going
     while (cellsFilled < cellsNotFilled)
     {
         if (cellVector[i].value == cellCheck)
@@ -381,6 +394,7 @@ std::vector<cellValueBF> PathPlanning::brushfire()
 
     std::vector<cellValueBF> maxCell;
 
+    // Drawing the Brushfire algorithm and the GVD
     for (int i = 0; i < cellVector.size(); i++)
     {
         if (cellVector[i].value == 1)
@@ -455,6 +469,7 @@ std::vector<cellValueBF> PathPlanning::brushfire()
     return cellVector;
 }
 
+// Removes the GVD from the corners (the red cells described in the report, only keep the blue cells)
 bool PathPlanning::removeCorners(int index, std::vector<cellValueBF> cellVector)
 {
     int up = 240;
@@ -542,6 +557,7 @@ bool PathPlanning::removeCorners(int index, std::vector<cellValueBF> cellVector)
     }
 }
 
+// Checking if the GVD is in a valid room. An invalid room is outside the walls in the most outer walls
 bool PathPlanning::isValidRoom(int index, std::vector<cellValueBF> cellVector)
 {
     int up = 240;
