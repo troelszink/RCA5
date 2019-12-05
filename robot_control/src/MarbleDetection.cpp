@@ -7,6 +7,7 @@ MarbleDetection::MarbleDetection()
 
 }
 
+// The built-in method supplied with our own code
 void MarbleDetection::cameraCallback(ConstImageStampedPtr &msg) 
 {
     static boost::mutex mutex;
@@ -19,6 +20,7 @@ void MarbleDetection::cameraCallback(ConstImageStampedPtr &msg)
     im = im.clone();
     cv::cvtColor(im, im, CV_RGB2BGR);
 
+    // Calling methods to implement our design
     cv::Mat imPre = preprocessing(im);
     cv::Mat imDet = edgeDetection(imPre);
     cv::Mat result = houghCircles(imDet;
@@ -41,6 +43,7 @@ cv::Mat MarbleDetection::preprocessing(cv::Mat im)
     return imDenoising;
 }
 
+// Generate edge detection by means of gradients and Sobel derivatives
 cv::Mat MarbleDetection::edgeDetection(cv::Mat im)
 {
     cv::Mat grad;
@@ -66,8 +69,10 @@ cv::Mat MarbleDetection::edgeDetection(cv::Mat im)
     return grad;
 }
 
+// Draw the Hough cirlces around the marbles
 cv::Mat MarbleDetection::houghCircles(cv::Mat imDet)
 {
+    // Calculing the Canny value used in HoughCircles()
     cv::Mat imCanny;
     double canny_value = cv::threshold(imDet, imCanny, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 
@@ -112,6 +117,7 @@ cv::Mat MarbleDetection::houghCircles(cv::Mat imDet)
                 if (current != center)
                     {
                         current = center;
+                        // Calling the method that estimates the location of the marbles
                         marbleLocation(diameter, center.x, center.y);
                     }
 
@@ -125,6 +131,8 @@ cv::Mat MarbleDetection::houghCircles(cv::Mat imDet)
     return imDet;
 }
 
+// This method is used to get the information from the same object used in the Callback class.
+// So we can get the correct data from the lidar-sensors to compare with
 void MarbleDetection::addObject(Callback &obj)
 {
     callback = &obj;
@@ -172,9 +180,10 @@ void MarbleDetection::marbleLocation(float marbleWidth, float centerX, float cen
 
     //std::cout << "DistanceToMarble: " << distanceToMarble << std::endl;
     std::cout << "The location of the marble is: (" << x2 << "," << y2 << ")" << std::endl;
-    std::cout << "The location of the robot: " << callback->getCurPosition().x << "," << callback->getCurPosition().y << std::endl;
+    std::cout << "The location of the robot is: (" << callback->getCurPosition().x << "," << callback->getCurPosition().y << ")" << std::endl;
 }
 
+// Just for drawing our tests
 void MarbleDetection::drawTest()
 {
     cv::Mat image;
