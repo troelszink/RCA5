@@ -12,6 +12,7 @@ There are 5 major topics divided into 6 mains. They are as follows:
 - **mainROB-Loc.cpp**       - Main for Robotics, Localization
 
 These mains are located in the folder: /robot_control/src/mains/
+- The one called "main.cpp" in the /robot_control/src/ folder is the one called: **"mainAI-FC.cpp"**.
 
 However, in /robot_control/src there are one main, and the rest are in "mains".
 This is the main-file that will be executed when building the project.
