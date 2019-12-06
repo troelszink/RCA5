@@ -5,6 +5,7 @@
 There are 5 major topics divided into 6 mains. They are as follows:
 
 - **mainAI-FC.cpp**         - Main for Fuzzy Control
+-- Set the goal for the Fuzzy Controller in mainAI-FC.h
 - **mainAI-QL.cpp**         - Main for Q-Learning
 - **mainVIS.cpp**           - Main for image analysis with Computer Vision
 - **mainROB-WF.cpp**        - Main for Robotics, Wavefront Planner
